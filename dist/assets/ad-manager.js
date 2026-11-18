@@ -27,7 +27,7 @@
   function renderCoupangSlot(el) {
     const title = el.getAttribute("data-title") || "";
     const reason = el.getAttribute("data-reason") || "";
-    const cta = el.getAttribute("data-cta") || "쿠팡 최저가 보기";
+    const cta = el.getAttribute("data-cta") || "쿠팡 상품 보기";
     const url = el.getAttribute("data-url") || "https://shopping.guidehollow.com/";
     const badge = el.getAttribute("data-badge") || "상황 맞춤 추천";
     const guideUrl = el.getAttribute("data-guide-url") || "https://shopping.guidehollow.com/";

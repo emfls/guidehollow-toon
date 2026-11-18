@@ -30,7 +30,7 @@ def test_build_portal_matches_comic_naver_and_no_fake_server() -> None:
 
     home_html = (DIST / "index.html").read_text(encoding="utf-8")
     assert "이달의 신규 웹툰" in home_html
-    assert "요일별 전체 웹툰" in home_html
+    assert "장르별 전체 웹툰" in home_html
     assert "첫 화 보기" in home_html
     assert "G-QP5Q67GE5B" in home_html
     assert AI_IMAGE_NOTICE in home_html

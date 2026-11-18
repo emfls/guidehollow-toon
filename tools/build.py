@@ -505,11 +505,12 @@ body.viewer-body { background: #ffffff; color: #111111; }
 
 @media (min-width: 1180px) {
   .viewer-stage { max-width: 1150px; display: grid; grid-template-columns: 200px minmax(0, 690px) 200px; gap: 20px; align-items: start; justify-content: center; }
-  .wing-ad { display: block; position: sticky; top: 72px; }
+  .viewer-stage .wing-ad { display: block; position: sticky; top: 72px; }
   .mobile-top-coupang { display: none; }
 }
 @media (min-width: 1420px) {
   .home-stage { max-width: 1420px; display: grid; grid-template-columns: 188px minmax(0, 980px) 188px; gap: 20px; align-items: start; justify-content: center; }
+  .home-stage .wing-ad { display: block; position: sticky; top: 72px; }
 }
 
 .site-footer { margin-top: 48px; border-top: 1px solid #ebebeb; padding: 28px 0 42px; font-size: 12.5px; color: #767676; background: #ffffff; }
@@ -573,7 +574,7 @@ AD_MANAGER_JS = """
   function renderCoupangSlot(el) {
     const title = el.getAttribute("data-title") || "";
     const reason = el.getAttribute("data-reason") || "";
-    const cta = el.getAttribute("data-cta") || "쿠팡 최저가 보기";
+    const cta = el.getAttribute("data-cta") || "쿠팡 상품 보기";
     const url = el.getAttribute("data-url") || "https://shopping.guidehollow.com/";
     const badge = el.getAttribute("data-badge") || "상황 맞춤 추천";
     const guideUrl = el.getAttribute("data-guide-url") || "https://shopping.guidehollow.com/";
@@ -749,7 +750,7 @@ def _gnb_html(active: str = "home") -> str:
     </nav>
     <div class="nv-sub-nav">
       <div class="wrap nv-sub-tabs" role="tablist" aria-label="장르별 보기">
-        <button type="button" class="nv-sub-btn is-active" data-genre="all">요일전체</button>
+        <button type="button" class="nv-sub-btn is-active" data-genre="all">장르전체</button>
         <button type="button" class="nv-sub-btn" data-genre="office">직장·알바</button>
         <button type="button" class="nv-sub-btn" data-genre="love">연애·관계</button>
         <button type="button" class="nv-sub-btn" data-genre="car">주차·도로</button>
@@ -940,8 +941,8 @@ def build_home_html(episodes: list[dict]) -> str:
     top = episodes[0]
     total_cuts = sum(ep["cutCount"] for ep in episodes)
     head = _head_html(
-        "GuideHollow 웹툰 — 사이다 실화 연재관",
-        f"네이버 웹툰 스타일 세로 스크롤 {len(episodes)}화(총 {total_cuts}컷) 사이다 실화 웹툰을 무료로 감상하세요.",
+        "GuideHollow 웹툰 — 현실 공감 사이다 연재관",
+        f"네이버 웹툰 스타일 세로 스크롤 {len(episodes)}화(총 {total_cuts}컷) 현실 공감 창작·각색 사이다 웹툰을 무료로 감상하세요.",
         f"{SITE_URL}/",
         f"{SITE_URL}/assets/toons/{top['id']}/cover.svg",
     )
@@ -959,16 +960,16 @@ def build_home_html(episodes: list[dict]) -> str:
 {_render_new_cards(episodes)}
     </section>
 
-{_render_coupang_strip(episodes, 0, "웹툰 상황별 생활·데스크 인기템 추천")}
+{_render_coupang_strip(episodes, 0, "웹툰 에피소드 상황별 생활·데스크 관련 상품")}
 
     <div class="nv-sec-title-row">
-      <h2 class="nv-sec-title">요일별 전체 웹툰</h2>
+      <h2 class="nv-sec-title">장르별 전체 웹툰</h2>
       <span class="nv-sec-more">에피소드 길이별 맞춤 컷수(12~18컷) · 전 회차 무료</span>
     </div>
     <section class="wt-grid" aria-label="전체 웹툰 포스터">
 {_render_poster_cards(episodes)}
     </section>
-    <div id="wt-empty-msg" style="display:none;padding:28px 16px;text-align:center;color:#595959;border:1px dashed #d1d5db;border-radius:6px;margin-top:12px;font-size:14px;">조건에 맞는 웹툰이 없습니다. 상단 '요일전체' 탭을 눌러 전체 작품을 확인하세요.</div>
+    <div id="wt-empty-msg" style="display:none;padding:28px 16px;text-align:center;color:#595959;border:1px dashed #d1d5db;border-radius:6px;margin-top:12px;font-size:14px;">조건에 맞는 웹툰이 없습니다. 상단 '장르전체' 탭을 눌러 전체 작품을 확인하세요.</div>
 
 {_render_coupang_strip(episodes, 4, "자취·주거·일상 예방 필수품 모아보기")}
 
@@ -980,10 +981,10 @@ def build_home_html(episodes: list[dict]) -> str:
         <div>
           <h2 class="series-h2">오늘의 베스트 사이다 썰툰 모음집</h2>
           <div class="series-authors"><strong>GuideHollow 편집팀</strong> · 글 / <strong>AI 웹툰 스튜디오</strong> · 그림 &nbsp;|&nbsp; 스토리 맞춤 12~18컷 무료 연재</div>
-          <p class="series-synop">{esc(top['summary'])} 직장·연애·주차·전세·중고거래 등 현실에서 누구나 겪는 답답한 상황을 이야기의 호흡에 맞춘 맞춤 컷수로 풀어낸 세로 웹툰 모음입니다.</p>
+          <p class="series-synop">{esc(top['summary'])} 직장·연애·주차·전세·중고거래 등 현실에서 누구나 겪는 답답한 상황을 이야기의 호흡에 맞춘 맞춤 컷수로 풀어낸 창작·각색 세로 웹툰 모음입니다.</p>
           <div class="series-tags">
             <span class="series-tag">#사이다참교육</span>
-            <span class="series-tag">#직장실화</span>
+            <span class="series-tag">#직장공감</span>
             <span class="series-tag">#스토리별가변컷</span>
             <span class="series-tag">#전세사기방어</span>
             <span class="series-tag">#무료정주행</span>
@@ -1020,9 +1021,9 @@ def build_studio_archive_html(episodes: list[dict]) -> str:
 {_gnb_html("studio")}
   <main class="wrap">
     <div class="nv-sec-title-row">
-      <h1 class="nv-sec-title">전체 완결·인기 웹툰 모아보기 ({len(episodes)}작 · 총 {total_cuts}컷)</h1>
+      <h1 class="nv-sec-title">전체 완결·정주행 웹툰 모아보기 ({len(episodes)}작 · 총 {total_cuts}컷)</h1>
     </div>
-{_render_coupang_strip(episodes, 1, "정주행 독자들이 자주 찾는 생활·가전 추천")}
+{_render_coupang_strip(episodes, 1, "에피소드 주제별 생활·가전 관련 상품 안내")}
     <section class="wt-grid" style="margin-bottom:28px;">
 {_render_poster_cards(episodes)}
     </section>
@@ -1228,7 +1229,7 @@ def build_site(ad_mode: str = "coupang") -> dict:
             "about",
             "연재·편집 원칙",
             "GuideHollow 웹툰 연재·편집 원칙",
-            f"<p>전 에피소드는 직장·계약·중고거래·이웃 분쟁 등 일상에서 벌어지는 실제 고민을 이야기 길이에 따라 12~18컷 세로 스크롤 웹툰으로 각색(현재 {len(episodes)}화 총 {total_cuts}컷)하고, 하단에 법적 대응과 생활 체크리스트를 함께 수록합니다.</p>"
+            f"<p>전 에피소드는 직장·계약·중고거래·이웃 분쟁 등 일상에서 흔히 겪는 갈등 소재를 바탕으로 이야기 길이에 따라 12~18컷 세로 스크롤 웹툰으로 창작·각색(현재 {len(episodes)}화 총 {total_cuts}컷)하고, 하단에 법적 대응과 생활 체크리스트를 함께 수록합니다.</p>"
             "<p>모든 웹툰 작화는 AI 생성 일러스트와 한국어 웹툰 식자 조판을 결합해 제작되며, 별도 회원가입·댓글·평점 없이 모바일과 PC 모두에서 끊김 없는 무료 정주행을 즐길 수 있습니다.</p>",
         ),
     )
