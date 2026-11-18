@@ -112,45 +112,51 @@ body.viewer-body { background: #ffffff; color: #111111; }
 .nv-box { background: #ffffff; border: 1px solid #ebebeb; border-radius: 6px; padding: 20px; }
 .next-ep-banner { display: grid; grid-template-columns: 72px 1fr auto; gap: 14px; align-items: center; border: 1px solid #ebebeb; border-radius: 6px; padding: 14px; background: #fafafa; }
 .next-ep-banner img { width: 72px; height: 92px; object-fit: cover; border-radius: 4px; }
-.ad-box { background: #ffffff; border: 1px solid #ebebeb; border-radius: 6px; padding: 18px; }
-.ad-disclosure { font-size: 11px; color: #595959; margin-bottom: 6px; line-height: 1.4; }
-.ad-thumb-wrap { overflow: hidden; border-radius: 6px; border: 1px solid #e5e7eb; background: #f8fafc; }
-.ad-thumb-img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
-.coupang-banner { display: grid; grid-template-columns: 156px minmax(0, 1fr); gap: 14px; align-items: center; }
-.coupang-banner-body { display: grid; gap: 6px; min-width: 0; }
-.coupang-cta { display: inline-flex; align-items: center; justify-content: center; background: #111111; color: #ffffff; font-weight: 700; font-size: 13.5px; padding: 9px 15px; border-radius: 4px; }
+.ad-box { background: #ffffff; border: 1px solid #ebebeb; border-radius: 6px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.top-coupang-disclosure { margin: 10px 0 4px; padding: 8px 14px; border-radius: 4px; border: 1px solid #ebebeb; background: #f9fafb; font-size: 12px; color: #595959; line-height: 1.45; text-align: center; }
 
-.promo-event-banner { margin: 20px 0; padding: 16px 18px; border-radius: 8px; border: 1.5px solid #f59e0b; background: linear-gradient(135deg, #fffbeb 0%, #ffffff 55%, #ecfdf5 100%); display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; align-items: center; box-shadow: 0 2px 10px rgba(17, 17, 17, 0.04); }
-.promo-event-media { overflow: hidden; border-radius: 6px; border: 1px solid #fde68a; background: #ffffff; }
-.promo-event-media img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
-.promo-event-body { display: grid; gap: 6px; min-width: 0; }
-.promo-event-tag { display: inline-flex; align-items: center; width: max-content; max-width: 100%; padding: 3px 10px; border-radius: 999px; background: #fef3c7; border: 1px solid #f59e0b; color: #b45309; font-size: 11px; font-weight: 800; }
-.promo-event-title { margin: 0; font-size: 16.5px; font-weight: 900; color: #111111; line-height: 1.35; }
-.promo-event-desc { margin: 0; font-size: 13px; color: #444444; line-height: 1.45; }
-.promo-event-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 4px; }
-.promo-event-cta { display: inline-flex; align-items: center; justify-content: center; background: #111111; color: #00dc64; font-size: 13px; font-weight: 900; padding: 9px 15px; border-radius: 5px; }
+/* Official Coupang Partners Dynamic & Promotion Embeds */
+.promo-event-banner { margin: 18px auto; display: flex; justify-content: center; align-items: center; max-width: 100%; overflow: hidden; }
+.promo-event-banner img { display: block; max-width: 100%; height: auto; border-radius: 6px; margin: 0 auto; }
+.promo-event-banner a.cp-promo-desktop { display: none; max-width: 100%; line-height: 0; }
+.promo-event-banner a.cp-promo-mobile { display: block; width: 100%; max-width: 320px; margin: 0 auto; line-height: 0; }
+.cp-dyn-desktop { display: none; }
+.cp-dyn-mobile { display: flex; justify-content: center; width: 100%; }
+.cp-dyn-mobile iframe { width: 320px; max-width: 100%; height: 320px; border: 0; display: block; margin: 0 auto; }
 
-/* Multi-Zone Coupang Placements: Desktop Left/Right Wings (>=1180px), Mid-Stream, Mobile */
+@media (min-width: 720px) {
+  .promo-event-banner a.cp-promo-desktop { display: block; width: 100%; max-width: 728px; margin: 0 auto; }
+  .promo-event-banner a.cp-promo-desktop img { width: 100%; max-width: 728px; height: auto; }
+  .promo-event-banner a.cp-promo-mobile { display: none; }
+  .cp-dyn-desktop { display: flex; justify-content: center; width: 100%; }
+  .cp-dyn-desktop iframe { width: 100%; max-width: 680px; height: 140px; border: 0; display: block; margin: 0 auto; }
+  .cp-dyn-mobile { display: none; }
+}
+
+/* Multi-Zone Official Coupang Placements: Desktop Left/Right Wings, Mid-Stream, Mobile */
 .home-stage { width: 100%; max-width: 1190px; margin: 0 auto; padding: 0 16px; }
-.viewer-stage { width: 100%; max-width: 690px; margin: 0 auto; }
+.viewer-stage { width: 100%; max-width: 708px; margin: 0 auto; }
 .wing-ad { display: none; }
-.wing-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; margin-bottom: 12px; display: grid; gap: 7px; }
-.wing-badge { font-size: 11px; font-weight: 800; color: #00a64c; }
-.wing-title { font-size: 13.5px; font-weight: 800; color: #111111; line-height: 1.4; }
-.wing-reason { font-size: 12px; color: #555555; line-height: 1.45; }
-.wing-cta { display: block; text-align: center; background: #111111; color: #ffffff; font-size: 12.5px; font-weight: 700; padding: 8px 10px; border-radius: 4px; }
-.wing-guide { font-size: 12px; font-weight: 700; color: #2563eb; text-align: center; }
+.wing-card { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.wing-card a { display: block; line-height: 0; }
+.wing-card img { display: block; width: 160px; height: auto; border-radius: 6px; }
 
-.infeed-coupang-card { margin: 16px 0; padding: 16px 18px; background: #f9fafb; border: 1px solid #e5e7eb; border-top: 2.5px solid var(--nv-green); border-radius: 6px; }
-.mobile-top-coupang { margin: 0 auto 14px; max-width: 690px; padding: 0 12px; }
+.infeed-coupang-card { margin: 16px 0; padding: 12px 0; background: #f9fafb; border-top: 1px solid #ebebeb; border-bottom: 1px solid #ebebeb; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+.mobile-top-coupang { margin: 0 auto 14px; max-width: 708px; padding: 0; }
 .mobile-top-coupang .infeed-coupang-card { margin: 0; }
-.coupang-strip-box { margin: 22px 0; padding: 18px; background: #f9fafb; border: 1px solid #ebebeb; border-radius: 6px; }
-.coupang-strip-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-.coupang-strip-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.coupang-mini-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
+.coupang-strip-box { margin: 20px 0; padding: 14px 0; background: #f9fafb; border-top: 1px solid #ebebeb; border-bottom: 1px solid #ebebeb; display: flex; flex-direction: column; align-items: center; gap: 12px; overflow: hidden; }
+@media (max-width: 350px) {
+  .home-stage .coupang-strip-box { margin-left: -10px; margin-right: -10px; }
+}
+@media (min-width: 351px) and (max-width: 719px) {
+  .home-stage .coupang-strip-box { margin-left: -16px; margin-right: -16px; }
+}
+@media (min-width: 720px) {
+  .infeed-coupang-card, .coupang-strip-box { border: 1px solid #ebebeb; border-radius: 6px; padding: 14px 8px; }
+}
 
 @media (min-width: 1180px) {
-  .viewer-stage { max-width: 1150px; display: grid; grid-template-columns: 200px minmax(0, 690px) 200px; gap: 20px; align-items: start; justify-content: center; }
+  .viewer-stage { max-width: 1150px; display: grid; grid-template-columns: 184px minmax(0, 708px) 184px; gap: 18px; align-items: start; justify-content: center; }
   .viewer-stage .wing-ad { display: block; position: sticky; top: 72px; }
   .mobile-top-coupang { display: none; }
 }
@@ -166,7 +172,6 @@ body.viewer-body { background: #ffffff; color: #111111; }
 @media (max-width: 960px) {
   .new-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .wt-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .coupang-strip-grid { grid-template-columns: 1fr; }
   .nv-search-box { display: none; }
 }
 @media (max-width: 640px) {
@@ -182,9 +187,6 @@ body.viewer-body { background: #ffffff; color: #111111; }
   .next-ep-banner { grid-template-columns: 60px 1fr; }
   .next-ep-banner a { grid-column: 1 / -1; text-align: center; }
   .float-scroll-nav { right: 10px; bottom: 14px; }
-}
-@media (max-width: 560px) {
-  .coupang-banner, .promo-event-banner { grid-template-columns: 1fr; }
 }
 @media (max-width: 350px) {
   .wrap, .home-stage { padding: 0 10px; }

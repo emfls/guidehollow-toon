@@ -519,45 +519,51 @@ body.viewer-body { background: #ffffff; color: #111111; }
 .nv-box { background: #ffffff; border: 1px solid #ebebeb; border-radius: 6px; padding: 20px; }
 .next-ep-banner { display: grid; grid-template-columns: 72px 1fr auto; gap: 14px; align-items: center; border: 1px solid #ebebeb; border-radius: 6px; padding: 14px; background: #fafafa; }
 .next-ep-banner img { width: 72px; height: 92px; object-fit: cover; border-radius: 4px; }
-.ad-box { background: #ffffff; border: 1px solid #ebebeb; border-radius: 6px; padding: 18px; }
-.ad-disclosure { font-size: 11px; color: #595959; margin-bottom: 6px; line-height: 1.4; }
-.ad-thumb-wrap { overflow: hidden; border-radius: 6px; border: 1px solid #e5e7eb; background: #f8fafc; }
-.ad-thumb-img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
-.coupang-banner { display: grid; grid-template-columns: 156px minmax(0, 1fr); gap: 14px; align-items: center; }
-.coupang-banner-body { display: grid; gap: 6px; min-width: 0; }
-.coupang-cta { display: inline-flex; align-items: center; justify-content: center; background: #111111; color: #ffffff; font-weight: 700; font-size: 13.5px; padding: 9px 15px; border-radius: 4px; }
+.ad-box { background: #ffffff; border: 1px solid #ebebeb; border-radius: 6px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.top-coupang-disclosure { margin: 10px 0 4px; padding: 8px 14px; border-radius: 4px; border: 1px solid #ebebeb; background: #f9fafb; font-size: 12px; color: #595959; line-height: 1.45; text-align: center; }
 
-.promo-event-banner { margin: 20px 0; padding: 16px 18px; border-radius: 8px; border: 1.5px solid #f59e0b; background: linear-gradient(135deg, #fffbeb 0%, #ffffff 55%, #ecfdf5 100%); display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; align-items: center; box-shadow: 0 2px 10px rgba(17, 17, 17, 0.04); }
-.promo-event-media { overflow: hidden; border-radius: 6px; border: 1px solid #fde68a; background: #ffffff; }
-.promo-event-media img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
-.promo-event-body { display: grid; gap: 6px; min-width: 0; }
-.promo-event-tag { display: inline-flex; align-items: center; width: max-content; max-width: 100%; padding: 3px 10px; border-radius: 999px; background: #fef3c7; border: 1px solid #f59e0b; color: #b45309; font-size: 11px; font-weight: 800; }
-.promo-event-title { margin: 0; font-size: 16.5px; font-weight: 900; color: #111111; line-height: 1.35; }
-.promo-event-desc { margin: 0; font-size: 13px; color: #444444; line-height: 1.45; }
-.promo-event-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 4px; }
-.promo-event-cta { display: inline-flex; align-items: center; justify-content: center; background: #111111; color: #00dc64; font-size: 13px; font-weight: 900; padding: 9px 15px; border-radius: 5px; }
+/* Official Coupang Partners Dynamic & Promotion Embeds */
+.promo-event-banner { margin: 18px auto; display: flex; justify-content: center; align-items: center; max-width: 100%; overflow: hidden; }
+.promo-event-banner img { display: block; max-width: 100%; height: auto; border-radius: 6px; margin: 0 auto; }
+.promo-event-banner a.cp-promo-desktop { display: none; max-width: 100%; line-height: 0; }
+.promo-event-banner a.cp-promo-mobile { display: block; width: 100%; max-width: 320px; margin: 0 auto; line-height: 0; }
+.cp-dyn-desktop { display: none; }
+.cp-dyn-mobile { display: flex; justify-content: center; width: 100%; }
+.cp-dyn-mobile iframe { width: 320px; max-width: 100%; height: 320px; border: 0; display: block; margin: 0 auto; }
 
-/* Multi-Zone Coupang Placements: Desktop Left/Right Wings (>=1180px), Mid-Stream, Mobile */
+@media (min-width: 720px) {
+  .promo-event-banner a.cp-promo-desktop { display: block; width: 100%; max-width: 728px; margin: 0 auto; }
+  .promo-event-banner a.cp-promo-desktop img { width: 100%; max-width: 728px; height: auto; }
+  .promo-event-banner a.cp-promo-mobile { display: none; }
+  .cp-dyn-desktop { display: flex; justify-content: center; width: 100%; }
+  .cp-dyn-desktop iframe { width: 100%; max-width: 680px; height: 140px; border: 0; display: block; margin: 0 auto; }
+  .cp-dyn-mobile { display: none; }
+}
+
+/* Multi-Zone Official Coupang Placements: Desktop Left/Right Wings, Mid-Stream, Mobile */
 .home-stage { width: 100%; max-width: 1190px; margin: 0 auto; padding: 0 16px; }
-.viewer-stage { width: 100%; max-width: 690px; margin: 0 auto; }
+.viewer-stage { width: 100%; max-width: 708px; margin: 0 auto; }
 .wing-ad { display: none; }
-.wing-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; margin-bottom: 12px; display: grid; gap: 7px; }
-.wing-badge { font-size: 11px; font-weight: 800; color: #00a64c; }
-.wing-title { font-size: 13.5px; font-weight: 800; color: #111111; line-height: 1.4; }
-.wing-reason { font-size: 12px; color: #555555; line-height: 1.45; }
-.wing-cta { display: block; text-align: center; background: #111111; color: #ffffff; font-size: 12.5px; font-weight: 700; padding: 8px 10px; border-radius: 4px; }
-.wing-guide { font-size: 12px; font-weight: 700; color: #2563eb; text-align: center; }
+.wing-card { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.wing-card a { display: block; line-height: 0; }
+.wing-card img { display: block; width: 160px; height: auto; border-radius: 6px; }
 
-.infeed-coupang-card { margin: 16px 0; padding: 16px 18px; background: #f9fafb; border: 1px solid #e5e7eb; border-top: 2.5px solid var(--nv-green); border-radius: 6px; }
-.mobile-top-coupang { margin: 0 auto 14px; max-width: 690px; padding: 0 12px; }
+.infeed-coupang-card { margin: 16px 0; padding: 12px 0; background: #f9fafb; border-top: 1px solid #ebebeb; border-bottom: 1px solid #ebebeb; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+.mobile-top-coupang { margin: 0 auto 14px; max-width: 708px; padding: 0; }
 .mobile-top-coupang .infeed-coupang-card { margin: 0; }
-.coupang-strip-box { margin: 22px 0; padding: 18px; background: #f9fafb; border: 1px solid #ebebeb; border-radius: 6px; }
-.coupang-strip-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-.coupang-strip-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.coupang-mini-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
+.coupang-strip-box { margin: 20px 0; padding: 14px 0; background: #f9fafb; border-top: 1px solid #ebebeb; border-bottom: 1px solid #ebebeb; display: flex; flex-direction: column; align-items: center; gap: 12px; overflow: hidden; }
+@media (max-width: 350px) {
+  .home-stage .coupang-strip-box { margin-left: -10px; margin-right: -10px; }
+}
+@media (min-width: 351px) and (max-width: 719px) {
+  .home-stage .coupang-strip-box { margin-left: -16px; margin-right: -16px; }
+}
+@media (min-width: 720px) {
+  .infeed-coupang-card, .coupang-strip-box { border: 1px solid #ebebeb; border-radius: 6px; padding: 14px 8px; }
+}
 
 @media (min-width: 1180px) {
-  .viewer-stage { max-width: 1150px; display: grid; grid-template-columns: 200px minmax(0, 690px) 200px; gap: 20px; align-items: start; justify-content: center; }
+  .viewer-stage { max-width: 1150px; display: grid; grid-template-columns: 184px minmax(0, 708px) 184px; gap: 18px; align-items: start; justify-content: center; }
   .viewer-stage .wing-ad { display: block; position: sticky; top: 72px; }
   .mobile-top-coupang { display: none; }
 }
@@ -573,7 +579,6 @@ body.viewer-body { background: #ffffff; color: #111111; }
 @media (max-width: 960px) {
   .new-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .wt-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .coupang-strip-grid { grid-template-columns: 1fr; }
   .nv-search-box { display: none; }
 }
 @media (max-width: 640px) {
@@ -590,9 +595,6 @@ body.viewer-body { background: #ffffff; color: #111111; }
   .next-ep-banner a { grid-column: 1 / -1; text-align: center; }
   .float-scroll-nav { right: 10px; bottom: 14px; }
 }
-@media (max-width: 560px) {
-  .coupang-banner, .promo-event-banner { grid-template-columns: 1fr; }
-}
 @media (max-width: 350px) {
   .wrap, .home-stage { padding: 0 10px; }
   .nv-main-tabs a { padding: 0 10px; font-size: 13.5px; }
@@ -607,19 +609,12 @@ AD_MANAGER_JS = """
   const AD_MODE = (override === "adsense" || override === "coupang") ? override : "{DEFAULT_MODE}";
   window.GH_TOON_AD_MODE = AD_MODE;
 
-  const COUPANG_FTC = "{FTC_TEXT}";
   const ADSENSE_PUB = "{PUB_ID}";
-
-  function esc(v) {
-    return String(v || "").replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\\"": "&quot;", "'": "&#39;" }[c];
-    });
-  }
 
   function renderAdSenseSlot(container, layout) {
     const isArticle = layout === "in-article";
     container.innerHTML =
-      '<div class="ad-disclosure">Advertisement</div>' +
+      '<div style="font-size:11px;color:#595959;margin-bottom:6px;">Advertisement</div>' +
       '<ins class="adsbygoogle" style="display:block;min-height:90px;text-align:center;" ' +
       'data-ad-client="' + ADSENSE_PUB + '" data-ad-slot="auto" ' +
       (isArticle ? 'data-ad-layout="in-article" data-ad-format="fluid" ' : 'data-ad-format="auto" data-full-width-responsive="true" ') +
@@ -628,40 +623,10 @@ AD_MANAGER_JS = """
   }
 
   function renderCoupangSlot(el) {
-    const title = el.getAttribute("data-title") || "";
-    const reason = el.getAttribute("data-reason") || "";
-    const cta = el.getAttribute("data-cta") || "쿠팡 상품 보기";
-    const url = el.getAttribute("data-url") || "https://shopping.guidehollow.com/";
-    const badge = el.getAttribute("data-badge") || "상황 맞춤 추천";
-    const guideUrl = el.getAttribute("data-guide-url") || "https://shopping.guidehollow.com/";
-    const guideLabel = el.getAttribute("data-guide-label") || "구매 가이드";
-    const img = el.getAttribute("data-image") || "/assets/ads/pick-goldbox.webp";
-    const variant = el.getAttribute("data-gh-slot-variant") || "banner";
-    if (variant === "wing") {
-      el.innerHTML =
-        '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
-        '<div class="ad-thumb-wrap"><img class="ad-thumb-img" src="' + esc(img) + '" alt="' + esc(title) + '" width="640" height="420" loading="lazy" /></div>' +
-        '<div class="wing-badge">' + esc(badge) + '</div>' +
-        '<div class="wing-title">' + esc(title) + '</div>' +
-        '<div class="wing-reason">' + esc(reason) + '</div>' +
-        '<a class="wing-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
-        '<a class="wing-guide" href="' + esc(guideUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(guideLabel) + ' →</a>';
-      return;
-    }
+    const widgetId = String(el.getAttribute("data-widget-id") || "1044909").replace(/[^0-9]/g, "") || "1044909";
     el.innerHTML =
-      '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
-      '<div class="coupang-banner">' +
-      '  <div class="ad-thumb-wrap"><img class="ad-thumb-img" src="' + esc(img) + '" alt="' + esc(title) + '" width="640" height="420" loading="lazy" /></div>' +
-      '  <div class="coupang-banner-body">' +
-      '    <div style="font-size:12px;font-weight:800;color:#059669;">' + esc(badge) + '</div>' +
-      '    <div style="font-size:16px;font-weight:800;color:#111111;">' + esc(title) + '</div>' +
-      '    <div style="font-size:13.5px;color:#555555;">' + esc(reason) + '</div>' +
-      '    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">' +
-      '      <a class="coupang-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
-      '      <a style="display:inline-flex;align-items:center;font-size:13px;font-weight:700;color:#2563eb;" href="' + esc(guideUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(guideLabel) + ' →</a>' +
-      '    </div>' +
-      '  </div>' +
-      '</div>';
+      '<div class="cp-dyn-desktop"><iframe src="https://ads-partners.coupang.com/widgets.html?id=' + widgetId + '&template=carousel&trackingCode=AF2560572&subId=ghshopping&width=680&height=140&tsource=" width="680" height="140" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" title="쿠팡 파트너스 다이나믹 배너"></iframe></div>' +
+      '<div class="cp-dyn-mobile"><iframe src="https://ads-partners.coupang.com/widgets.html?id=1050469&template=carousel&trackingCode=AF2560572&subId=ghshopping&width=320&height=320&tsource=" width="320" height="320" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" title="쿠팡 파트너스 모바일 다이나믹 배너"></iframe></div>';
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -678,7 +643,7 @@ AD_MANAGER_JS = """
       });
     } else {
       document.querySelectorAll("[data-gh-ad-slot]").forEach(function (el) {
-        if (!el.querySelector(".coupang-banner, .wing-cta")) {
+        if (!el.querySelector("iframe, a[href*='link.coupang.com']")) {
           renderCoupangSlot(el);
         }
       });
@@ -869,110 +834,148 @@ def _thematic_coupang_for(episodes: list[dict], ep_idx: int, slot_offset: int) -
     return episodes[target_idx]["coupang"]
 
 
-def _render_promo_event_banner() -> str:
-    return (
-        '<aside class="promo-event-banner" data-promo-banner="goldbox" aria-label="쿠팡 골드박스 오늘의 특가 이벤트 프로모션">'
-        '  <div class="promo-event-media">'
-        '    <img src="/assets/ads/pick-goldbox.webp" alt="쿠팡 골드박스 오늘의 특가 이벤트 프로모션" width="640" height="420" loading="lazy" />'
-        '  </div>'
-        '  <div class="promo-event-body">'
-        '    <div class="promo-event-tag">EVENT · 쿠팡 골드박스 오늘의 특가 프로모션</div>'
-        '    <h3 class="promo-event-title">매일 오전 7시 오픈! 생필품·디지털·주방 일일 특가 기획전</h3>'
-        '    <p class="promo-event-desc">웹툰 독자님들이 가장 많이 찾는 생활·자취·데스크 필수품 오늘의 할인 품목을 한눈에 확인하세요.</p>'
-        f'    <div class="ad-disclosure" style="margin:0;">{COUPANG_DISCLOSURE}</div>'
-        '    <div class="promo-event-actions">'
-        '      <a class="promo-event-cta" href="https://link.coupang.com/a/iH5tIYeHsG" target="_blank" rel="noopener noreferrer sponsored">골드박스 이벤트 특가 바로가기 ↗</a>'
-        '      <a style="font-size:13px;font-weight:700;color:#1d4ed8;" href="https://shopping.guidehollow.com/" target="_blank" rel="noopener noreferrer">분야별 구매 기준 가이드 →</a>'
-        '    </div>'
-        '  </div>'
-        '</aside>'
-    )
+OFFICIAL_PROMO_HORIZONTAL = [
+    {
+        "tag": "goldbox",
+        "label": "쿠팡 골드박스 오늘의 특가 공식 프로모션 배너",
+        "desktop_href": "https://link.coupang.com/a/iNaaA301kW",
+        "desktop_src": "https://ads-partners.coupang.com/banners/1051813?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-969b06e95b87326d-I1051813&w=728&h=90",
+        "mobile_href": "https://link.coupang.com/a/iNaaMb3SxM",
+        "mobile_src": "https://ads-partners.coupang.com/banners/1051814?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-969b06e95b87326d-I1051814&w=320&h=100",
+    },
+    {
+        "tag": "rocketwow",
+        "label": "쿠팡 로켓와우 공식 프로모션 배너",
+        "desktop_href": "https://link.coupang.com/a/iNaeuxvEbc",
+        "desktop_src": "https://ads-partners.coupang.com/banners/1051818?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-bae0f72e5e59e45f-I1051818&w=728&h=90",
+        "mobile_href": "https://link.coupang.com/a/iNaeEitd48",
+        "mobile_src": "https://ads-partners.coupang.com/banners/1051819?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-bae0f72e5e59e45f-I1051819&w=320&h=100",
+    },
+    {
+        "tag": "digital",
+        "label": "쿠팡 로켓 가전디지털 공식 프로모션 배너",
+        "desktop_href": "https://link.coupang.com/a/iNae93QcwK",
+        "desktop_src": "https://ads-partners.coupang.com/banners/1046864?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-5f9bd61900e673c0-I1046864&w=728&h=90",
+        "mobile_href": "https://link.coupang.com/a/iNafjHJl4S",
+        "mobile_src": "https://ads-partners.coupang.com/banners/1046865?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-5f9bd61900e673c0-I1046865&w=320&h=100",
+    },
+    {
+        "tag": "living",
+        "label": "쿠팡 로켓 홈인테리어 공식 프로모션 배너",
+        "desktop_href": "https://link.coupang.com/a/iNafOxSD2O",
+        "desktop_src": "https://ads-partners.coupang.com/banners/1046868?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-2f679fc6bd8f2e58-I1046868&w=728&h=90",
+        "mobile_href": "https://link.coupang.com/a/iNafX8IASG",
+        "mobile_src": "https://ads-partners.coupang.com/banners/1046869?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-2f679fc6bd8f2e58-I1046869&w=320&h=100",
+    },
+    {
+        "tag": "kitchen",
+        "label": "쿠팡 로켓 주방용품 공식 프로모션 배너",
+        "desktop_href": "https://link.coupang.com/a/iNagtoLLoX",
+        "desktop_src": "https://ads-partners.coupang.com/banners/1046870?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-2b8ef06377ec8f50-I1046870&w=728&h=90",
+        "mobile_href": "https://link.coupang.com/a/iNagC4gz7c",
+        "mobile_src": "https://ads-partners.coupang.com/banners/1046871?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-2b8ef06377ec8f50-I1046871&w=320&h=100",
+    },
+]
+
+OFFICIAL_WING_SKYSCRAPERS = [
+    {
+        "label": "쿠팡 골드박스 공식 프로모션 배너",
+        "href": "https://link.coupang.com/a/iNaa8LL0VM",
+        "src": "https://ads-partners.coupang.com/banners/1051816?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-969b06e95b87326d-I1051816&w=160&h=600",
+    },
+    {
+        "label": "쿠팡 로켓와우 공식 프로모션 배너",
+        "href": "https://link.coupang.com/a/iNaeNwqXa8",
+        "src": "https://ads-partners.coupang.com/banners/1051820?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-bae0f72e5e59e45f-I1051820&w=160&h=600",
+    },
+    {
+        "label": "쿠팡 로켓 가전디지털 공식 프로모션 배너",
+        "href": "https://link.coupang.com/a/iNafr4LFmK",
+        "src": "https://ads-partners.coupang.com/banners/1051821?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-5f9bd61900e673c0-I1051821&w=160&h=600",
+    },
+    {
+        "label": "쿠팡 로켓 홈인테리어 공식 프로모션 배너",
+        "href": "https://link.coupang.com/a/iNaf6VAo0q",
+        "src": "https://ads-partners.coupang.com/banners/1051822?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-2f679fc6bd8f2e58-I1051822&w=160&h=600",
+    },
+    {
+        "label": "쿠팡 로켓 주방용품 공식 프로모션 배너",
+        "href": "https://link.coupang.com/a/iNagL29tjU",
+        "src": "https://ads-partners.coupang.com/banners/1051823?trackingCode=AF2560572&subId=ghshopping&traceId=V0-301-2b8ef06377ec8f50-I1051823&w=160&h=600",
+    },
+]
+
+MOBILE_DYNAMIC_WIDGET_IDS = {"1050468", "1050469", "1050470"}
 
 
-def _render_wing_card_html(coup: dict) -> str:
-    img = coup.get("image") or "/assets/ads/pick-goldbox.webp"
+def _render_top_coupang_disclosure() -> str:
+    return f'<div class="wrap"><div class="top-coupang-disclosure" role="note">{COUPANG_DISCLOSURE}</div></div>'
+
+
+def _official_dynamic_banner_html(desktop_id: str, mobile_id: str) -> str:
     return (
-        f'<div class="wing-card" data-gh-ad-slot="wing" data-gh-slot-variant="wing" '
-        f'data-widget-id="{esc(coup["widgetId"])}" data-badge="{esc(coup["badge"])}" '
-        f'data-title="{esc(coup["title"])}" data-reason="{esc(coup["reason"])}" '
-        f'data-cta="{esc(coup["cta"])}" data-url="{esc(coup["url"])}" '
-        f'data-image="{esc(img)}" '
-        f'data-guide-url="{esc(coup["guideUrl"])}" data-guide-label="{esc(coup["guideLabel"])}">'
-        f'  <div class="ad-disclosure">{COUPANG_DISCLOSURE}</div>'
-        f'  <div class="ad-thumb-wrap"><img class="ad-thumb-img" src="{esc(img)}" alt="{esc(coup["title"])}" width="640" height="420" loading="lazy" /></div>'
-        f'  <div class="wing-badge">{esc(coup["badge"])}</div>'
-        f'  <div class="wing-title">{esc(coup["title"])}</div>'
-        f'  <div class="wing-reason">{esc(coup["reason"])}</div>'
-        f'  <a class="wing-cta" href="{esc(coup["url"])}" target="_blank" rel="noopener noreferrer sponsored">{esc(coup["cta"])} ↗</a>'
-        f'  <a class="wing-guide" href="{esc(coup["guideUrl"])}" target="_blank" rel="noopener noreferrer">{esc(coup["guideLabel"])} →</a>'
+        f'<div class="cp-dyn-desktop">'
+        f'<iframe src="https://ads-partners.coupang.com/widgets.html?id={esc(desktop_id)}&template=carousel&trackingCode=AF2560572&subId=ghshopping&width=680&height=140&tsource=" '
+        f'width="680" height="140" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" title="쿠팡 파트너스 다이나믹 배너"></iframe>'
+        f'</div>'
+        f'<div class="cp-dyn-mobile">'
+        f'<iframe src="https://ads-partners.coupang.com/widgets.html?id={esc(mobile_id)}&template=carousel&trackingCode=AF2560572&subId=ghshopping&width=320&height=320&tsource=" '
+        f'width="320" height="320" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" title="쿠팡 파트너스 모바일 다이나믹 배너"></iframe>'
         f'</div>'
     )
 
 
+def _render_promo_event_banner(idx: int = 0) -> str:
+    b = OFFICIAL_PROMO_HORIZONTAL[idx % len(OFFICIAL_PROMO_HORIZONTAL)]
+    return (
+        f'<aside class="promo-event-banner" data-promo-banner="{esc(b["tag"])}" aria-label="{esc(b["label"])}">'
+        f'  <a class="cp-promo-desktop" href="{esc(b["desktop_href"])}" target="_blank" rel="noopener noreferrer sponsored" referrerpolicy="unsafe-url">'
+        f'    <img src="{esc(b["desktop_src"])}" width="728" height="90" alt="{esc(b["label"])}" loading="lazy" />'
+        f'  </a>'
+        f'  <a class="cp-promo-mobile" href="{esc(b["mobile_href"])}" target="_blank" rel="noopener noreferrer sponsored" referrerpolicy="unsafe-url">'
+        f'    <img src="{esc(b["mobile_src"])}" width="320" height="100" alt="{esc(b["label"])}" loading="lazy" />'
+        f'  </a>'
+        f'</aside>'
+    )
+
+
 def _render_wing_aside(episodes: list[dict], start_idx: int, side: str, thematic_ep_idx: int | None = None) -> str:
-    if thematic_ep_idx is not None:
-        offsets = [0, 1] if side == "left" else [2, 0]
-        items = [_thematic_coupang_for(episodes, thematic_ep_idx, off) for off in offsets]
+    if side == "left":
+        sky = OFFICIAL_WING_SKYSCRAPERS[0]
     else:
-        items = [_coupang_item_for(episodes, start_idx + offset) for offset in range(2)]
-    cards = "\n".join(_render_wing_card_html(coup) for coup in items)
-    aria = "좌측 여백 생활 추천 상품" if side == "left" else "우측 여백 생활 추천 상품"
-    return f'<aside class="wing-ad wing-ad-{side}" aria-label="{aria}">\n{cards}\n</aside>'
+        pick = ((thematic_ep_idx if thematic_ep_idx is not None else start_idx) % (len(OFFICIAL_WING_SKYSCRAPERS) - 1)) + 1
+        sky = OFFICIAL_WING_SKYSCRAPERS[pick]
+    aria = "좌측 쿠팡 파트너스 공식 배너" if side == "left" else "우측 쿠팡 파트너스 공식 배너"
+    return (
+        f'<aside class="wing-ad wing-ad-{side}" aria-label="{aria}">\n'
+        f'  <div class="wing-card" data-gh-ad-slot="wing" data-gh-slot-variant="wing" data-widget-id="1044909">\n'
+        f'    <a href="{esc(sky["href"])}" target="_blank" rel="noopener noreferrer sponsored" referrerpolicy="unsafe-url">'
+        f'<img src="{esc(sky["src"])}" width="160" height="600" alt="{esc(sky["label"])}" loading="lazy" /></a>\n'
+        f'  </div>\n'
+        f'</aside>'
+    )
 
 
 def _render_infeed_coupang_card(coup: dict, slot_name: str, extra_class: str = "infeed-coupang-card") -> str:
-    img = coup.get("image") or "/assets/ads/pick-goldbox.webp"
+    mobile_id = str(coup.get("widgetId") or "1050469")
+    if mobile_id not in MOBILE_DYNAMIC_WIDGET_IDS:
+        mobile_id = "1050469"
+    desktop_id = "1050466" if mobile_id == "1050468" else "1044909"
     return (
-        f'<aside class="{extra_class}" aria-label="상황 맞춤 생활·상품 추천" '
-        f'       data-gh-ad-slot="{esc(slot_name)}" data-ad-kind="contextual" data-ad-layout="in-article" '
-        f'       data-widget-id="{esc(coup["widgetId"])}" data-badge="{esc(coup["badge"])}" '
-        f'       data-title="{esc(coup["title"])}" data-reason="{esc(coup["reason"])}" '
-        f'       data-cta="{esc(coup["cta"])}" data-url="{esc(coup["url"])}" '
-        f'       data-image="{esc(img)}" '
-        f'       data-guide-url="{esc(coup["guideUrl"])}" data-guide-label="{esc(coup["guideLabel"])}">'
-        f'  <div class="ad-disclosure">{COUPANG_DISCLOSURE}</div>'
-        f'  <div class="coupang-banner">'
-        f'    <div class="ad-thumb-wrap"><img class="ad-thumb-img" src="{esc(img)}" alt="{esc(coup["title"])}" width="640" height="420" loading="lazy" /></div>'
-        f'    <div class="coupang-banner-body">'
-        f'      <div style="font-size:12px;font-weight:800;color:#059669;">{esc(coup["badge"])}</div>'
-        f'      <div style="font-size:16px;font-weight:800;color:#111111;">{esc(coup["title"])}</div>'
-        f'      <div style="font-size:13.5px;color:#555555;">{esc(coup["reason"])}</div>'
-        f'      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">'
-        f'        <a class="coupang-cta" href="{esc(coup["url"])}" target="_blank" rel="noopener noreferrer sponsored">{esc(coup["cta"])} ↗</a>'
-        f'        <a style="display:inline-flex;align-items:center;font-size:13px;font-weight:700;color:#2563eb;" href="{esc(coup["guideUrl"])}" target="_blank" rel="noopener noreferrer">{esc(coup["guideLabel"])} →</a>'
-        f'      </div>'
-        f'    </div>'
-        f'  </div>'
+        f'<aside class="{extra_class}" aria-label="쿠팡 파트너스 다이나믹 배너" '
+        f'data-gh-ad-slot="{esc(slot_name)}" data-ad-kind="contextual" data-ad-layout="in-article" '
+        f'data-widget-id="{esc(desktop_id)}">'
+        f'{_official_dynamic_banner_html(desktop_id, mobile_id)}'
         f'</aside>'
     )
 
 
 def _render_coupang_strip(episodes: list[dict], start_idx: int, heading: str) -> str:
-    mini_cards = []
-    for offset in range(3):
-        coup = _coupang_item_for(episodes, start_idx + offset)
-        img = coup.get("image") or "/assets/ads/pick-goldbox.webp"
-        mini_cards.append(
-            f'<div class="coupang-mini-card">'
-            f'  <div style="display:grid;gap:6px;">'
-            f'    <div class="ad-thumb-wrap"><img class="ad-thumb-img" src="{esc(img)}" alt="{esc(coup["title"])}" width="640" height="420" loading="lazy" /></div>'
-            f'    <div class="wing-badge">{esc(coup["badge"])}</div>'
-            f'    <div class="wing-title">{esc(coup["title"])}</div>'
-            f'    <div class="wing-reason">{esc(coup["reason"])}</div>'
-            f'  </div>'
-            f'  <div style="display:grid;gap:5px;margin-top:6px;">'
-            f'    <a class="wing-cta" href="{esc(coup["url"])}" target="_blank" rel="noopener noreferrer sponsored">{esc(coup["cta"])} ↗</a>'
-            f'    <a class="wing-guide" href="{esc(coup["guideUrl"])}" target="_blank" rel="noopener noreferrer">{esc(coup["guideLabel"])} →</a>'
-            f'  </div>'
-            f'</div>'
-        )
+    desktop_id = "1044908" if start_idx == 0 else "1050466"
+    mobile_id = "1050469" if start_idx == 0 else ("1050468" if start_idx >= 3 else "1050470")
     return (
         f'<section class="coupang-strip-box" aria-label="{esc(heading)}">'
-        f'  <div class="coupang-strip-head">'
-        f'    <h2 style="margin:0;font-size:16px;font-weight:800;color:#111111;">{esc(heading)}</h2>'
-        f'    <span class="ad-disclosure" style="margin:0;">{COUPANG_DISCLOSURE}</span>'
-        f'  </div>'
-        f'  <div class="coupang-strip-grid">\n{chr(10).join(mini_cards)}\n  </div>'
+        f'{_official_dynamic_banner_html(desktop_id, mobile_id)}'
         f'</section>'
     )
 
@@ -1039,6 +1042,7 @@ def build_home_html(episodes: list[dict]) -> str:
     return f"""{head}
 <body>
 {_gnb_html("home")}
+{_render_top_coupang_disclosure()}
   <div class="home-stage">
 {_render_wing_aside(episodes, 0, "left")}
   <main style="min-width:0;">
@@ -1110,11 +1114,12 @@ def build_studio_archive_html(episodes: list[dict]) -> str:
     return f"""{head}
 <body>
 {_gnb_html("studio")}
+{_render_top_coupang_disclosure()}
   <main class="wrap">
     <div class="nv-sec-title-row">
       <h1 class="nv-sec-title">전체 완결 단편 웹툰 모아보기 ({len(episodes)}작)</h1>
     </div>
-{_render_promo_event_banner()}
+{_render_promo_event_banner(1)}
 {_render_coupang_strip(episodes, 1, "이야기 주제별 생활·가전 관련 상품 안내")}
     <section class="wt-grid" style="margin-bottom:28px;">
 {_render_poster_cards(episodes)}
@@ -1187,6 +1192,7 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
   </header>
 
   <main>
+{_render_top_coupang_disclosure()}
     <div class="ep-head-meta">
       <h2>{esc(ep['title'])}</h2>
       <p>{esc(ep['hook'])}</p>
@@ -1226,7 +1232,7 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
 
       {_render_infeed_coupang_card(end_slot, "ep-bottom", extra_class="ad-box")}
 
-      {_render_promo_event_banner()}
+      {_render_promo_event_banner(idx)}
 
       <div class="nv-box">
         <h3 style="margin:0 0 8px;font-size:16px;font-weight:800;">{esc(ep['guideTitle'])}</h3>
@@ -1289,7 +1295,6 @@ def build_site(ad_mode: str = "coupang") -> dict:
     write_text(
         DIST / "assets" / "ad-manager.js",
         AD_MANAGER_JS.replace("{DEFAULT_MODE}", ad_mode)
-        .replace("{FTC_TEXT}", COUPANG_DISCLOSURE)
         .replace("{PUB_ID}", ADSENSE_PUB)
         + "\n",
     )

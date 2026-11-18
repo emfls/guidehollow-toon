@@ -4,19 +4,12 @@
   const AD_MODE = (override === "adsense" || override === "coupang") ? override : "coupang";
   window.GH_TOON_AD_MODE = AD_MODE;
 
-  const COUPANG_FTC = "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.";
   const ADSENSE_PUB = "ca-pub-8830524482034754";
-
-  function esc(v) {
-    return String(v || "").replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c];
-    });
-  }
 
   function renderAdSenseSlot(container, layout) {
     const isArticle = layout === "in-article";
     container.innerHTML =
-      '<div class="ad-disclosure">Advertisement</div>' +
+      '<div style="font-size:11px;color:#595959;margin-bottom:6px;">Advertisement</div>' +
       '<ins class="adsbygoogle" style="display:block;min-height:90px;text-align:center;" ' +
       'data-ad-client="' + ADSENSE_PUB + '" data-ad-slot="auto" ' +
       (isArticle ? 'data-ad-layout="in-article" data-ad-format="fluid" ' : 'data-ad-format="auto" data-full-width-responsive="true" ') +
@@ -25,40 +18,10 @@
   }
 
   function renderCoupangSlot(el) {
-    const title = el.getAttribute("data-title") || "";
-    const reason = el.getAttribute("data-reason") || "";
-    const cta = el.getAttribute("data-cta") || "쿠팡 상품 보기";
-    const url = el.getAttribute("data-url") || "https://shopping.guidehollow.com/";
-    const badge = el.getAttribute("data-badge") || "상황 맞춤 추천";
-    const guideUrl = el.getAttribute("data-guide-url") || "https://shopping.guidehollow.com/";
-    const guideLabel = el.getAttribute("data-guide-label") || "구매 가이드";
-    const img = el.getAttribute("data-image") || "/assets/ads/pick-goldbox.webp";
-    const variant = el.getAttribute("data-gh-slot-variant") || "banner";
-    if (variant === "wing") {
-      el.innerHTML =
-        '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
-        '<div class="ad-thumb-wrap"><img class="ad-thumb-img" src="' + esc(img) + '" alt="' + esc(title) + '" width="640" height="420" loading="lazy" /></div>' +
-        '<div class="wing-badge">' + esc(badge) + '</div>' +
-        '<div class="wing-title">' + esc(title) + '</div>' +
-        '<div class="wing-reason">' + esc(reason) + '</div>' +
-        '<a class="wing-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
-        '<a class="wing-guide" href="' + esc(guideUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(guideLabel) + ' →</a>';
-      return;
-    }
+    const widgetId = String(el.getAttribute("data-widget-id") || "1044909").replace(/[^0-9]/g, "") || "1044909";
     el.innerHTML =
-      '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
-      '<div class="coupang-banner">' +
-      '  <div class="ad-thumb-wrap"><img class="ad-thumb-img" src="' + esc(img) + '" alt="' + esc(title) + '" width="640" height="420" loading="lazy" /></div>' +
-      '  <div class="coupang-banner-body">' +
-      '    <div style="font-size:12px;font-weight:800;color:#059669;">' + esc(badge) + '</div>' +
-      '    <div style="font-size:16px;font-weight:800;color:#111111;">' + esc(title) + '</div>' +
-      '    <div style="font-size:13.5px;color:#555555;">' + esc(reason) + '</div>' +
-      '    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">' +
-      '      <a class="coupang-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
-      '      <a style="display:inline-flex;align-items:center;font-size:13px;font-weight:700;color:#2563eb;" href="' + esc(guideUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(guideLabel) + ' →</a>' +
-      '    </div>' +
-      '  </div>' +
-      '</div>';
+      '<div class="cp-dyn-desktop"><iframe src="https://ads-partners.coupang.com/widgets.html?id=' + widgetId + '&template=carousel&trackingCode=AF2560572&subId=ghshopping&width=680&height=140&tsource=" width="680" height="140" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" title="쿠팡 파트너스 다이나믹 배너"></iframe></div>' +
+      '<div class="cp-dyn-mobile"><iframe src="https://ads-partners.coupang.com/widgets.html?id=1050469&template=carousel&trackingCode=AF2560572&subId=ghshopping&width=320&height=320&tsource=" width="320" height="320" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" title="쿠팡 파트너스 모바일 다이나믹 배너"></iframe></div>';
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -75,7 +38,7 @@
       });
     } else {
       document.querySelectorAll("[data-gh-ad-slot]").forEach(function (el) {
-        if (!el.querySelector(".coupang-banner, .wing-cta")) {
+        if (!el.querySelector("iframe, a[href*='link.coupang.com']")) {
           renderCoupangSlot(el);
         }
       });

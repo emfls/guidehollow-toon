@@ -54,13 +54,20 @@ def test_build_portal_matches_comic_naver_and_no_fake_server() -> None:
     assert "G-QP5Q67GE5B" in home_html
     assert AI_IMAGE_NOTICE in home_html
     assert COUPANG_DISCLOSURE in home_html
+    assert home_html.count(COUPANG_DISCLOSURE) == 1
+    assert studio_html.count(COUPANG_DISCLOSURE) == 1
+    assert "top-coupang-disclosure" in home_html
+    assert "top-coupang-disclosure" in studio_html
     assert "wing-ad-left" in home_html
     assert "wing-ad-right" in home_html
     assert "coupang-strip-box" in home_html
-    assert "ad-thumb-img" in home_html
     assert "promo-event-banner" in home_html
-    assert "pick-goldbox.webp" in home_html
-    assert (DIST / "assets" / "ads" / "pick-goldbox.webp").exists()
+    assert "https://ads-partners.coupang.com/widgets.html" in home_html
+    assert "https://ads-partners.coupang.com/banners/" in home_html
+    assert "pick-goldbox.webp" not in home_html
+    assert "ad-thumb-img" not in home_html
+    assert "pick-goldbox.webp" not in studio_html
+    assert "ad-thumb-img" not in studio_html
     for marker in DISALLOWED_EDITOR_MARKERS + DISALLOWED_FAKE_SERVER_MARKERS + FORBIDDEN_UX_MARKERS + ["★", "조회 482만"]:
         assert marker not in home_html
         assert marker not in studio_html
@@ -94,18 +101,19 @@ def test_build_portal_matches_comic_naver_and_no_fake_server() -> None:
         ep_html = (DIST / "episodes" / eid / "index.html").read_text(encoding="utf-8")
         assert "act-gutter" not in ep_html
         assert AI_IMAGE_NOTICE in ep_html
-        assert COUPANG_DISCLOSURE in ep_html
+        assert ep_html.count(COUPANG_DISCLOSURE) == 1
+        assert "top-coupang-disclosure" in ep_html
         assert "wing-ad-left" in ep_html
         assert "wing-ad-right" in ep_html
         assert "mobile-top-coupang" in ep_html
         assert "ep-mid-cut4" in ep_html
         assert "ep-mid-cut9" in ep_html
         assert "ep-bottom" in ep_html
-        assert "ad-thumb-img" in ep_html
         assert "promo-event-banner" in ep_html
-        assert ep["coupang"]["url"] in ep_html
-        assert ep["coupang"]["image"] in ep_html
-        assert (DIST / ep["coupang"]["image"].lstrip("/")).exists()
+        assert "https://ads-partners.coupang.com/widgets.html" in ep_html
+        assert "https://ads-partners.coupang.com/banners/" in ep_html
+        assert "pick-goldbox.webp" not in ep_html
+        assert "ad-thumb-img" not in ep_html
         assert "G-QP5Q67GE5B" in ep_html
         for marker in DISALLOWED_EDITOR_MARKERS + DISALLOWED_FAKE_SERVER_MARKERS + FORBIDDEN_UX_MARKERS + ["★", "베스트 댓글", "+ 관심"]:
             assert marker not in ep_html
