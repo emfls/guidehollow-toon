@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 920" width="720" height="920" role="img" aria-label="2화 · 1컷 (기(3초 훅)) - 식권 4장 쓰셨으니 적자 26만 원은 동창회 회비 정산으로 갈음할게요.">
+  <rect x="0" y="0" width="720" height="920" fill="#ffffff"/>
+  <!-- Top Narration Bar -->
+  <rect x="20" y="16" width="680" height="106" rx="12" fill="#f8fafc" stroke="#0f172a" stroke-width="4"/>
+  <rect x="34" y="26" width="210" height="28" rx="6" fill="#00dc64"/>
+  <text x="139" y="45" text-anchor="middle" font-size="14" font-weight="900" fill="#052e16" font-family="Noto Sans KR, sans-serif">2화 · 1컷 (기(3초 훅))</text>
+  <text x="684" y="45" text-anchor="end" font-size="13" font-weight="800" fill="#64748b" font-family="Noto Sans KR, sans-serif">예식장·카페 · 무표정</text>
+  <text x="38" y="78" font-size="21" font-weight="800" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">3초 훅 · 축의금 5만 원 봉투에 식권 4장, 총 식대는 31만 2천</text>
+  <text x="38" y="106" font-size="21" font-weight="800" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">원이었습니다.</text>
+
+  <!-- Central Illustrated Artwork Stage -->
+  <g>
+    <clipPath id="stageClip"><rect x="20" y="136" width="680" height="572" rx="14"/></clipPath>
+    <g clip-path="url(#stageClip)">
+      <defs><linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fdf2f8"/><stop offset="68%" stop-color="#fce7f3"/><stop offset="100%" stop-color="#f9a8d4"/></linearGradient><radialGradient id="spotGrad" cx="50%" cy="45%" r="55%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/><stop offset="100%" stop-color="#0f172a" stop-opacity="0.18"/></radialGradient></defs>
+  <rect x="20" y="136" width="680" height="572" fill="url(#bgGrad)"/>
+  <rect x="20" y="547" width="680" height="160" fill="#f9a8d4" opacity="0.68"/>
+  <line x1="180" y1="136" x2="180" y2="180" stroke="#9d174d" stroke-width="3"/>
+  <ellipse cx="180" cy="192" rx="48" ry="18" fill="#fef08a" stroke="#be185d" stroke-width="3"/>
+  <line x1="550" y1="136" x2="550" y2="184" stroke="#9d174d" stroke-width="3"/>
+  <ellipse cx="550" cy="196" rx="42" ry="16" fill="#fef08a" stroke="#be185d" stroke-width="3"/>
+  <rect x="450" y="467" width="215" height="84" rx="10" fill="#fff1f2" stroke="#be185d" stroke-width="3"/>
+  <rect x="475" y="444" width="72" height="44" rx="5" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+  <rect x="565" y="450" width="76" height="40" rx="5" fill="#fef08a" stroke="#b45309" stroke-width="2"/>
+  <rect x="20" y="136" width="680" height="572" fill="url(#spotGrad)"/>
+  <line x1="429" y1="456" x2="784" y2="456" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="423" y1="498" x2="766" y2="590" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="406" y1="538" x2="714" y2="716" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="380" y1="572" x2="631" y2="823" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="346" y1="598" x2="524" y2="906" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="306" y1="615" x2="398" y2="958" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="264" y1="621" x2="264" y2="976" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="221" y1="615" x2="129" y2="958" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="181" y1="598" x2="4" y2="906" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="147" y1="572" x2="-103" y2="823" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="121" y1="538" x2="-186" y2="716" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="104" y1="498" x2="-238" y2="590" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="99" y1="456" x2="-256" y2="456" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="104" y1="413" x2="-238" y2="321" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="121" y1="373" x2="-186" y2="195" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="147" y1="339" x2="-103" y2="88" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="181" y1="313" x2="3" y2="5" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="221" y1="296" x2="129" y2="-46" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="263" y1="291" x2="263" y2="-64" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="306" y1="296" x2="398" y2="-46" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="346" y1="313" x2="524" y2="5" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="380" y1="339" x2="631" y2="88" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="406" y1="373" x2="714" y2="195" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+  <line x1="423" y1="413" x2="766" y2="321" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
+      <g transform="translate(250,498) scale(1.55)">
+  <path d="M -112 185 C -106 78, -68 58, -32 54 L 32 54 C 68 58, 106 78, 112 185 Z" fill="#9d174d" stroke="#0f172a" stroke-width="5"/>
+  <polygon points="-28,54 28,54 0,136" fill="#fff1f2" stroke="#0f172a" stroke-width="3.5"/>
+  <polygon points="-7,62 7,62 9,122 0,138 -9,122" fill="#be185d" stroke="#0f172a" stroke-width="2.5"/>
+  <rect x="-20" y="18" width="40" height="44" rx="10" fill="#fdece2" stroke="#0f172a" stroke-width="4"/>
+  <path d="M -20 34 Q 0 48 20 34 L 20 22 L -20 22 Z" fill="#0f172a" opacity="0.16"/>
+  <ellipse cx="-54" cy="-24" rx="10" ry="15" fill="#fdece2" stroke="#0f172a" stroke-width="3.5"/>
+  <ellipse cx="54" cy="-24" rx="10" ry="15" fill="#fdece2" stroke="#0f172a" stroke-width="3.5"/>
+  <path d="M -64 -24 C -68 -96, 68 -96, 64 -24 Z" fill="#312e81"/>
+  <path d="M -52 -46 C -54 8, -30 34, 0 36 C 30 34, 54 8, 52 -46 C 52 -84, -52 -84, -52 -46 Z" fill="#fdece2" stroke="#0f172a" stroke-width="4.5"/>
+  <path d="M -56 -36 C -58 -92, 58 -94, 56 -36 C 42 -60, 26 -42, 16 -58 C 4 -40, -12 -58, -24 -40 C -36 -56, -46 -44, -56 -36 Z" fill="#312e81" stroke="#0f172a" stroke-width="3.5"/>
+  <path d="M -28 -68 Q 0 -80 28 -68" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.32" stroke-linecap="round"/>
+  <line x1="-34" y1="-38" x2="-10" y2="-38" stroke="#0f172a" stroke-width="4"/>
+  <line x1="10" y1="-38" x2="34" y2="-38" stroke="#0f172a" stroke-width="4"/>
+  <ellipse cx="-20" cy="-22" rx="7" ry="6" fill="#0f172a"/><circle cx="-18" cy="-24" r="2.2" fill="#ffffff"/>
+  <ellipse cx="20" cy="-22" rx="7" ry="6" fill="#0f172a"/><circle cx="22" cy="-24" r="2.2" fill="#ffffff"/>
+  <line x1="-12" y1="10" x2="12" y2="10" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+  <rect x="64" y="64" width="46" height="72" rx="8" fill="#0f172a" stroke="#ffffff" stroke-width="2.5" transform="rotate(-10 86 100)"/>
+  <rect x="69" y="72" width="36" height="54" rx="4" fill="#38bdf8" opacity="0.9" transform="rotate(-10 86 100)"/>
+  <circle cx="62" cy="112" r="14" fill="#fdece2" stroke="#0f172a" stroke-width="3.5"/>
+  </g>
+    </g>
+    <rect x="20" y="136" width="680" height="572" rx="14" fill="none" stroke="#0f172a" stroke-width="5"/>
+  </g>
+
+  <!-- Tilted Comic SFX Badge -->
+  <g transform="translate(592, 188) rotate(-8)">
+    <rect x="-78" y="-26" width="156" height="52" rx="12" fill="#fef08a" stroke="#b91c1c" stroke-width="4"/>
+    <text x="0" y="9" text-anchor="middle" font-size="25" font-weight="900" fill="#b91c1c" font-family="Noto Sans KR, sans-serif">실화냐?!</text>
+  </g>
+
+  <!-- Speech Balloon & Dialogue -->
+  <polygon points="36,722 150,730 190,710 245,730 350,714 440,730 530,710 684,724 672,796 692,838 666,892 490,884 410,900 320,886 190,898 54,886 30,822" fill="#fffbeb" stroke="#dc2626" stroke-width="5"/>
+  <rect x="260" y="698" width="200" height="32" rx="999" fill="#0f172a"/>
+  <text x="360" y="719" text-anchor="middle" font-size="15" font-weight="900" fill="#00dc64" font-family="Noto Sans KR, sans-serif">신부(나)</text>
+  <text x="360" y="790" text-anchor="middle" font-size="22" font-weight="800" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">식권 4장 쓰셨으니 적자 26만 원은 동창회 회비</text>
+  <text x="360" y="821" text-anchor="middle" font-size="22" font-weight="800" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">정산으로 갈음할게요.</text>
+  <text x="700" y="908" text-anchor="end" font-size="12" font-weight="700" fill="#94a3b8" font-family="Noto Sans KR, sans-serif">GuideHollow 웹툰 · toon.guidehollow.com</text>
+</svg>

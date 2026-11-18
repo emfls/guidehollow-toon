@@ -1,4 +1,4 @@
-// Dual-Mode Ad Manager for GuideHollow 썰툰 (toon.guidehollow.com)
+// Dual-Mode Ad Manager for GuideHollow 웹툰 (toon.guidehollow.com)
 // Switch permanently via `python3 tools/build.py --ad-mode adsense` after AdSense approval,
 // or preview live by appending `?ad_mode=adsense` to any URL.
 (function () {
@@ -69,7 +69,7 @@
     if (kind === "contextual") {
       const badge = container.dataset.badge || "생활 실속 추천 배너";
       const title = container.dataset.title || "쿠팡 파트너스 인기 추천 상품 보기";
-      const reason = container.dataset.reason || "썰툰 주제와 관련된 실용 상품을 바로 비교해 보세요.";
+      const reason = container.dataset.reason || "웹툰 주제와 관련된 실용 상품을 바로 비교해 보세요.";
       const url = container.dataset.url || "https://link.coupang.com/a/iG9mTjBUg8";
       const cta = container.dataset.cta || "쿠팡에서 가격 확인하기";
       const guideUrl = container.dataset.guideUrl || "https://shopping.guidehollow.com/";

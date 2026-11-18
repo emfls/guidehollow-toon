@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 920" width="720" height="920" role="img" aria-label="3화 · 2컷 (승(고구마 빌드업)) - 번호판 위 연락처로 전화 5통, 문자 3통… 왜 받지 않는 거지?!">
+  <rect x="0" y="0" width="720" height="920" fill="#ffffff"/>
+  <!-- Top Narration Bar -->
+  <rect x="20" y="16" width="680" height="106" rx="12" fill="#f8fafc" stroke="#0f172a" stroke-width="4"/>
+  <rect x="34" y="26" width="210" height="28" rx="6" fill="#00dc64"/>
+  <text x="139" y="45" text-anchor="middle" font-size="14" font-weight="900" fill="#052e16" font-family="Noto Sans KR, sans-serif">3화 · 2컷 (승(고구마 빌드업))</text>
+  <text x="684" y="45" text-anchor="end" font-size="13" font-weight="800" fill="#64748b" font-family="Noto Sans KR, sans-serif">주차장·도로 · 당황</text>
+  <text x="38" y="78" font-size="21" font-weight="800" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">새벽 6시 10분 · 앞을 가로막고 서 있는 대형 세단, 기어는</text>
+  <text x="38" y="106" font-size="21" font-weight="800" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">P+사이드.</text>
+
+  <!-- Central Illustrated Artwork Stage -->
+  <g>
+    <clipPath id="stageClip"><rect x="20" y="136" width="680" height="572" rx="14"/></clipPath>
+    <g clip-path="url(#stageClip)">
+      <defs><linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0f172a"/><stop offset="68%" stop-color="#334155"/><stop offset="100%" stop-color="#1e293b"/></linearGradient><radialGradient id="spotGrad" cx="50%" cy="45%" r="55%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/><stop offset="100%" stop-color="#0f172a" stop-opacity="0.18"/></radialGradient></defs>
+  <rect x="20" y="136" width="680" height="572" fill="url(#bgGrad)"/>
+  <rect x="20" y="547" width="680" height="160" fill="#1e293b" opacity="0.68"/>
+  <rect x="60" y="160" width="54" height="512" fill="#475569" stroke="#0f172a" stroke-width="3"/>
+  <rect x="60" y="286" width="54" height="54" fill="#facc15"/><text x="87" y="320" text-anchor="middle" font-size="22" font-weight="900" fill="#0f172a">B2</text>
+  <rect x="200" y="158" width="140" height="12" rx="6" fill="#e0f2fe"/><rect x="440" y="158" width="140" height="12" rx="6" fill="#e0f2fe"/>
+  <rect x="420" y="387" width="245" height="118" rx="22" fill="#1e293b" stroke="#020617" stroke-width="4"/>
+  <path d="M 450 387 L 490 319 L 605 319 L 635 387 Z" fill="#334155" stroke="#020617" stroke-width="4"/>
+  <circle cx="465" cy="456" r="20" fill="#fbbf24" opacity="0.9"/><circle cx="615" cy="456" r="20" fill="#fbbf24" opacity="0.9"/>
+  <rect x="508" y="456" width="64" height="22" rx="4" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="540" y="472" text-anchor="middle" font-size="12" font-weight="900" fill="#0f172a">P+SIDE</text>
+  <rect x="20" y="136" width="680" height="572" fill="url(#spotGrad)"/>
+      <g transform="translate(250,498) scale(1.55)">
+  <path d="M -112 185 C -106 78, -68 58, -32 54 L 32 54 C 68 58, 106 78, 112 185 Z" fill="#334155" stroke="#0f172a" stroke-width="5"/>
+  <polygon points="-28,54 28,54 0,136" fill="#f1f5f9" stroke="#0f172a" stroke-width="3.5"/>
+  <polygon points="-7,62 7,62 9,122 0,138 -9,122" fill="#f59e0b" stroke="#0f172a" stroke-width="2.5"/>
+  <rect x="-20" y="18" width="40" height="44" rx="10" fill="#fbd8c5" stroke="#0f172a" stroke-width="4"/>
+  <path d="M -20 34 Q 0 48 20 34 L 20 22 L -20 22 Z" fill="#0f172a" opacity="0.16"/>
+  <ellipse cx="-54" cy="-24" rx="10" ry="15" fill="#fbd8c5" stroke="#0f172a" stroke-width="3.5"/>
+  <ellipse cx="54" cy="-24" rx="10" ry="15" fill="#fbd8c5" stroke="#0f172a" stroke-width="3.5"/>
+  <path d="M -64 -24 C -68 -96, 68 -96, 64 -24 Z" fill="#090d16"/>
+  <path d="M -52 -46 C -54 8, -30 34, 0 36 C 30 34, 54 8, 52 -46 C 52 -84, -52 -84, -52 -46 Z" fill="#fbd8c5" stroke="#0f172a" stroke-width="4.5"/>
+  <path d="M -56 -36 C -58 -92, 58 -94, 56 -36 C 42 -60, 26 -42, 16 -58 C 4 -40, -12 -58, -24 -40 C -36 -56, -46 -44, -56 -36 Z" fill="#090d16" stroke="#0f172a" stroke-width="3.5"/>
+  <path d="M -28 -68 Q 0 -80 28 -68" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.32" stroke-linecap="round"/>
+  <path d="M -36 -44 Q -22 -52 -10 -42" fill="none" stroke="#0f172a" stroke-width="4"/>
+  <path d="M 10 -42 Q 22 -52 36 -44" fill="none" stroke="#0f172a" stroke-width="4"/>
+  <circle cx="-20" cy="-22" r="10" fill="#ffffff" stroke="#0f172a" stroke-width="3.5"/>
+  <circle cx="20" cy="-22" r="10" fill="#ffffff" stroke="#0f172a" stroke-width="3.5"/>
+  <circle cx="-20" cy="-22" r="3" fill="#0f172a"/><circle cx="20" cy="-22" r="3" fill="#0f172a"/>
+  <ellipse cx="0" cy="12" rx="14" ry="13" fill="#7f1d1d" stroke="#0f172a" stroke-width="3.5"/>
+  <text x="64" y="-58" font-size="28">💧</text>
+  <rect x="64" y="64" width="46" height="72" rx="8" fill="#0f172a" stroke="#ffffff" stroke-width="2.5" transform="rotate(-10 86 100)"/>
+  <rect x="69" y="72" width="36" height="54" rx="4" fill="#38bdf8" opacity="0.9" transform="rotate(-10 86 100)"/>
+  <circle cx="62" cy="112" r="14" fill="#fbd8c5" stroke="#0f172a" stroke-width="3.5"/>
+  </g>
+    </g>
+    <rect x="20" y="136" width="680" height="572" rx="14" fill="none" stroke="#0f172a" stroke-width="5"/>
+  </g>
+
+  <!-- Tilted Comic SFX Badge -->
+  <g transform="translate(592, 188) rotate(-8)">
+    <rect x="-78" y="-26" width="156" height="52" rx="12" fill="#fef08a" stroke="#b91c1c" stroke-width="4"/>
+    <text x="0" y="9" text-anchor="middle" font-size="25" font-weight="900" fill="#b91c1c" font-family="Noto Sans KR, sans-serif">삐빅-</text>
+  </g>
+
+  <!-- Speech Balloon & Dialogue -->
+  <rect x="42" y="724" width="636" height="164" rx="28" fill="#ffffff" stroke="#0f172a" stroke-width="4.5"/><polygon points="240,726 266,690 294,726" fill="#ffffff" stroke="#0f172a" stroke-width="4.5"/><line x1="244" y1="726" x2="290" y2="726" stroke="#ffffff" stroke-width="6"/>
+  <rect x="260" y="698" width="200" height="32" rx="999" fill="#0f172a"/>
+  <text x="360" y="719" text-anchor="middle" font-size="15" font-weight="900" fill="#00dc64" font-family="Noto Sans KR, sans-serif">차주(나)</text>
+  <text x="360" y="790" text-anchor="middle" font-size="22" font-weight="800" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">번호판 위 연락처로 전화 5통, 문자 3통… 왜 받지</text>
+  <text x="360" y="821" text-anchor="middle" font-size="22" font-weight="800" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">않는 거지?!</text>
+  <text x="700" y="908" text-anchor="end" font-size="12" font-weight="700" fill="#94a3b8" font-family="Noto Sans KR, sans-serif">GuideHollow 웹툰 · toon.guidehollow.com</text>
+</svg>
