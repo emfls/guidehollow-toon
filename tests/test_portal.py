@@ -40,8 +40,8 @@ FORBIDDEN_UX_MARKERS = [
 def test_build_portal_matches_comic_naver_and_no_fake_server() -> None:
     stats = build_site(ad_mode="coupang")
     episodes = prepare_episodes()
-    expected_cuts = sum(EPISODE_CUT_COUNTS[ep["id"]] for ep in episodes)
-    assert stats["episodes"] == 10
+    expected_cuts = sum(EPISODE_CUT_COUNTS.get(ep["id"], len(ep["panels"])) for ep in episodes)
+    assert stats["episodes"] >= 10
     assert stats["cuts"] == expected_cuts
     assert stats["svgs"] == len(episodes) + expected_cuts
 
@@ -76,7 +76,8 @@ def test_build_portal_matches_comic_naver_and_no_fake_server() -> None:
     seen_cut_counts = set()
     for ep in episodes:
         eid = ep["id"]
-        target_n = EPISODE_CUT_COUNTS[eid]
+        target_n = EPISODE_CUT_COUNTS.get(eid, len(ep["panels"]))
+        assert 12 <= target_n <= 18
         assert len(ep["panels"]) == target_n
         seen_cut_counts.add(target_n)
 
@@ -112,6 +113,8 @@ def test_build_portal_matches_comic_naver_and_no_fake_server() -> None:
         assert "promo-event-banner" in ep_html
         assert "https://ads-partners.coupang.com/widgets.html" in ep_html
         assert "https://ads-partners.coupang.com/banners/" in ep_html
+        assert "comic-cut cut" in ep_html
+        assert "letter caption" in ep_html
         assert "pick-goldbox.webp" not in ep_html
         assert "ad-thumb-img" not in ep_html
         assert "G-QP5Q67GE5B" in ep_html
@@ -123,14 +126,14 @@ def test_build_portal_matches_comic_naver_and_no_fake_server() -> None:
             assert cut_webp_rel in ep_html
             cut_webp_file = DIST / "assets" / "toons" / eid / f"cut-{c_idx:02d}.webp"
             assert cut_webp_file.exists()
-            assert cut_webp_file.stat().st_size > 35_000
+            assert cut_webp_file.stat().st_size > 25_000
             with Image.open(cut_webp_file) as panel_im:
-                assert panel_im.size == (1080, 1520)
+                assert panel_im.size == (1080, 1080)
 
             cut_file = DIST / "assets" / "toons" / eid / f"cut-{c_idx:02d}.svg"
             assert cut_file.exists()
             cut_xml = cut_file.read_text(encoding="utf-8")
-            assert 'viewBox="0 0 1080 1520"' in cut_xml
+            assert 'viewBox="0 0 1080 1080"' in cut_xml
             assert "data:image/webp;base64," in cut_xml
             for marker in FORBIDDEN_UX_MARKERS:
                 assert marker not in cut_xml

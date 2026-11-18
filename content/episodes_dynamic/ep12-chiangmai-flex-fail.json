@@ -1,0 +1,39 @@
+{
+  "id": "ep12-chiangmai-flex-fail",
+  "episodeNo": 12,
+  "genreKey": "comedy",
+  "genre": "병맛·영포티",
+  "styleMode": "comedy",
+  "publishedAt": "2026-11-19T08:44:00+09:00",
+  "title": "치앙마이 한달살기 카페에서 영어 3문장으로 힙한 IT 대표인 척하다 10초 만에 들통난 썰",
+  "hook": "스티커 도배 맥북 펴놓고 타자 소리만 요란하던 44세 디지털 노마드 꿈나무의 대참사.",
+  "summary": "님만해민 카페에서 린넨 셔츠에 에어팟 끼고 글로벌 스타트업 대표 포스 풍기던 44세 영포티. 외국인이 다가오자 화면 속 가계부가 그대로 들통나며 문을 밀고 도망간 흑역사.",
+  "guideTitle": "오늘의 흑역사 한줄평 · 스티커보다 화면 밝기를 줄이자",
+  "punchlineRecap": "화려한 개발자 스티커 뒤에 숨어 있던 건 특가 장바구니와 월세 가계부. 다음 날부터 그 린넨 셔츠는 다시는 카페에 나타나지 않았습니다.",
+  "coupang": {
+    "widgetId": "1050468",
+    "badge": "한달살기 디지털 유목민 아이템",
+    "title": "카페 노트북 사생활 보호필름·가벼운 파우치",
+    "reason": "화면 비침 방지 필수품",
+    "cta": "노트북 용품 보기",
+    "url": "https://link.coupang.com/a/iG9mTjBUg8",
+    "guideUrl": "https://shopping.guidehollow.com/guides/digital",
+    "guideLabel": "쇼핑 가이드"
+  },
+  "panels": [
+    {"cut": 1, "act": "1막 · 노마드 코스프레", "camera": "climax_impact", "scene": "cafe", "speaker": "44세 영포티", "line": "훗… 치앙마이 바람 맞으며 일하니까 실리콘밸리 같군.", "subline": "에어팟 양쪽 다 끼고 아무 노래도 안 틀어놓은 채 미간 찌푸리는 중.", "sfx": "폼생폼사", "emotion": "smug", "showSfx": true},
+    {"cut": 2, "act": "1막 · 노마드 코스프레", "camera": "evidence_zoom", "scene": "cafe", "speaker": "맥북 뒷면", "line": "개발 컨퍼런스 스티커 14장 + 얼음 다 녹은 아아 1잔", "subline": "내용물은 모르지만 남들 보기에 '잇츠 스타트업' 느낌이 중요합니다.", "sfx": "", "emotion": "calm"},
+    {"cut": 3, "act": "1막 · 노마드 코스프레", "camera": "wide", "scene": "cafe", "speaker": "주변 노마드들", "line": "저 분 아까부터 엔터키만 천 번 치시는 것 같은데…", "subline": "옆 테이블 외국인들 의식해서 일부러 키보드 타격음 2배 증폭 중.", "sfx": "타다닥!!", "emotion": "angry", "showSfx": true},
+    {"cut": 4, "act": "2막 · 위기 접근", "camera": "wide", "scene": "cafe", "speaker": "호주 여행객", "line": "Hey mate! 혹시 스타트업 파운더세요? 자리 같이 써도 돼요?", "subline": "설마 했던 상황이 현실로! 웃으며 의자를 끌고 다가오는 외국인.", "sfx": "", "emotion": "calm"},
+    {"cut": 5, "act": "2막 · 허세 발사", "camera": "closeup_hero", "scene": "cafe", "speaker": "44세 영포티", "line": "오 예스~ 암 시이오. 글로벌 비즈니스, 베리 비지!", "subline": "영어 문장 3개 총동원해서 여유로운 글로벌 대표 미소 장전.", "sfx": "", "emotion": "smug"},
+    {"cut": 6, "act": "2막 · 동공 지진", "camera": "closeup_villain", "scene": "cafe", "speaker": "나(패닉 시작)", "line": "(잠깐, 방금 '무슨 스택 쓰냐'고 물어본 건가?!)", "subline": "두 번째 질문이 1.5배속 원어민 발음으로 날아오자 뇌 정지.", "sfx": "정적…", "emotion": "shocked", "showSfx": true},
+    {"cut": 7, "act": "2막 · 횡설수설", "camera": "closeup_villain", "scene": "cafe", "speaker": "44세 영포티", "line": "아~ 디스 이즈… 파이썬 투마로우 미팅 굿 나이스!", "subline": "손발 총동원해 허공에 단어만 던지는 44세 영어 마술쇼.", "sfx": "", "emotion": "angry"},
+    {"cut": 9, "act": "3막 · 대참사 포착", "camera": "evidence_zoom", "scene": "messenger", "speaker": "맥북 화면", "line": "[9월 전기세 정산 엑셀] + [배송비 무료 쿠폰 마감 3분 전]", "subline": "호기심에 노트북 화면을 슬쩍 본 외국인이 멈칫하고 말았습니다.", "sfx": "들킴!!", "emotion": "shocked", "showSfx": true},
+    {"cut": 10, "act": "3막 · 덤 타격", "camera": "wide", "scene": "cafe", "speaker": "카페 직원", "line": "아까 '예스 푸딩 소다' 하셔서 파란 거 가져왔습니다~", "subline": "방금 대답 잘못해서 시켜버린 형광 파란색 아이스크림 소다 등판.", "sfx": "", "emotion": "shocked"},
+    {"cut": 11, "act": "4막 · 급마감", "camera": "closeup_villain", "scene": "cafe", "speaker": "44세 영포티", "line": "아이 해브 어… 이머전시 서울 콜! 바이!!", "subline": "얼굴 홍당무 색으로 붉어지며 맥북 덮개 소리가 카페를 울렸습니다.", "sfx": "쾅!!", "emotion": "crying", "showSfx": true},
+    {"cut": 12, "act": "4막 · 영혼 탈출", "camera": "closeup_hero", "scene": "darkroom", "speaker": "나(내면)", "line": "(아… 내일부턴 한국어 메뉴판 있는 국밥집만 가야지…)", "subline": "누가 IT 대표냐 물어본 것도 아닌데 혼자 90도 폴더 인사 발사.", "sfx": "", "emotion": "crying"},
+    {"cut": 15, "act": "5막 · 출구 실수", "camera": "wide", "scene": "cafe", "speaker": "유리문", "line": "[당기시오 PULL] — 온 힘을 다해 10초 동안 미는 중", "subline": "마지막 멋있는 퇴장마저 당기는 문을 밀어버리며 3콤보 흑역사 달성.", "sfx": "끼이익", "emotion": "shocked"},
+    {"cut": 17, "act": "5막 · 현실 복귀", "camera": "closeup_hero", "scene": "cafe", "speaker": "44세 영포티", "line": "싸장님 여기 망고 셰이크 스몰 하나요… 당도 50%요.", "subline": "린넨 셔츠 집어던지고 동네 트레이닝 후드 입고 길거리 셰이크 흡입 중.", "sfx": "", "emotion": "calm_smirk"},
+    {"cut": 18, "act": "5막 · 현타 엔딩", "camera": "climax_impact", "scene": "street", "speaker": "44세 영포티", "line": "그래… 역시 여행은 내 페이스대로 다니는 게 최고야.", "subline": "뚝뚝이 사이드미러에 비친 홀가분한 표정. 영어 3문장은 당분간 봉인.", "sfx": "완결!", "emotion": "calm_smirk", "showSfx": true}
+  ]
+}

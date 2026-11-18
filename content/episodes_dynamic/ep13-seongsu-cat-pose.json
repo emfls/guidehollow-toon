@@ -1,0 +1,37 @@
+{
+  "id": "ep13-seongsu-cat-pose",
+  "episodeNo": 13,
+  "genreKey": "comedy",
+  "genre": "병맛·영포티",
+  "styleMode": "comedy",
+  "publishedAt": "2026-11-19T08:43:00+09:00",
+  "title": "성수동 팝업에서 '잠깐만요, 사진 좀 찍어도 될까요?' 말에 모델 포즈 잡았다가 인생 최대 흑역사 쓴 날",
+  "hook": "은색 숏패딩에 숏비니 풀세팅한 41세 영포티, 스냅 작가의 손짓 한 번에 치명적인 옆선을 잡았는데…",
+  "summary": "성수동 골목 스트릿 패션 촬영인 줄 알고 주머니에 손 꽂고 입술까지 깨문 41세 패셔니스타. 정작 카메라가 노리고 있던 건 발밑 벽돌 위 치즈고양이였습니다.",
+  "guideTitle": "오늘의 흑역사 한줄평 · 고양이 옆엔 서지 말자",
+  "punchlineRecap": "은갈치 숏패딩으로 20대 뺨치는 줄 알았지만 세상은 치즈고양이 편이었습니다. 뒷골목 우수관에서 3분간 멍 때린 건 비밀.",
+  "coupang": {
+    "widgetId": "1050469",
+    "badge": "성수동 산책 필수 방한",
+    "title": "가벼운 데일리 숏패딩·비니 겨울 산책템",
+    "reason": "너무 반짝이지 않는 무난한 핏 추천",
+    "cta": "겨울 코디 보기",
+    "url": "https://link.coupang.com/a/iG9mVheC0i",
+    "guideUrl": "https://shopping.guidehollow.com/",
+    "guideLabel": "쇼핑 가이드"
+  },
+  "panels": [
+    {"cut": 1, "act": "1막 · 성수동 등판", "camera": "climax_impact", "scene": "street", "speaker": "41세 영포티", "line": "오늘 핏 미쳤다. 누가 봐도 성수동 24세 크리에이터잖아.", "subline": "남의 SUV 검은 창문에 은색 크롬 숏패딩 깃 세우며 자기최면 거는 중.", "sfx": "자신감!", "emotion": "smug", "showSfx": true},
+    {"cut": 3, "act": "1막 · 시선 발견", "camera": "wide", "scene": "street", "speaker": "나(기대 중)", "line": "(어? 저 앞에 스트릿 패션 포토그래퍼들 아냐?!)", "subline": "골목 저편에서 20대 작가 둘이 카메라를 만지며 걸어오는 현장 포착.", "sfx": "", "emotion": "calm"},
+    {"cut": 4, "act": "2막 · 결정적 착각", "camera": "closeup_hero", "scene": "street", "speaker": "스냅 작가", "line": "저기요! 혹시 거기 잠깐 사진 한 장만 찍어도 될까요?", "subline": "카메라 들고 손을 내밀며 이쪽 방향을 향해 해맑게 외친 말 한마디.", "sfx": "두둥!", "emotion": "calm", "showSfx": true},
+    {"cut": 5, "act": "2막 · 풀세팅", "camera": "closeup_hero", "scene": "street", "speaker": "41세 영포티", "line": "아 네~ 편하게 찍으세요. 인스타 태그만 부탁드려요^^", "subline": "이때를 기다렸다는 듯 뱃살 숨기고 선글라스 0.5cm 내리는 치명적 여유.", "sfx": "", "emotion": "smug"},
+    {"cut": 6, "act": "2막 · 화보 장전", "camera": "closeup_hero", "scene": "street", "speaker": "41세 영포티", "line": "(턱선은 45도… 주머니 손… 무심한 듯 시크하게…)", "subline": "입술까지 살짝 깨물며 2026 FW 스트릿 잡지 커버 포즈 완성.", "sfx": "찰칵?!", "emotion": "smug", "showSfx": true},
+    {"cut": 7, "act": "3막 · 정적", "camera": "closeup_villain", "scene": "street", "speaker": "스냅 작가", "line": "아 저기 선생님… 왼쪽 뒤로 한 발짝만 비켜주실래요?", "subline": "셔터도 안 누르고 당황한 눈빛으로 내 뒤쪽 바닥을 가리키는 작가.", "sfx": "", "emotion": "shocked"},
+    {"cut": 9, "act": "3막 · 진실의 주인공", "camera": "evidence_zoom", "scene": "street", "speaker": "치즈고양이", "line": "냥… (햇빛 쬐는데 은색 풍선 아저씨가 가렸네…)", "subline": "내 카고바지 뒤꿈치 바로 옆 벽돌에서 낮잠 자던 오늘의 진짜 주인공.", "sfx": "충격!!", "emotion": "shocked", "showSfx": true},
+    {"cut": 10, "act": "4막 · 정지 화면", "camera": "closeup_villain", "scene": "street", "speaker": "41세 영포티", "line": "(방금 나 '선생님'이라고 불렀나…? 야옹이 찍으려고…?)", "subline": "턱선 잡던 얼굴 그대로 하얗게 굳어버린 41세 스트릿 모델 지망생.", "sfx": "얼음!", "emotion": "shocked", "showSfx": true},
+    {"cut": 11, "act": "4막 · 게걸음 후퇴", "camera": "wide", "scene": "street", "speaker": "나(도망 중)", "line": "(난 원래 저 배수로 파이프 점검하러 나온 사람이다…)", "subline": "아무 일 없었던 척 게걸음으로 3미터 옆 배수관을 진지하게 관찰 중.", "sfx": "", "emotion": "crying"},
+    {"cut": 13, "act": "4막 · 은신 시도", "camera": "wide", "scene": "street", "speaker": "41세 영포티", "line": "지퍼 끝까지 올리면 내 얼굴 아무도 기억 못 하겠지…", "subline": "은색 숏패딩 후드 지퍼를 코끝까지 당겨 잠근 채 벽과 하나 되기.", "sfx": "", "emotion": "crying"},
+    {"cut": 16, "act": "5막 · 순대국 엔딩", "camera": "closeup_hero", "scene": "cafe", "speaker": "41세 영포티", "line": "아이고 허리야… 패딩 벗으니까 살 것 같네…", "subline": "결국 성수동 팝업 다 패스하고 동네 김치찌개 백반집에서 허리 두드리는 중.", "sfx": "", "emotion": "calm"},
+    {"cut": 18, "act": "5막 · 묘연 엔딩", "camera": "climax_impact", "scene": "cafe", "speaker": "41세 영포티", "line": "그래 이 녀석아… 너나 나나 뱃살 빼고 다시 태어나자.", "subline": "창밖 치즈고양이와 국밥 한 숟가락으로 화해하며 마친 성수동 원정기.", "sfx": "완결!", "emotion": "calm_smirk", "showSfx": true}
+  ]
+}

@@ -22,6 +22,7 @@ from content.episodes import EPISODES  # noqa: E402
 
 DIST = ROOT / "dist"
 AI_RAW_DIR = ROOT / "assets" / "ai_raw"
+DYNAMIC_EPISODES_DIR = ROOT / "content" / "episodes_dynamic"
 SITE_URL = "https://toon.guidehollow.com"
 ADSENSE_PUB = "ca-pub-8830524482034754"
 ADSENSE_TXT = "google.com, pub-8830524482034754, DIRECT, f08c47fec0942fa0\n"
@@ -71,10 +72,30 @@ DISALLOWED_FAKE_SERVER_MARKERS = [
 ]
 
 
+def _load_dynamic_episodes() -> list[dict]:
+    """Load auto-generated hourly comedy episodes sorted newest-first."""
+    if not DYNAMIC_EPISODES_DIR.exists():
+        return []
+    loaded: list[dict] = []
+    for path in sorted(DYNAMIC_EPISODES_DIR.glob("*.json")):
+        try:
+            ep = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if isinstance(ep, dict) and ep.get("id") and ep.get("panels"):
+            loaded.append(ep)
+    loaded.sort(
+        key=lambda e: (str(e.get("publishedAt", "")), int(e.get("episodeNo", 0))),
+        reverse=True,
+    )
+    return loaded
+
+
 def prepare_episodes() -> list[dict]:
-    """Return deep-cleaned standalone stories with zero fake rating/comment or cut-count labels."""
+    """Return deep-cleaned standalone stories (newest dynamic comedy episodes first) with zero fake rating/comment labels."""
+    all_raw = _load_dynamic_episodes() + list(EPISODES)
     cleaned: list[dict] = []
-    for ep in EPISODES:
+    for ep in all_raw:
         raw_panels = ep["panels"]
         target_n = EPISODE_CUT_COUNTS.get(ep["id"], len(raw_panels))
         if target_n < len(raw_panels) and target_n >= 4:
@@ -124,12 +145,13 @@ _SHEET_CACHE: dict[Path, Image.Image] = {}
 
 
 def _load_sheet(ep_num: int, half: str) -> Image.Image:
-    path = AI_RAW_DIR / f"ep{ep_num:02d}_sheet_{half}.jpg"
-    if not path.exists():
-        raise FileNotFoundError(f"Missing AI webtoon sheet: {path}")
-    if path not in _SHEET_CACHE:
-        _SHEET_CACHE[path] = Image.open(path).convert("RGB")
-    return _SHEET_CACHE[path]
+    for ext in (".png", ".jpg", ".jpeg", ".webp"):
+        path = AI_RAW_DIR / f"ep{ep_num:02d}_sheet_{half}{ext}"
+        if path.exists():
+            if path not in _SHEET_CACHE:
+                _SHEET_CACHE[path] = Image.open(path).convert("RGB")
+            return _SHEET_CACHE[path]
+    raise FileNotFoundError(f"Missing AI webtoon sheet for ep{ep_num:02d}_sheet_{half}")
 
 
 def _crop_cell(ep_num: int, cut_index_1based: int) -> Image.Image:
@@ -231,168 +253,18 @@ def render_cover_assets(ep: dict) -> tuple[bytes, str]:
 
 
 def render_panel_assets(ep: dict, idx: int, panel: dict) -> tuple[bytes, str]:
-    """Render 1080x1520 HiDPI webtoon panel WebP with baked speech bubble + clean artwork (no inset, no red text, no cut count)."""
-    w, h = 1080, 1520
-    frame_left, frame_top, frame_right, frame_bottom = 24, 24, 1056, 1496
-    art_x, art_y, art_w, art_h = 24, 380, 1032, 1116
-
+    """Render 1080x1080 pure textless HiDPI illustration WebP + SVG metadata wrapper."""
+    w, h = 1080, 1080
     source_cut = int(panel.get("sourceCut", idx))
-    is_left = (idx % 2 == 1)
     speaker = str(panel.get("speaker", ""))
-    sub_lines = wrap_ko(panel["subline"], width=30, max_lines=2, strict=True)
-    d_lines = wrap_ko(panel["line"], width=17, max_lines=4, strict=True)
+    camera = str(panel.get("camera", ""))
+    centering = (0.5, 0.45) if camera in ("evidence_zoom", "wide") else (0.5, 0.30)
 
-    f_sub = _load_ko_font(27, "bold")
-    f_spk = _load_ko_font(21, "extrabold")
-    f_dlg = _load_ko_font(32, "extrabold")
-    f_sfx = _load_ko_font(54, "extrabold")
-
-    canvas = Image.new("RGBA", (w, h), (255, 255, 255, 255))
-
-    # Subtle paper-to-white header backdrop inside top frame before artwork starts
-    hdr_grad = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    hd = ImageDraw.Draw(hdr_grad)
-    for y in range(frame_top, art_y):
-        hd.line([(frame_left, y), (frame_right, y)], fill=(248, 250, 252, 255))
-    canvas = Image.alpha_composite(canvas, hdr_grad)
-
-    # Full-width HiDPI illustration anchored below top dialogue zone so face/subject stays clear
     cropped = _crop_cell(ep["episodeNo"], source_cut)
-    art = _upscale_artwork(cropped, (art_w, art_h), centering=(0.5, 0.35)).convert("RGBA")
-    canvas.paste(art, (art_x, art_y))
+    art = _upscale_artwork(cropped, (w, h), centering=centering).convert("RGB")
 
-    # Crisp divider between clean top bubble zone and illustrated body + outer frame stroke
-    d_pre = ImageDraw.Draw(canvas)
-    d_pre.line([(frame_left, art_y), (frame_right, art_y)], fill=(24, 24, 27, 255), width=3)
-
-    # 1) Upper Warm Cream Narration Box (zero cut counter, zero red text)
-    n_x, n_y, n_w = 48, 42, 984
-    sub_lh = 36
-    n_h = 34 + len(sub_lines) * sub_lh
-    canvas = _draw_alpha_shadow_rect(
-        canvas,
-        (n_x + 4, n_y + 5, n_x + n_w + 4, n_y + n_h + 5),
-        radius=8,
-        fill_rgba=(24, 24, 27, 45),
-    )
-    d = ImageDraw.Draw(canvas)
-    d.rounded_rectangle(
-        (n_x, n_y, n_x + n_w, n_y + n_h),
-        radius=8,
-        fill=(251, 248, 240, 248),
-        outline=(24, 24, 27, 255),
-        width=3,
-    )
-    sub_start_y = n_y + (n_h - len(sub_lines) * sub_lh) // 2 + sub_lh // 2
-    for s_idx, s_line in enumerate(sub_lines):
-        d.text(
-            (w // 2, sub_start_y + s_idx * sub_lh),
-            s_line,
-            font=f_sub,
-            fill=(24, 24, 27, 255),
-            anchor="mm",
-        )
-
-    # 2) Speech Bubble Baked Inside Canvas (reaches cleanly over top edge of illustration with pointer tail)
-    bw = 680
-    bx = 52 if is_left else 348
-    by = n_y + n_h + 18
-    dlg_lh = 42
-    bh = 76 + len(d_lines) * dlg_lh
-    tx = bx + (bw * 2 // 3 if is_left else bw // 3)
-    tip_x = tx + (20 if is_left else -20)
-    tail_tip_y = by + bh + 44
-
-    # Soft shadow for speech bubble
-    canvas = _draw_alpha_shadow_rect(
-        canvas,
-        (bx + 5, by + 6, bx + bw + 5, by + bh + 6),
-        radius=44,
-        fill_rgba=(24, 24, 27, 50),
-    )
-    d = ImageDraw.Draw(canvas)
-
-    # Tail shadow
-    d.polygon(
-        [(tx - 15, by + bh - 2), (tip_x + 4, tail_tip_y + 4), (tx + 17, by + bh - 2)],
-        fill=(24, 24, 27, 50),
-    )
-    # Main bubble body + border
-    d.rounded_rectangle(
-        (bx, by, bx + bw, by + bh),
-        radius=44,
-        fill=(255, 255, 255, 252),
-        outline=(24, 24, 27, 255),
-        width=4,
-    )
-    # Bubble pointer tail seamless join
-    d.polygon(
-        [(tx - 16, by + bh - 3), (tip_x, tail_tip_y), (tx + 16, by + bh - 3)],
-        fill=(255, 255, 255, 255),
-    )
-    d.line([(tx - 16, by + bh - 1), (tip_x, tail_tip_y)], fill=(24, 24, 27, 255), width=4)
-    d.line([(tip_x, tail_tip_y), (tx + 16, by + bh - 1)], fill=(24, 24, 27, 255), width=4)
-
-    # Speaker badge pill (zero red colors anywhere)
-    is_hero = speaker.startswith("나(") or "신부" in speaker or "사장" in speaker
-    is_sys = any(k in speaker for k in ("증거", "알림", "청구", "발령", "공문", "원칙", "팀", "창구", "면", "확인"))
-    spk_bg = (236, 253, 245, 255) if is_hero else ((239, 246, 255, 255) if is_sys else (241, 245, 249, 255))
-    spk_fg = (6, 95, 70, 255) if is_hero else ((30, 64, 175, 255) if is_sys else (51, 65, 85, 255))
-
-    bbox = d.textbbox((0, 0), speaker, font=f_spk)
-    pill_w = min(380, max(126, (bbox[2] - bbox[0]) + 36))
-    pill_h = 34
-    pill_x = bx + 28
-    pill_y = by + 15
-    d.rounded_rectangle(
-        (pill_x, pill_y, pill_x + pill_w, pill_y + pill_h),
-        radius=17,
-        fill=spk_bg,
-    )
-    d.text((pill_x + pill_w // 2, pill_y + pill_h // 2), speaker, font=f_spk, fill=spk_fg, anchor="mm")
-
-    # Dialogue lines inside bubble
-    dlg_start_y = by + 58 + dlg_lh // 2
-    for d_idx, d_line in enumerate(d_lines):
-        d.text(
-            (bx + bw // 2, dlg_start_y + d_idx * dlg_lh),
-            d_line,
-            font=f_dlg,
-            fill=(17, 17, 17, 255),
-            anchor="mm",
-        )
-
-    # 3) Tilted SFX stamp on mid-lower illustration (subtle dark ink + cream outline, no red)
-    sfx = str(panel.get("sfx", "") or "").strip()
-    if sfx:
-        sfx_layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-        sd = ImageDraw.Draw(sfx_layer)
-        sx = 865 if is_left else 215
-        sy = 1355
-        rot = 9 if is_left else -8
-        sd.text(
-            (sx, sy),
-            sfx,
-            font=f_sfx,
-            fill=(24, 24, 27, 255),
-            stroke_width=8,
-            stroke_fill=(255, 251, 235, 255),
-            anchor="mm",
-        )
-        rotated_sfx = sfx_layer.rotate(rot, center=(sx, sy), resample=Image.Resampling.BICUBIC)
-        canvas = Image.alpha_composite(canvas, rotated_sfx)
-        d = ImageDraw.Draw(canvas)
-
-    # Crisp comic outer border
-    d.rectangle(
-        (frame_left, frame_top, frame_right, frame_bottom),
-        outline=(24, 24, 27, 255),
-        width=4,
-    )
-
-    out_rgb = canvas.convert("RGB")
     buf = io.BytesIO()
-    out_rgb.save(buf, format="WEBP", quality=92, method=4)
+    art.save(buf, format="WEBP", quality=92, method=4)
     webp_bytes = buf.getvalue()
     webp_b64 = base64.b64encode(webp_bytes).decode("ascii")
     svg_str = (
@@ -509,8 +381,74 @@ body.viewer-body { background: #ffffff; color: #111111; }
 .ai-disclosure-sm { margin-top: 8px; font-size: 11.5px; color: #595959; }
 
 .comic-canvas { width: 100%; max-width: 690px; margin: 0 auto; background: #ffffff; }
-.comic-cut { width: 100%; margin: 0; padding: 0; background: #ffffff; }
-.comic-cut img { width: 100%; height: auto; display: block; }
+.comic-cut.cut {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  margin: 0 0 clamp(14px, 3vw, 24px);
+  padding: 0;
+  background: #f8fafc;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  container-type: inline-size;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+.comic-cut.cut.full { aspect-ratio: 1 / 1.12; margin-bottom: clamp(24px, 5vw, 44px); }
+.comic-cut.cut.wide { aspect-ratio: 1.18 / 1; }
+.comic-cut.cut.insert { width: auto; aspect-ratio: 1.12 / 1; margin-inline: 5.5%; }
+.comic-cut.cut.proof { width: auto; aspect-ratio: 1.12 / 1; margin-inline: 4%; border: 4px solid #384340; }
+.comic-cut.cut img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: 50% 34%; }
+.comic-cut.cut.wide img, .comic-cut.cut.insert img, .comic-cut.cut.proof img { object-position: 50% 45%; }
+
+.letter {
+  z-index: 1;
+  position: absolute;
+  margin: 0;
+  padding: .46em .68em;
+  max-width: 78%;
+  color: #201e18;
+  background: #fff8e7;
+  font-size: clamp(.82rem, 3.55cqw, 1.1rem);
+  font-weight: 700;
+  line-height: 1.36;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+}
+.letter-spk {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.08);
+  color: #111111;
+}
+.tl { top: 4.5%; left: 4.5%; }
+.tr { top: 4.5%; right: 4.5%; }
+.ml { top: 43%; left: 4.5%; }
+.mr { top: 43%; right: 4.5%; }
+.bl { bottom: 5%; left: 4.5%; }
+.br { bottom: 5%; right: 4.5%; }
+.sfx { max-width: 72%; font-size: clamp(1.1rem, 5.4cqw, 1.85rem); font-weight: 950; color: #fae2b6; letter-spacing: .04em; text-shadow: 0 0 6px #121713, 1px 2px #15140e, -1px -1px #15140e; background: none; padding: 0; box-shadow: none; }
+.say { border: 1.5px solid #352b21; border-radius: 1.05em; max-width: 72%; }
+.say:after { content: ""; position: absolute; background: inherit; border-right: 1.5px solid #352b21; border-bottom: 1.5px solid #352b21; width: .52em; height: .52em; bottom: -.3em; transform: rotate(45deg); }
+.tail-l:after { left: 22%; }
+.tail-r:after { right: 22%; }
+.say.bl:after, .say.br:after { bottom: auto; top: -.3em; transform: rotate(225deg); }
+.thought { color: #fff8e7; background: rgba(24, 34, 30, 0.92); border: 1.5px dashed #d9cba9; border-radius: 1.05em; font-weight: 650; max-width: 72%; }
+.thought .letter-spk { background: rgba(255, 255, 255, 0.16); color: #ecfdf5; }
+.caption { color: #fff8ea; background: rgba(24, 30, 27, 0.92); border-left: 3.5px solid #eab96f; font-weight: 650; max-width: 86%; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.34); }
+.phone { color: #16241d; background: #dce8df; border: 1px solid #86a391; border-radius: .65em; max-width: 74%; }
+.paper { color: #2b2318; background: #f8e8b7; border: 1px solid #998352; border-radius: .2em; max-width: 76%; }
+@media (max-width: 380px) {
+  .comic-cut.cut, .comic-cut.cut.wide { aspect-ratio: 1 / 1.14; }
+  .comic-cut.cut.insert, .comic-cut.cut.proof { aspect-ratio: 1 / 1.16; }
+  .letter { font-size: 3.85cqw; padding: .42em .58em; max-width: 84%; }
+}
 
 .float-scroll-nav { position: fixed; right: 12px; bottom: 14px; z-index: 80; display: flex; flex-direction: column; gap: 6px; opacity: 0.86; }
 .float-circle { width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, 0.92); border: 1px solid #d9d9d9; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #333333; cursor: pointer; }
@@ -777,6 +715,7 @@ def _gnb_html(active: str = "home") -> str:
     <div class="nv-sub-nav">
       <div class="wrap nv-sub-tabs" role="tablist" aria-label="장르별 보기">
         <button type="button" class="nv-sub-btn is-active" data-genre="all">장르전체</button>
+        <button type="button" class="nv-sub-btn" data-genre="comedy">병맛·영포티</button>
         <button type="button" class="nv-sub-btn" data-genre="office">직장·알바</button>
         <button type="button" class="nv-sub-btn" data-genre="love">연애·관계</button>
         <button type="button" class="nv-sub-btn" data-genre="car">주차·도로</button>
@@ -801,7 +740,7 @@ def _footer_html() -> str:
         <a href="/terms/">이용약관</a>
         <a href="/contact/">문의하기</a>
       </div>
-      <div>GuideHollow 웹툰 · 전 작품 세로 스크롤 무료 공개 · 모든 이야기 하단에 현실 분쟁 대응 가이드를 함께 수록합니다.</div>
+      <div>GuideHollow 웹툰 · 매시간 새 병맛·공감 단편이 올라오는 무료 세로 스크롤 웹툰 연재관</div>
       <div class="ai-disclosure-sm">{AI_IMAGE_NOTICE}</div>
     </div>
   </footer>
@@ -1075,14 +1014,14 @@ def build_home_html(episodes: list[dict]) -> str:
           <img src="/assets/toons/{esc(top['id'])}/cover.webp" alt="{esc(top['title'])}" width="720" height="930" />
         </div>
         <div>
-          <h2 class="series-h2">오늘의 베스트 사이다 단편 모음집</h2>
-          <div class="series-authors"><strong>GuideHollow 편집팀</strong> · 글 / <strong>AI 웹툰 스튜디오</strong> · 그림 &nbsp;|&nbsp; 현실 공감 단편 완결 웹툰</div>
-          <p class="series-synop">{esc(top['summary'])} 직장·연애·주차·전세·중고거래 등 현실에서 누구나 겪는 답답한 상황을 한 편씩 깔끔하게 풀어낸 창작·각색 세로 웹툰 모음입니다.</p>
+          <h2 class="series-h2">오늘의 병맛·영포티 &amp; 사이다 단편 모음집</h2>
+          <div class="series-authors"><strong>GuideHollow 편집팀</strong> · 글 / <strong>AI 웹툰 스튜디오</strong> · 그림 &nbsp;|&nbsp; 매시간 새 단편 업데이트</div>
+          <p class="series-synop">{esc(top['summary'])} 라오스·치앙마이·성수동에서 벌어지는 40대 자뻑 흑역사 병맛 썰부터 직장·일상 사이다 단편까지 가볍게 웃고 보는 무료 세로 웹툰 모음입니다.</p>
           <div class="series-tags">
-            <span class="series-tag">#사이다참교육</span>
-            <span class="series-tag">#직장공감</span>
-            <span class="series-tag">#현실사이다단편</span>
-            <span class="series-tag">#전세사기방어</span>
+            <span class="series-tag">#병맛영포티</span>
+            <span class="series-tag">#라오스흑역사</span>
+            <span class="series-tag">#자뻑반전썰</span>
+            <span class="series-tag">#매시간업데이트</span>
             <span class="series-tag">#무료감상</span>
           </div>
           <div class="series-cta-row">
@@ -1133,6 +1072,53 @@ def build_studio_archive_html(episodes: list[dict]) -> str:
 </html>"""
 
 
+def _render_panel_figure_html(eid: str, ep_title: str, c_idx: int, total: int, p: dict) -> str:
+    camera = str(p.get("camera", ""))
+    scene = str(p.get("scene", ""))
+    speaker = str(p.get("speaker", "") or "").strip()
+    emotion = str(p.get("emotion", ""))
+    line = str(p.get("line", "") or "").strip()
+    subline = str(p.get("subline", "") or "").strip()
+
+    if c_idx in (1, total) or camera == "climax_impact":
+        variant = "full"
+    elif camera == "evidence_zoom":
+        variant = "proof" if c_idx % 2 == 0 else "insert"
+    elif camera == "wide":
+        variant = "wide"
+    else:
+        variant = "std"
+
+    if camera == "evidence_zoom" or any(k in speaker for k in ("증거", "공문", "창구", "원칙", "청구", "발령", "확인")):
+        dlg_role = "paper"
+    elif scene == "messenger" or any(k in speaker for k in ("알림", "문자", "카톡", "계좌")):
+        dlg_role = "phone"
+    elif speaker.startswith("나(") and emotion in ("determined", "angry") and c_idx % 3 == 0:
+        dlg_role = "thought"
+    else:
+        dlg_role = "say tail-l" if (c_idx % 2 == 1) else "say tail-r"
+
+    cap_pos = "tl" if (c_idx % 2 == 1) else "tr"
+    dlg_pos = "br" if (c_idx % 2 == 1) else "bl"
+    spk_html = f'<span class="letter-spk">{esc(speaker)}</span>' if speaker else ""
+    overlays = []
+    if subline:
+        overlays.append(f'<p class="letter caption {cap_pos}">{esc(subline)}</p>')
+    if p.get("showSfx") and str(p.get("sfx") or "").strip():
+        sfx_pos = "mr" if (c_idx % 2 == 1) else "ml"
+        overlays.append(f'<p class="letter sfx {sfx_pos}">{esc(p.get("sfx"))}</p>')
+    if line:
+        overlays.append(f'<p class="letter {dlg_role} {dlg_pos}">{spk_html}{esc(line)}</p>')
+    alt = f"{ep_title} - {speaker}: {line} ({subline})"
+    loading = "eager" if c_idx == 1 else "lazy"
+    return (
+        f'<figure class="comic-cut cut {variant}" data-cut-num="{c_idx}" aria-label="장면 {c_idx}">'
+        f'  <img src="/assets/toons/{esc(eid)}/cut-{c_idx:02d}.webp" alt="{esc(alt)}" width="1080" height="1080" loading="{loading}" />'
+        f'  {"".join(overlays)}'
+        f'</figure>'
+    )
+
+
 def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
     eid = ep["id"]
     prev_ep = episodes[idx - 1] if idx > 0 else episodes[-1]
@@ -1154,17 +1140,38 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
 
     cuts_html = []
     for c_idx, p in enumerate(ep["panels"], start=1):
-        cuts_html.append(
-            f'<div class="comic-cut" data-cut-num="{c_idx}">'
-            f'  <img src="/assets/toons/{esc(eid)}/cut-{c_idx:02d}.webp" alt="{esc(ep["title"])} - {esc(p["speaker"])}: {esc(p["line"])} ({esc(p["subline"])})" width="1080" height="1520" loading="{"eager" if c_idx == 1 else "lazy"}" />'
-            f'</div>'
-        )
+        cuts_html.append(_render_panel_figure_html(eid, ep["title"], c_idx, total, p))
         if c_idx == 4:
             cuts_html.append(_render_infeed_coupang_card(mid_slot_a, "ep-mid-cut4"))
         elif c_idx == 9 and total >= 11:
             cuts_html.append(_render_infeed_coupang_card(mid_slot_b, "ep-mid-cut9"))
 
-    checklist_html = "\n".join(f"<li style='margin-bottom:6px;'>{esc(item)}</li>" for item in ep["checklist"])
+    checklist_items = ep.get("checklist") or []
+    checklist_html = "\n".join(f"<li style='margin-bottom:6px;'>{esc(item)}</li>" for item in checklist_items)
+    if ep.get("styleMode") == "comedy":
+        recap_title = esc(ep.get("guideTitle") or "오늘의 흑역사 한줄평")
+        recap_body = esc(ep.get("punchlineRecap") or ep.get("guideBody") or ep.get("hook") or "")
+        bottom_card_html = (
+            f'      <div class="nv-box">\n'
+            f'        <div style="font-size:12px;font-weight:800;color:#008f42;margin-bottom:4px;">병맛·영포티 썰 한줄평</div>\n'
+            f'        <h3 style="margin:0 0 8px;font-size:16px;font-weight:800;">{recap_title}</h3>\n'
+            f'        <p style="margin:0 0 12px;font-size:14px;color:#444444;">{recap_body}</p>\n'
+            f'        <a class="v-btn primary" href="/episodes/{esc(next_ep["id"])}/">다음 병맛 썰 바로보기 ▶</a>\n'
+            f'        <div class="ai-disclosure-sm" style="margin-top:12px;">{AI_IMAGE_NOTICE}</div>\n'
+            f'      </div>'
+        )
+    else:
+        bottom_card_html = (
+            f'      <div class="nv-box">\n'
+            f'        <h3 style="margin:0 0 8px;font-size:16px;font-weight:800;">{esc(ep.get("guideTitle", ""))}</h3>\n'
+            f'        <p style="margin:0 0 12px;font-size:14px;color:#444444;">{esc(ep.get("guideBody", ""))}</p>\n'
+            f'        <div style="font-size:14px;font-weight:800;margin-bottom:6px;color:#00b853;">실전 확인 체크리스트</div>\n'
+            f'        <ul style="margin:0;padding-left:18px;font-size:13.5px;color:#333333;">\n'
+            f'{checklist_html}\n'
+            f'        </ul>\n'
+            f'        <div class="ai-disclosure-sm" style="margin-top:12px;">{AI_IMAGE_NOTICE}</div>\n'
+            f'      </div>'
+        )
     head = _head_html(
         f"{ep['title']} | GuideHollow 웹툰",
         f"{ep['hook']} {ep['summary']}",
@@ -1234,15 +1241,7 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
 
       {_render_promo_event_banner(idx)}
 
-      <div class="nv-box">
-        <h3 style="margin:0 0 8px;font-size:16px;font-weight:800;">{esc(ep['guideTitle'])}</h3>
-        <p style="margin:0 0 12px;font-size:14px;color:#444444;">{esc(ep['guideBody'])}</p>
-        <div style="font-size:14px;font-weight:800;margin-bottom:6px;color:#00b853;">실전 확인 체크리스트</div>
-        <ul style="margin:0;padding-left:18px;font-size:13.5px;color:#333333;">
-{checklist_html}
-        </ul>
-        <div class="ai-disclosure-sm" style="margin-top:12px;">{AI_IMAGE_NOTICE}</div>
-      </div>
+{bottom_card_html}
     </section>
   </main>
 
