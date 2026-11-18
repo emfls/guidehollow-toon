@@ -1,71 +1,74 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420" width="600" height="420" role="img" aria-label="단순 변심 환불 우기며 생수병 보낸 진상 구매자, 원컷 개봉으로 참교육한 썰">
-  <defs><linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0f172a"/><stop offset="68%" stop-color="#334155"/><stop offset="100%" stop-color="#1e293b"/></linearGradient><radialGradient id="spotGrad" cx="50%" cy="45%" r="55%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/><stop offset="100%" stop-color="#0f172a" stop-opacity="0.18"/></radialGradient></defs>
-  <rect x="0" y="0" width="600" height="420" fill="url(#bgGrad)"/>
-  <rect x="0" y="302" width="600" height="117" fill="#1e293b" opacity="0.68"/>
-  <rect x="40" y="24" width="54" height="360" fill="#475569" stroke="#0f172a" stroke-width="3"/>
-  <rect x="40" y="150" width="54" height="54" fill="#facc15"/><text x="67" y="184" text-anchor="middle" font-size="22" font-weight="900" fill="#0f172a">B2</text>
-  <rect x="180" y="22" width="140" height="12" rx="6" fill="#e0f2fe"/><rect x="420" y="22" width="140" height="12" rx="6" fill="#e0f2fe"/>
-  <rect x="320" y="184" width="245" height="118" rx="22" fill="#1e293b" stroke="#020617" stroke-width="4"/>
-  <path d="M 350 184 L 390 134 L 505 134 L 535 184 Z" fill="#334155" stroke="#020617" stroke-width="4"/>
-  <circle cx="365" cy="235" r="20" fill="#fbbf24" opacity="0.9"/><circle cx="515" cy="235" r="20" fill="#fbbf24" opacity="0.9"/>
-  <rect x="408" y="235" width="64" height="22" rx="4" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
-  <text x="440" y="251" text-anchor="middle" font-size="12" font-weight="900" fill="#0f172a">P+SIDE</text>
-  <rect x="0" y="0" width="600" height="420" fill="url(#spotGrad)"/>
-  <line x1="381" y1="235" x2="736" y2="235" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="375" y1="277" x2="718" y2="369" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="358" y1="317" x2="666" y2="494" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="332" y1="351" x2="583" y2="602" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="298" y1="377" x2="476" y2="685" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="258" y1="394" x2="350" y2="737" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="216" y1="400" x2="216" y2="755" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="173" y1="394" x2="81" y2="737" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="133" y1="377" x2="-43" y2="685" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="99" y1="351" x2="-151" y2="602" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="73" y1="317" x2="-234" y2="494" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="56" y1="277" x2="-286" y2="369" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="51" y1="235" x2="-304" y2="235" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="56" y1="192" x2="-286" y2="100" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="73" y1="152" x2="-234" y2="-25" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="99" y1="118" x2="-151" y2="-132" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="133" y1="92" x2="-44" y2="-215" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="173" y1="75" x2="81" y2="-267" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="215" y1="70" x2="215" y2="-285" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="258" y1="75" x2="350" y2="-267" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="298" y1="92" x2="476" y2="-215" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="332" y1="118" x2="583" y2="-132" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="358" y1="152" x2="666" y2="-25" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <line x1="375" y1="192" x2="718" y2="100" stroke="#0f172a" stroke-width="2" opacity="0.26"/>
-  <g transform="translate(452,260) scale(1.18)">
-  <path d="M -112 185 C -106 78, -68 58, -32 54 L 32 54 C 68 58, 106 78, 112 185 Z" fill="#3f3f46" stroke="#0f172a" stroke-width="5"/>
-  <polygon points="-28,54 28,54 0,136" fill="#f1f5f9" stroke="#0f172a" stroke-width="3.5"/>
-  <polygon points="-7,62 7,62 9,122 0,138 -9,122" fill="#dc2626" stroke="#0f172a" stroke-width="2.5"/>
-  <rect x="-20" y="18" width="40" height="44" rx="10" fill="#fbd8c5" stroke="#0f172a" stroke-width="4"/>
-  <path d="M -20 34 Q 0 48 20 34 L 20 22 L -20 22 Z" fill="#0f172a" opacity="0.16"/>
-  <ellipse cx="-54" cy="-24" rx="10" ry="15" fill="#fbd8c5" stroke="#0f172a" stroke-width="3.5"/>
-  <ellipse cx="54" cy="-24" rx="10" ry="15" fill="#fbd8c5" stroke="#0f172a" stroke-width="3.5"/>
-  <path d="M -64 -24 C -68 -96, 68 -96, 64 -24 Z" fill="#27272a"/>
-  <path d="M -52 -46 C -54 8, -30 34, 0 36 C 30 34, 54 8, 52 -46 C 52 -84, -52 -84, -52 -46 Z" fill="#fbd8c5" stroke="#0f172a" stroke-width="4.5"/>
-  <path d="M -56 -36 C -58 -92, 58 -94, 56 -36 C 42 -60, 26 -42, 16 -58 C 4 -40, -12 -58, -24 -40 C -36 -56, -46 -44, -56 -36 Z" fill="#27272a" stroke="#0f172a" stroke-width="3.5"/>
-  <path d="M -28 -68 Q 0 -80 28 -68" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.32" stroke-linecap="round"/>
-  <path d="M -36 -40 Q -20 -48 -8 -40" fill="none" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
-  <path d="M 8 -40 Q 20 -48 36 -40" fill="none" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
-  <path d="M -32 -22 Q -20 -34 -8 -22" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
-  <path d="M 8 -22 Q 20 -34 32 -22" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
-  <path d="M -18 4 Q 0 22 18 4 Z" fill="#ffffff" stroke="#0f172a" stroke-width="3.5"/>
-  <circle cx="-32" cy="-6" r="7" fill="#fb7185" opacity="0.45"/><circle cx="32" cy="-6" r="7" fill="#fb7185" opacity="0.45"/>
-  <text x="68" y="-66" font-size="30">✨</text>
-  <rect x="64" y="64" width="46" height="72" rx="8" fill="#0f172a" stroke="#ffffff" stroke-width="2.5" transform="rotate(-10 86 100)"/>
-  <rect x="69" y="72" width="36" height="54" rx="4" fill="#38bdf8" opacity="0.9" transform="rotate(-10 86 100)"/>
-  <circle cx="62" cy="112" r="14" fill="#fbd8c5" stroke="#0f172a" stroke-width="3.5"/>
-  </g>
-  <!-- Bottom comic dialogue punchline card (distinct from HTML title below) -->
-  <rect x="26" y="282" width="338" height="106" rx="16" fill="#ffffff" stroke="#0f172a" stroke-width="4.5"/>
-  <rect x="42" y="266" width="120" height="28" rx="999" fill="#0f172a"/>
-  <text x="102" y="285" text-anchor="middle" font-size="13" font-weight="900" fill="#00dc64" font-family="Noto Sans KR, sans-serif">판매자(나)</text>
-  <text x="195" y="318" text-anchor="middle" font-size="19" font-weight="900" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif">노트북은 1.8kg인데 반송</text>
-  <text x="195" y="344" text-anchor="middle" font-size="19" font-weight="900" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif">송장은 600g 생수 …</text>
-  <g transform="translate(115, 118) rotate(-8)">
-    <rect x="-74" y="-24" width="148" height="48" rx="12" fill="#fef08a" stroke="#b91c1c" stroke-width="4"/>
-    <text x="0" y="9" text-anchor="middle" font-size="24" font-weight="900" fill="#b91c1c" font-family="Noto Sans KR, sans-serif">참교육!</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 640" width="480" height="640" role="img" aria-label="노트북 반품한다며 500ml 생수병 보낸 구매자… 제가 꺼낸 &#x27;무편집 영상&#x27;에 경찰서에서 오열한 이유">
+<defs><linearGradient id="bg-living" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1e293b"/><stop offset="100%" stop-color="#334155"/></linearGradient><radialGradient id="glow-living" cx="50%" cy="42%" r="52%"><stop offset="0%" stop-color="#7dd3fc" stop-opacity="0.34"/><stop offset="100%" stop-color="#1e293b" stop-opacity="0"/></radialGradient></defs>
+<rect width="480" height="640" fill="url(#bg-living)"/>
+<rect width="480" height="640" fill="url(#glow-living)"/>
+<circle cx="40" cy="130" r="42" fill="#ffffff" opacity="0.06"/>
+<circle cx="185" cy="200" r="42" fill="#ffffff" opacity="0.06"/>
+<circle cx="330" cy="270" r="42" fill="#ffffff" opacity="0.06"/>
+<circle cx="475" cy="130" r="42" fill="#ffffff" opacity="0.06"/>
+<circle cx="140" cy="200" r="42" fill="#ffffff" opacity="0.06"/>
+<circle cx="285" cy="270" r="42" fill="#ffffff" opacity="0.06"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(0.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(18.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(36.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(54.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(72.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(90.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(108.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(126.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(144.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(162.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(180.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(198.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(216.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(234.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(252.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(270.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(288.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(306.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(324.0 240 270)"/>
+<line x1="380" y1="270" x2="700" y2="270" stroke="#7dd3fc" stroke-width="3.5" opacity="0.35" transform="rotate(342.0 240 270)"/>
+<g transform="translate(335,250) scale(0.92)">
+<path d="M-85 155 C-82 70 -48 45 0 45 C48 45 82 70 85 155 Z" fill="#9a3412" stroke="#0b0f19" stroke-width="4.5"/>
+<path d="M-24 46 L0 86 L24 46" fill="#ffffff" stroke="#0b0f19" stroke-width="3.5"/>
+<path d="M-8 68 L8 68 L14 145 L-14 145 Z" fill="#dc2626" stroke="#0b0f19" stroke-width="3"/>
+<rect x="-15" y="16" width="30" height="34" rx="10" fill="#fde2c8" stroke="#0b0f19" stroke-width="3.5"/>
+<ellipse cx="-48" cy="-24" rx="10" ry="15" fill="#fbd4b2" stroke="#0b0f19" stroke-width="3.5"/>
+<ellipse cx="48" cy="-24" rx="10" ry="15" fill="#fbd4b2" stroke="#0b0f19" stroke-width="3.5"/>
+<circle cx="0" cy="-42" r="54" fill="#1f2937" stroke="#0b0f19" stroke-width="4"/>
+<path d="M-46 -40 C-48 8 -26 30 0 32 C26 30 48 8 46 -40 C44 -72 -44 -72 -46 -40 Z" fill="#fde2c8" stroke="#0b0f19" stroke-width="4"/>
+<path d="M-50 -46 C-42 -84 42 -84 50 -46 C36 -56 20 -58 6 -44 C-8 -60 -28 -58 -50 -46 Z" fill="#1f2937" stroke="#0b0f19" stroke-width="4"/>
+<path d="M-34 -42 Q-20 -48 -8 -38 M8 -38 Q22 -48 34 -42" fill="none" stroke="#0b0f19" stroke-width="4"/>
+<path d="M-28 -26 Q-18 -30 -10 -24 M10 -24 Q18 -30 28 -26" fill="none" stroke="#0b0f19" stroke-width="4"/>
+<circle cx="-19" cy="-25" r="4" fill="#0b0f19"/>
+<circle cx="19" cy="-25" r="4" fill="#0b0f19"/>
+<path d="M-10 8 Q8 16 20 2" fill="none" stroke="#0b0f19" stroke-width="4" stroke-linecap="round"/>
+<path d="M-2 -12 L2 -2 L-4 0" fill="none" stroke="#0b0f19" stroke-width="2.5" stroke-linecap="round"/>
+</g>
+<g transform="translate(170,290) scale(1.18)">
+<path d="M-85 155 C-82 70 -48 45 0 45 C48 45 82 70 85 155 Z" fill="#0369a1" stroke="#0b0f19" stroke-width="4.5"/>
+<path d="M-24 46 L0 86 L24 46" fill="#ffffff" stroke="#0b0f19" stroke-width="3.5"/>
+<path d="M-7 72 L7 72 L10 140 L-10 140 Z" fill="#00dc64" stroke="#0b0f19" stroke-width="3"/>
+<rect x="-15" y="16" width="30" height="34" rx="10" fill="#fde2c8" stroke="#0b0f19" stroke-width="3.5"/>
+<ellipse cx="-48" cy="-24" rx="10" ry="15" fill="#fbd4b2" stroke="#0b0f19" stroke-width="3.5"/>
+<ellipse cx="48" cy="-24" rx="10" ry="15" fill="#fbd4b2" stroke="#0b0f19" stroke-width="3.5"/>
+<circle cx="0" cy="-42" r="54" fill="#0f172a" stroke="#0b0f19" stroke-width="4"/>
+<path d="M-46 -40 C-48 8 -26 30 0 32 C26 30 48 8 46 -40 C44 -72 -44 -72 -46 -40 Z" fill="#fde2c8" stroke="#0b0f19" stroke-width="4"/>
+<path d="M-50 -44 C-46 -86 46 -86 50 -44 C34 -60 12 -52 0 -38 C-14 -54 -36 -58 -50 -44 Z" fill="#0f172a" stroke="#0b0f19" stroke-width="4"/>
+<path d="M-32 -40 L-10 -36 M10 -36 L32 -40" stroke="#0b0f19" stroke-width="4" stroke-linecap="round"/>
+<ellipse cx="-20" cy="-26" rx="7.5" ry="6.5" fill="#0b0f19"/>
+<ellipse cx="20" cy="-26" rx="7.5" ry="6.5" fill="#0b0f19"/>
+<circle cx="-18" cy="-28" r="2.4" fill="#ffffff"/>
+<circle cx="22" cy="-28" r="2.4" fill="#ffffff"/>
+<path d="M-12 6 Q2 16 18 4" fill="none" stroke="#0b0f19" stroke-width="4" stroke-linecap="round"/>
+<path d="M-2 -12 L2 -2 L-4 0" fill="none" stroke="#0b0f19" stroke-width="2.5" stroke-linecap="round"/>
+</g>
+<defs><linearGradient id="cover-scrim" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#05070b" stop-opacity="0"/><stop offset="35%" stop-color="#05070b" stop-opacity="0.62"/><stop offset="100%" stop-color="#05070b" stop-opacity="0.96"/></linearGradient></defs>
+<rect x="0" y="290" width="480" height="350" fill="url(#cover-scrim)"/>
+<rect x="20" y="412" width="184" height="30" rx="15" fill="#0ea5e9"/>
+<text x="112" y="432" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="14" font-weight="900" fill="#05070b">중고거래 역관광 썰</text>
+<text x="22" y="482" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="25" font-weight="900" fill="#ffffff" stroke="#000000" stroke-width="1">노트북 반품한다며 500ml</text>
+<text x="22" y="518" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="25" font-weight="900" fill="#ffffff" stroke="#000000" stroke-width="1">생수병 보낸 구매자… 제가</text>
+<text x="22" y="554" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="25" font-weight="900" fill="#ffffff" stroke="#000000" stroke-width="1">꺼낸 &#x27;무편집 영상&#x27;…</text>
+<text x="22" y="612" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="15" font-weight="800" fill="#fde047">★ 9.98 · 조회 394만 · 클릭해서 결말 보기 ▶</text>
 </svg>

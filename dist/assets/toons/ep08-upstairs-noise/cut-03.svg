@@ -1,65 +1,70 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 920" width="720" height="920" role="img" aria-label="8화 · 3컷 (승(고구마 빌드업)) - &#x27;우린 다 자는데 아랫집이 예민한 거 아녜요?&#x27; 헉… 증거 없으면 꼼짝없이 당하겠네.">
-  <rect x="0" y="0" width="720" height="920" fill="#ffffff"/>
-  <!-- Top Narration Bar -->
-  <rect x="20" y="16" width="680" height="106" rx="12" fill="#f8fafc" stroke="#0f172a" stroke-width="4"/>
-  <rect x="34" y="26" width="210" height="28" rx="6" fill="#00dc64"/>
-  <text x="139" y="45" text-anchor="middle" font-size="14" font-weight="900" fill="#052e16" font-family="Noto Sans KR, sans-serif">8화 · 3컷 (승(고구마 빌드업))</text>
-  <text x="684" y="45" text-anchor="end" font-size="13" font-weight="800" fill="#64748b" font-family="Noto Sans KR, sans-serif">톡방·메신저 · 억울</text>
-  <text x="38" y="78" font-size="21" font-weight="800" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">관리사무소 1차 인터폰 연락에도 돌아온 윗집의 뻔뻔한 부인.</text>
-
-  <!-- Central Illustrated Artwork Stage -->
-  <g>
-    <clipPath id="stageClip"><rect x="20" y="136" width="680" height="572" rx="14"/></clipPath>
-    <g clip-path="url(#stageClip)">
-      <defs><linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fef08a"/><stop offset="68%" stop-color="#fef9c3"/><stop offset="100%" stop-color="#ca8a04"/></linearGradient><radialGradient id="spotGrad" cx="50%" cy="45%" r="55%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/><stop offset="100%" stop-color="#0f172a" stop-opacity="0.18"/></radialGradient></defs>
-  <rect x="20" y="136" width="680" height="572" fill="url(#bgGrad)"/>
-  <rect x="20" y="547" width="680" height="160" fill="#ca8a04" opacity="0.68"/>
-  <rect x="430" y="158" width="235" height="360" rx="26" fill="#0f172a" stroke="#334155" stroke-width="5"/>
-  <rect x="444" y="180" width="207" height="316" rx="14" fill="#b2c7d9"/>
-  <rect x="444" y="180" width="207" height="38" rx="8" fill="#1e293b"/>
-  <text x="548" y="204" text-anchor="middle" font-size="14" font-weight="800" fill="#f8fafc">단톡방 (99+)</text>
-  <rect x="458" y="234" width="138" height="44" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
-  <rect x="500" y="294" width="138" height="48" rx="10" fill="#fee500" stroke="#ca8a04" stroke-width="1.5"/>
-  <rect x="458" y="360" width="146" height="44" rx="10" fill="#ffffff" stroke="#ef4444" stroke-width="2"/>
-  <circle cx="650" cy="172" r="18" fill="#ef4444"/><text x="650" y="178" text-anchor="middle" font-size="13" font-weight="900" fill="#ffffff">!</text>
-  <rect x="20" y="136" width="680" height="572" fill="url(#spotGrad)"/>
-      <g transform="translate(250,498) scale(1.55)">
-  <path d="M -112 185 C -106 78, -68 58, -32 54 L 32 54 C 68 58, 106 78, 112 185 Z" fill="#0f766e" stroke="#0f172a" stroke-width="5"/>
-  <polygon points="-28,54 28,54 0,136" fill="#ffffff" stroke="#0f172a" stroke-width="3.5"/>
-  <polygon points="-7,62 7,62 9,122 0,138 -9,122" fill="#0284c7" stroke="#0f172a" stroke-width="2.5"/>
-  <rect x="-20" y="18" width="40" height="44" rx="10" fill="#fee4d3" stroke="#0f172a" stroke-width="4"/>
-  <path d="M -20 34 Q 0 48 20 34 L 20 22 L -20 22 Z" fill="#0f172a" opacity="0.16"/>
-  <ellipse cx="-54" cy="-24" rx="10" ry="15" fill="#fee4d3" stroke="#0f172a" stroke-width="3.5"/>
-  <ellipse cx="54" cy="-24" rx="10" ry="15" fill="#fee4d3" stroke="#0f172a" stroke-width="3.5"/>
-  <path d="M -64 -24 C -68 -96, 68 -96, 64 -24 Z" fill="#1e293b"/>
-  <path d="M -52 -46 C -54 8, -30 34, 0 36 C 30 34, 54 8, 52 -46 C 52 -84, -52 -84, -52 -46 Z" fill="#fee4d3" stroke="#0f172a" stroke-width="4.5"/>
-  <path d="M -56 -36 C -58 -92, 58 -94, 56 -36 C 42 -60, 26 -42, 16 -58 C 4 -40, -12 -58, -24 -40 C -36 -56, -46 -44, -56 -36 Z" fill="#1e293b" stroke="#0f172a" stroke-width="3.5"/>
-  <path d="M -28 -68 Q 0 -80 28 -68" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.32" stroke-linecap="round"/>
-  <line x1="-36" y1="-34" x2="-10" y2="-44" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
-  <line x1="36" y1="-34" x2="10" y2="-44" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
-  <ellipse cx="-20" cy="-20" rx="8" ry="8" fill="#0f172a"/><circle cx="-18" cy="-23" r="3" fill="#ffffff"/>
-  <ellipse cx="20" cy="-20" rx="8" ry="8" fill="#0f172a"/><circle cx="22" cy="-23" r="3" fill="#ffffff"/>
-  <ellipse cx="-22" cy="-6" rx="4" ry="8" fill="#60a5fa" opacity="0.85"/><ellipse cx="22" cy="-6" rx="4" ry="8" fill="#60a5fa" opacity="0.85"/>
-  <path d="M -14 14 Q 0 4 14 14" fill="none" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
-  <rect x="64" y="64" width="46" height="72" rx="8" fill="#0f172a" stroke="#ffffff" stroke-width="2.5" transform="rotate(-10 86 100)"/>
-  <rect x="69" y="72" width="36" height="54" rx="4" fill="#38bdf8" opacity="0.9" transform="rotate(-10 86 100)"/>
-  <circle cx="62" cy="112" r="14" fill="#fee4d3" stroke="#0f172a" stroke-width="3.5"/>
-  </g>
-    </g>
-    <rect x="20" y="136" width="680" height="572" rx="14" fill="none" stroke="#0f172a" stroke-width="5"/>
-  </g>
-
-  <!-- Tilted Comic SFX Badge -->
-  <g transform="translate(592, 188) rotate(-8)">
-    <rect x="-78" y="-26" width="156" height="52" rx="12" fill="#fef08a" stroke="#b91c1c" stroke-width="4"/>
-    <text x="0" y="9" text-anchor="middle" font-size="25" font-weight="900" fill="#b91c1c" font-family="Noto Sans KR, sans-serif">삐빅-</text>
-  </g>
-
-  <!-- Speech Balloon & Dialogue -->
-  <rect x="44" y="724" width="632" height="164" rx="46" fill="#f8fafc" stroke="#334155" stroke-width="4" stroke-dasharray="12 7"/><circle cx="242" cy="706" r="10" fill="#f8fafc" stroke="#334155" stroke-width="3"/><circle cx="256" cy="686" r="6" fill="#f8fafc" stroke="#334155" stroke-width="2.5"/>
-  <rect x="260" y="698" width="200" height="32" rx="999" fill="#0f172a"/>
-  <text x="360" y="719" text-anchor="middle" font-size="15" font-weight="900" fill="#00dc64" font-family="Noto Sans KR, sans-serif">관리실 안내</text>
-  <text x="360" y="790" text-anchor="middle" font-size="22" font-weight="800" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">&#x27;우린 다 자는데 아랫집이 예민한 거 아녜요?&#x27;</text>
-  <text x="360" y="821" text-anchor="middle" font-size="22" font-weight="800" fill="#0f172a" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">헉… 증거 없으면 꼼짝없이 당하겠네.</text>
-  <text x="700" y="908" text-anchor="end" font-size="12" font-weight="700" fill="#94a3b8" font-family="Noto Sans KR, sans-serif">GuideHollow 웹툰 · toon.guidehollow.com</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 880" width="720" height="880" role="img" aria-label="새벽 1시마다 망치질하던 윗집… 현관문 한 번 안 두드리고 &#x27;이 공문&#x27; 한 장으로 일주일 만에 침묵시킨 비결 3컷">
+<defs><linearGradient id="bg-apartment" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1c1917"/><stop offset="100%" stop-color="#44403c"/></linearGradient><radialGradient id="glow-apartment" cx="50%" cy="42%" r="52%"><stop offset="0%" stop-color="#fdba74" stop-opacity="0.34"/><stop offset="100%" stop-color="#1c1917" stop-opacity="0"/></radialGradient></defs>
+<rect width="720" height="880" fill="url(#bg-apartment)"/>
+<rect width="720" height="880" fill="url(#glow-apartment)"/>
+<rect x="30" y="100" width="76" height="700" fill="#000000" opacity="0.28"/>
+<rect x="614" y="100" width="76" height="700" fill="#000000" opacity="0.28"/>
+<rect x="0" y="760" width="720" height="28" fill="#facc15" opacity="0.24"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(0.0 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(12.857142857142858 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(25.714285714285715 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(38.57142857142857 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(51.42857142857143 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(64.28571428571429 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(77.14285714285714 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(90.0 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(102.85714285714286 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(115.71428571428572 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(128.57142857142858 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(141.42857142857144 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(154.28571428571428 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(167.14285714285714 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(180.0 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(192.85714285714286 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(205.71428571428572 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(218.57142857142858 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(231.42857142857144 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(244.2857142857143 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(257.14285714285717 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(270.0 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(282.8571428571429 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(295.7142857142857 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(308.57142857142856 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(321.42857142857144 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(334.2857142857143 360 430)"/>
+<line x1="500" y1="430" x2="820" y2="430" stroke="#ef4444" stroke-width="3.5" opacity="0.35" transform="rotate(347.14285714285717 360 430)"/>
+<g transform="translate(360,455) scale(2.05)">
+<path d="M-85 155 C-82 70 -48 45 0 45 C48 45 82 70 85 155 Z" fill="#7f1d1d" stroke="#0b0f19" stroke-width="4.5"/>
+<path d="M-24 46 L0 86 L24 46" fill="#ffffff" stroke="#0b0f19" stroke-width="3.5"/>
+<path d="M-8 68 L8 68 L14 145 L-14 145 Z" fill="#dc2626" stroke="#0b0f19" stroke-width="3"/>
+<rect x="-15" y="16" width="30" height="34" rx="10" fill="#fde2c8" stroke="#0b0f19" stroke-width="3.5"/>
+<ellipse cx="-48" cy="-24" rx="10" ry="15" fill="#fbd4b2" stroke="#0b0f19" stroke-width="3.5"/>
+<ellipse cx="48" cy="-24" rx="10" ry="15" fill="#fbd4b2" stroke="#0b0f19" stroke-width="3.5"/>
+<circle cx="0" cy="-42" r="54" fill="#1e293b" stroke="#0b0f19" stroke-width="4"/>
+<path d="M-46 -40 C-48 8 -26 30 0 32 C26 30 48 8 46 -40 C44 -72 -44 -72 -46 -40 Z" fill="#fde2c8" stroke="#0b0f19" stroke-width="4"/>
+<path d="M-50 -46 C-42 -84 42 -84 50 -46 C36 -56 20 -58 6 -44 C-8 -60 -28 -58 -50 -46 Z" fill="#1e293b" stroke="#0b0f19" stroke-width="4"/>
+<path d="M-34 -42 Q-20 -48 -8 -38 M8 -38 Q22 -48 34 -42" fill="none" stroke="#0b0f19" stroke-width="4"/>
+<path d="M-28 -26 Q-18 -30 -10 -24 M10 -24 Q18 -30 28 -26" fill="none" stroke="#0b0f19" stroke-width="4"/>
+<circle cx="-19" cy="-25" r="4" fill="#0b0f19"/>
+<circle cx="19" cy="-25" r="4" fill="#0b0f19"/>
+<path d="M-10 8 Q8 16 20 2" fill="none" stroke="#0b0f19" stroke-width="4" stroke-linecap="round"/>
+<path d="M-2 -12 L2 -2 L-4 0" fill="none" stroke="#0b0f19" stroke-width="2.5" stroke-linecap="round"/>
+</g>
+<rect x="0" y="0" width="720" height="54" fill="#05070b" opacity="0.88"/>
+<text x="24" y="34" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="17" font-weight="800" fill="#00dc64">EP.8 · 1막 · 충격 오프닝</text>
+<text x="696" y="34" text-anchor="end" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="16" font-weight="800" fill="#e2e8f0">CUT 03 / 18</text>
+<g>
+<rect x="39" y="92" width="610" height="114" rx="26" fill="#0b0f19" opacity="0.28"/>
+<rect x="34" y="86" width="610" height="114" rx="26" fill="#ffffff" stroke="#0b0f19" stroke-width="4.5"/>
+<polygon points="321,200 343,228 357,200" fill="#ffffff" stroke="#0b0f19" stroke-width="4" stroke-linejoin="round"/>
+<rect x="324" y="195" width="31" height="9" fill="#ffffff"/>
+<rect x="52" y="70" width="114" height="32" rx="16" fill="#0b0f19"/>
+<text x="68" y="92" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="16" font-weight="800" fill="#00dc64">윗집 남편</text>
+<text x="339" y="140" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="23" font-weight="800" fill="#0b0f19">우리가 언제 뛰었다고 그래요? 한 번만</text>
+<text x="339" y="174" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="23" font-weight="800" fill="#0b0f19">더 문 두드리면 스토킹 신고해요!</text>
+</g>
+<g transform="translate(592, 286) rotate(6)"><rect x="-86" y="-30" width="172" height="52" rx="14" fill="#ef4444" stroke="#ffffff" stroke-width="4"/><text x="0" y="5" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="25" font-weight="900" fill="#fde047">실화냐?!</text></g>
+<rect x="34" y="754" width="652" height="98" rx="14" fill="#0b0f19" opacity="0.93" stroke="#00dc64" stroke-width="3.5"/>
+<text x="360" y="790" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="20" font-weight="700" fill="#f8fafc">관리소 통해 좋게 말해도 오히려 아랫집을 예민충</text>
+<text x="360" y="822" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="20" font-weight="700" fill="#f8fafc">취급하며 위협했습니다.</text>
 </svg>

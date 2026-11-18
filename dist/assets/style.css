@@ -1,452 +1,148 @@
 :root {
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --surface-alt: #f1f4f6;
-  --ink: #111827;
-  --muted: #64748b;
-  --line: #e2e8f0;
-  --naver: #00dc64;
-  --naver-dark: #00b853;
-  --naver-ink: #052e16;
-  --highlight: #fef08a;
-  --coupang-red: #e60023;
-  --max: 1080px;
+  --nv-green: #00dc64;
+  --nv-green-dark: #00b853;
+  --nv-red: #ff3b30;
+  --bg-page: #f8f9fa;
+  --bg-card: #ffffff;
+  --ink-strong: #111827;
+  --ink-muted: #5b6472;
+  --line: #e5e8eb;
+  --viewer-bg: #0b0d10;
 }
-*, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; overflow-x: clip; max-width: 100%; }
-body {
-  margin: 0;
-  overflow-x: clip;
-  max-width: 100%;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
-  line-height: 1.62;
-  overflow-wrap: anywhere;
-}
-a { color: inherit; }
-button { font: inherit; }
-:focus-visible { outline: 3px solid var(--naver-dark); outline-offset: 2px; }
-.wrap { width: min(var(--max), calc(100% - 1.5rem)); margin: 0 auto; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; background: var(--bg-page); color: var(--ink-strong); font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; line-height: 1.55; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; height: auto; }
+.wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 16px; }
 
-/* Naver Webtoon-inspired Header */
-.site-header {
-  background: #ffffff;
-  border-bottom: 1px solid var(--line);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.05);
-}
-.header-inner {
-  min-height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  padding: 0.45rem 0;
-}
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-weight: 900;
-  font-size: 1.12rem;
-  text-decoration: none;
-  letter-spacing: -0.02em;
-}
-.brand-n {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  background: var(--naver);
-  color: #052e16;
-  font-weight: 900;
-  font-size: 0.95rem;
-}
-.brand-sub {
-  font-size: 0.76rem;
-  font-weight: 800;
-  color: var(--naver-dark);
-  background: #ecfdf5;
-  padding: 0.14rem 0.48rem;
-  border-radius: 999px;
-}
-.nav { display: flex; gap: 0.35rem; flex-wrap: wrap; }
-.nav a {
-  text-decoration: none;
-  padding: 0.42rem 0.78rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: #475569;
-  transition: background 0.15s, color 0.15s;
-}
-.nav a:hover { background: #f1f5f9; color: var(--ink); }
-.nav a.active {
-  background: var(--naver);
-  color: #052e16;
-}
+/* Naver Webtoon Top GNB */
+.nv-gnb { position: sticky; top: 0; z-index: 60; background: #ffffff; border-bottom: 1px solid var(--line); }
+.nv-gnb-inner { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 60px; flex-wrap: wrap; padding: 8px 0; }
+.nv-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 900; font-size: 19px; letter-spacing: -0.03em; }
+.nv-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--nv-green); color: #ffffff; font-weight: 900; font-size: 13px; padding: 5px 10px; border-radius: 6px; letter-spacing: 0.02em; }
+.nv-sub-pill { font-size: 11px; font-weight: 800; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 999px; padding: 2px 8px; }
+.nv-nav { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.nv-nav a { font-size: 15px; font-weight: 700; color: #374151; padding: 8px 2px; border-bottom: 3px solid transparent; }
+.nv-nav a.active, .nv-nav a:hover { color: #00b853; border-bottom-color: var(--nv-green); }
 
-/* Top Spotlight Banner */
-.hero {
-  background: linear-gradient(135deg, #0b1220 0%, #112a22 100%);
-  color: #ffffff;
-  border-radius: 16px;
-  padding: 1.65rem 1.4rem;
-  margin: 1rem 0 1.2rem;
-  border: 1px solid #1f3d30;
-}
-.hero-kicker {
-  display: inline-block;
-  background: var(--naver);
-  color: #052e16;
-  font-weight: 900;
-  font-size: 0.76rem;
-  padding: 0.18rem 0.62rem;
-  border-radius: 6px;
-}
-.hero h1 {
-  margin: 0.68rem 0 0.48rem;
-  font-size: clamp(1.42rem, 3.6vw, 2.15rem);
-  line-height: 1.25;
-  letter-spacing: -0.02em;
-}
-.hero p { margin: 0; color: #cbd5e1; max-width: 48rem; font-size: 0.95rem; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.05rem; }
+/* Genre Filter Tabs */
+.nv-subbar { background: #ffffff; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.nv-tabs { display: flex; align-items: center; gap: 8px; padding: 10px 0; min-width: max-content; }
+.nv-tab-btn { border: 1px solid #e5e8eb; background: #f8f9fa; color: #374151; font-weight: 700; font-size: 13.5px; border-radius: 999px; padding: 7px 14px; cursor: pointer; font-family: inherit; }
+.nv-tab-btn.is-active { background: #111827; border-color: #111827; color: #ffffff; }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  padding: 0.62rem 1rem;
-  border-radius: 9px;
-  border: 1.5px solid var(--line);
-  background: var(--surface);
-  color: var(--ink);
-  font-weight: 800;
-  font-size: 0.88rem;
-  cursor: pointer;
-  text-decoration: none;
-}
-.btn-naver { background: var(--naver); color: #052e16; border-color: var(--naver-dark); }
-.btn-dark { background: #111827; color: #ffffff; border-color: #111827; }
-.btn-coupang { background: var(--coupang-red); color: #ffffff; border-color: #b91c1c; }
+/* Today Spotlight Banner */
+.hero-spot { margin-top: 18px; background: linear-gradient(125deg, #0b1120 0%, #172554 55%, #064e3b 100%); border-radius: 16px; padding: 22px; color: #ffffff; display: grid; grid-template-columns: 180px 1fr; gap: 22px; align-items: center; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14); }
+.hero-cover { width: 180px; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45); border: 2px solid rgba(255, 255, 255, 0.16); }
+.hero-kicker { display: inline-flex; align-items: center; gap: 8px; background: var(--nv-red); color: #ffffff; font-size: 12px; font-weight: 900; border-radius: 6px; padding: 4px 10px; margin-bottom: 10px; }
+.hero-title { margin: 0 0 10px; font-size: clamp(20px, 2.6vw, 27px); font-weight: 900; line-height: 1.32; letter-spacing: -0.02em; }
+.hero-hook { margin: 0 0 16px; font-size: 15px; color: #e2e8f0; line-height: 1.55; }
+.hero-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.btn-nv { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--nv-green); color: #052e16; font-weight: 900; font-size: 15px; padding: 12px 22px; border-radius: 8px; border: 0; cursor: pointer; }
+.btn-nv:hover { background: #14eb74; }
+.hero-meta { font-size: 13.5px; color: #fde047; font-weight: 800; }
 
-/* Naver Webtoon Genre Filter Strip */
-.section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 1.2rem 0 0.65rem;
-}
-.section-head h2 { margin: 0; font-size: 1.22rem; letter-spacing: -0.02em; }
-.genre-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin: 0.85rem 0 1.15rem;
-  border-bottom: 2px solid var(--line);
-  padding-bottom: 0.7rem;
-}
-.genre-pill {
-  padding: 0.44rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: #475569;
-  font-size: 0.84rem;
-  font-weight: 800;
-  cursor: pointer;
-}
-.genre-pill.is-active {
-  background: var(--naver);
-  color: #052e16;
-  border-color: var(--naver-dark);
-}
+/* 3:4 Naver Webtoon Poster Grid */
+.sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 28px 0 14px; flex-wrap: wrap; }
+.sec-title { margin: 0; font-size: 20px; font-weight: 900; letter-spacing: -0.02em; }
+.sec-sub { font-size: 13px; color: var(--ink-muted); font-weight: 600; }
+.poster-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px 14px; }
+.poster-card { display: flex; flex-direction: column; gap: 8px; background: transparent; transition: transform 0.16s ease; }
+.poster-card:hover { transform: translateY(-3px); }
+.poster-thumb { position: relative; aspect-ratio: 3 / 4; border-radius: 10px; overflow: hidden; border: 1px solid #d1d5db; background: #111827; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08); }
+.poster-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.poster-rank { position: absolute; top: 8px; left: 8px; background: rgba(11, 15, 25, 0.88); color: var(--nv-green); font-size: 12px; font-weight: 900; padding: 3px 8px; border-radius: 6px; }
+.poster-up { position: absolute; top: 8px; right: 8px; background: var(--nv-red); color: #ffffff; font-size: 11px; font-weight: 900; padding: 3px 7px; border-radius: 6px; }
+.poster-ep-title { margin: 0; font-size: 14.5px; font-weight: 800; line-height: 1.38; color: var(--ink-strong); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.poster-hook { margin: 0; font-size: 12.5px; color: var(--ink-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.poster-stats { font-size: 12px; font-weight: 800; color: #d97706; display: flex; align-items: center; gap: 8px; }
+.poster-stats span.views { color: #6b7280; font-weight: 600; }
 
-/* Illustrated Webtoon Thumbnail Cards */
-.episode-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.6rem;
-}
-@media (max-width: 920px) { .episode-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px) { .episode-grid { grid-template-columns: 1fr; } }
-.ep-card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  text-decoration: none;
-  transition: transform 0.16s ease, box-shadow 0.16s ease;
-}
-.ep-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
-}
-.toon-thumb-box {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 10 / 7;
-  background: #0f172a;
-  overflow: hidden;
-  border-bottom: 1px solid var(--line);
-}
-.toon-thumb-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.ep-num-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(17, 24, 39, 0.88);
-  color: var(--naver);
-  font-size: 0.74rem;
-  font-weight: 900;
-  padding: 0.18rem 0.52rem;
-  border-radius: 6px;
-}
-.ep-up-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: var(--naver);
-  color: #052e16;
-  font-size: 0.72rem;
-  font-weight: 900;
-  padding: 0.14rem 0.44rem;
-  border-radius: 5px;
-}
-.ep-card-body {
-  padding: 0.88rem 0.95rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  flex: 1 1 auto;
-}
-.ep-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: var(--muted);
-}
-.ep-star { color: #ef4444; font-weight: 900; }
-.ep-card h2, .ep-card h3 {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.38;
-  color: var(--ink);
-}
-.ep-hook {
-  background: #f0fdf4;
-  border-left: 3px solid var(--naver-dark);
-  padding: 0.36rem 0.55rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #166534;
-}
-.ep-read-cta {
-  margin-top: auto;
-  padding-top: 0.45rem;
-  font-size: 0.84rem;
-  font-weight: 900;
-  color: var(--naver-dark);
-}
+/* Naver Webtoon Episode List Table */
+.ep-table-box { background: #ffffff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 32px; }
+.ep-row { display: grid; grid-template-columns: 84px 1fr 110px 94px; gap: 14px; align-items: center; padding: 14px 16px; border-bottom: 1px solid #f1f5f9; transition: background 0.14s ease; }
+.ep-row:last-child { border-bottom: 0; }
+.ep-row:hover { background: #f8fafc; }
+.ep-row-thumb { width: 84px; height: 58px; border-radius: 6px; overflow: hidden; border: 1px solid #e5e8eb; background: #0f172a; }
+.ep-row-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.ep-row-badge { display: inline-block; font-size: 11px; font-weight: 900; color: #059669; background: #ecfdf5; border-radius: 4px; padding: 2px 6px; margin-bottom: 4px; }
+.ep-row-title { font-size: 15px; font-weight: 800; color: #111827; line-height: 1.38; margin: 0 0 3px; }
+.ep-row-desc { font-size: 13px; color: #64748b; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ep-row-rate { font-size: 13.5px; font-weight: 900; color: #e11d48; text-align: right; }
+.ep-row-len { font-size: 12px; color: #64748b; font-weight: 700; display: block; }
+.ep-row-cta { text-align: center; font-size: 13px; font-weight: 800; background: var(--nv-green); color: #052e16; padding: 8px 10px; border-radius: 6px; }
 
-/* Naver Webtoon Vertical Comic Viewer */
-.viewer-bar {
-  background: #111827;
-  color: #f8fafc;
-  border-radius: 12px;
-  padding: 0.72rem 0.95rem;
-  margin: 0.9rem 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-}
-.viewer-title-wrap { min-width: 0; flex: 1 1 260px; }
-.viewer-ep-tag { font-size: 0.76rem; font-weight: 800; color: var(--naver); }
-.viewer-title-wrap h1 { margin: 0.12rem 0 0; font-size: clamp(1.02rem, 2.5vw, 1.35rem); line-height: 1.35; }
-.viewer-controls { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
-.vbtn {
-  padding: 0.42rem 0.72rem;
-  border-radius: 7px;
-  border: 1px solid #334155;
-  background: #1e293b;
-  color: #f8fafc;
-  font-size: 0.8rem;
-  font-weight: 800;
-  text-decoration: none;
-  cursor: pointer;
-}
-.vbtn-green { background: var(--naver); color: #052e16; border-color: var(--naver-dark); }
+/* Immersive Vertical Webtoon Viewer */
+body.viewer-body { background: var(--viewer-bg); color: #f8fafc; }
+body.viewer-body.light-mode { background: #f3f4f6; color: #111827; }
+.read-progress { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 90; background: rgba(255, 255, 255, 0.12); }
+.read-progress-fill { height: 100%; width: 0%; background: var(--nv-green); transition: width 0.08s linear; }
+.viewer-bar { position: sticky; top: 0; z-index: 70; background: rgba(20, 23, 28, 0.96); backdrop-filter: blur(8px); border-bottom: 1px solid #27272a; color: #ffffff; }
+body.viewer-body.light-mode .viewer-bar { background: rgba(255, 255, 255, 0.96); color: #111827; border-bottom-color: #e5e8eb; }
+.viewer-bar-inner { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 54px; padding: 6px 0; }
+.viewer-title-group { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+.viewer-back { display: inline-flex; align-items: center; gap: 4px; font-size: 13.5px; font-weight: 800; background: #27272a; color: #ffffff; padding: 7px 12px; border-radius: 8px; flex-shrink: 0; }
+body.viewer-body.light-mode .viewer-back { background: #f1f5f9; color: #111827; }
+.viewer-h1 { margin: 0; font-size: 14.5px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.viewer-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.ctrl-btn { border: 1px solid #3f3f46; background: #18181b; color: #f8fafc; font-size: 12.5px; font-weight: 800; padding: 7px 10px; border-radius: 8px; cursor: pointer; font-family: inherit; }
+body.viewer-body.light-mode .ctrl-btn { background: #ffffff; color: #111827; border-color: #d1d5db; }
+.ctrl-btn.primary { background: var(--nv-green); color: #052e16; border-color: var(--nv-green); }
 
-.webtoon-stage {
-  background: #0b0f19;
-  border-radius: 14px;
-  padding: 1rem 0.65rem 1.4rem;
-  margin: 0.75rem 0 1.3rem;
-  transition: background 0.2s ease;
-}
-.webtoon-stage.is-light {
-  background: #ffffff;
-  border: 1px solid var(--line);
-}
-.webtoon-strip {
-  width: min(720px, 100%);
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.webtoon-cut {
-  margin: 0;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #ffffff;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
-}
-.webtoon-cut-img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-.viewer-react-bar {
-  width: min(720px, 100%);
-  margin: 1.1rem auto 0;
-  background: #111827;
-  border: 1px solid #1f2937;
-  border-radius: 12px;
-  padding: 0.85rem 1rem;
-  color: #f8fafc;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-.webtoon-stage.is-light .viewer-react-bar {
-  background: #f8fafc;
-  border-color: var(--line);
-  color: var(--ink);
-}
-.rating-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: #fef08a;
-  color: #854d0e;
-  border: 1px solid #facc15;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.84rem;
-  font-weight: 900;
-  cursor: pointer;
-}
+/* Vertical Full-Bleed Webtoon Canvas (18 Cuts Stacked Seamlessly) */
+.ep-intro-strip { max-width: 720px; margin: 16px auto 12px; padding: 16px 18px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; }
+body.viewer-body.light-mode .ep-intro-strip { background: #ffffff; border-color: #e5e8eb; }
+.ep-intro-strip h2 { margin: 0 0 8px; font-size: clamp(19px, 3vw, 24px); font-weight: 900; line-height: 1.35; }
+.ep-intro-strip p { margin: 0; font-size: 14.5px; color: #cbd5e1; }
+body.viewer-body.light-mode .ep-intro-strip p { color: #475569; }
+.comic-canvas { width: 100%; max-width: 720px; margin: 0 auto; background: #000000; box-shadow: 0 0 40px rgba(0, 0, 0, 0.55); }
+.comic-cut { width: 100%; margin: 0; padding: 0; background: #000000; }
+.comic-cut img { width: 100%; height: auto; display: block; }
+.act-gutter { padding: 18px 16px 10px; text-align: center; background: #05070b; color: var(--nv-green); font-size: 12.5px; font-weight: 900; letter-spacing: 0.08em; border-top: 1px solid #1e293b; }
+.cut-float-counter { position: fixed; right: 16px; bottom: 72px; z-index: 65; background: rgba(11, 15, 25, 0.88); color: #00dc64; font-size: 12px; font-weight: 900; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(0, 220, 100, 0.4); }
 
-/* Ads & Practical Guide */
-.ad-box {
-  margin: 1.35rem 0;
-  padding: 0.88rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-}
-.ad-disclosure {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin: 0 0 0.45rem;
-  text-align: center;
-  font-weight: 600;
-}
-.coupang-search-wrap, .coupang-carousel-slot {
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  border-radius: 10px;
-}
-.coupang-search-wrap iframe, .coupang-carousel-slot iframe { max-width: 100%; border: 0; }
-.carousel-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; }
-@media (max-width: 980px) { .carousel-grid { grid-template-columns: 1fr; } }
-.coupang-banner-card {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.85rem;
-  padding: 1rem 1.1rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #fff7ed 0%, #fef2f2 100%);
-  border: 1.5px solid #fdba74;
-}
-.coupang-banner-card strong { display: block; font-size: 1rem; color: #9a3412; margin-bottom: 0.2rem; }
-.coupang-banner-card span { display: block; font-size: 0.86rem; color: #475569; }
-.coupang-card-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+/* Reader Footer: Rating + Next Preview + Comments + Guide */
+.reader-post { max-width: 720px; margin: 20px auto 90px; display: flex; flex-direction: column; gap: 16px; padding: 0 12px; }
+.nv-box { background: #ffffff; color: #111827; border: 1px solid #e5e8eb; border-radius: 14px; padding: 20px; }
+.rate-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.star-btns { display: flex; gap: 6px; }
+.star-btn { font-size: 20px; background: #fef9c3; border: 1px solid #fde047; border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+.next-preview { display: grid; grid-template-columns: 76px 1fr auto; gap: 14px; align-items: center; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 14px; }
+.next-preview img { width: 76px; height: 100px; object-fit: cover; border-radius: 8px; }
+.comment-item { padding: 14px 0; border-bottom: 1px solid #f1f5f9; }
+.comment-item:last-child { border-bottom: 0; }
+.best-pill { display: inline-block; background: #ef4444; color: #ffffff; font-size: 10.5px; font-weight: 900; padding: 2px 6px; border-radius: 4px; margin-right: 6px; }
+.comment-form { display: flex; gap: 8px; margin-top: 12px; }
+.comment-form input { flex: 1; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; }
+.comment-form button { background: var(--nv-green); color: #052e16; font-weight: 900; border: 0; padding: 0 16px; border-radius: 8px; cursor: pointer; font-family: inherit; }
+.ad-box { background: #ffffff; color: #111827; border: 1px solid #e5e8eb; border-radius: 14px; padding: 18px; }
+.ad-disclosure { font-size: 11.5px; color: #6b7280; margin-bottom: 6px; }
+.coupang-banner { display: grid; gap: 8px; }
+.coupang-cta { display: inline-flex; align-items: center; justify-content: center; background: #0f172a; color: #ffffff; font-weight: 800; font-size: 14px; padding: 11px 16px; border-radius: 8px; }
+.bottom-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 80; background: rgba(17, 24, 39, 0.96); border-top: 1px solid #374151; padding: 8px 14px; display: flex; justify-content: center; gap: 10px; }
+.bottom-dock a, .bottom-dock button { font-size: 13px; font-weight: 800; color: #ffffff; background: #1f2937; border: 1px solid #374151; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-family: inherit; }
+.bottom-dock a.go-next { background: var(--nv-green); color: #052e16; border-color: var(--nv-green); }
 
-.guide-article {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 1.3rem;
-  margin: 1.25rem 0;
-}
-.guide-article h2 { margin-top: 0; font-size: 1.2rem; color: var(--ink); }
-.guide-article ul { padding-left: 1.2rem; }
-.guide-article li { margin-bottom: 0.42rem; }
+.site-footer { margin-top: 40px; background: #ffffff; border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 13px; color: #6b7280; }
+.footer-links { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
+.prose-card { background: #ffffff; border: 1px solid var(--line); border-radius: 14px; padding: 24px; margin: 22px 0; }
 
-/* Binge Reader Stack (/studio/) */
-.binge-card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 1.1rem;
-  margin-bottom: 1.2rem;
+@media (max-width: 960px) {
+  .poster-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
-.binge-strip {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.65rem;
-  margin-top: 0.8rem;
+@media (max-width: 640px) {
+  .hero-spot { grid-template-columns: 1fr; padding: 16px; }
+  .hero-cover { width: 140px; }
+  .poster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; }
+  .ep-row { grid-template-columns: 64px 1fr auto; }
+  .ep-row-cta { display: none; }
+  .ep-row-thumb { width: 64px; height: 50px; }
+  .reader-post { padding: 0 8px; }
+  .next-preview { grid-template-columns: 60px 1fr; }
+  .next-preview a { grid-column: 1 / -1; text-align: center; }
 }
-@media (max-width: 720px) { .binge-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.binge-strip img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  border: 1px solid var(--line);
+@media (max-width: 350px) {
+  .wrap { padding: 0 10px; }
+  .nv-nav { gap: 10px; }
+  .nv-nav a { font-size: 13.5px; }
 }
-
-.site-footer {
-  margin-top: 2rem;
-  border-top: 1px solid var(--line);
-  background: var(--surface);
-  padding: 1.4rem 0 2.1rem;
-  font-size: 0.84rem;
-  color: var(--muted);
-}
-.footer-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem; }
-.footer-nav { display: flex; flex-wrap: wrap; gap: 0.85rem; }
-.footer-nav a { text-decoration: none; font-weight: 700; }

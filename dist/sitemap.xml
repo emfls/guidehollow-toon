@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://toon.guidehollow.com/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/studio/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/episodes/ep01-office-cider/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/episodes/ep02-love-wedding/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/episodes/ep03-car-parking/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/episodes/ep04-mystery-mirror/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/episodes/ep05-finance-jeonse/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/episodes/ep06-secondhand-brick/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/episodes/ep07-cafe-receipt/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/episodes/ep08-upstairs-noise/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/episodes/ep09-groupbuy-scam/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/episodes/ep10-gym-refund/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/about/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/privacy/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/terms/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>https://toon.guidehollow.com/contact/</loc><lastmod>2026-11-18</lastmod><changefreq>weekly</changefreq></url>
+  <url><loc>https://toon.guidehollow.com/</loc></url>
+  <url><loc>https://toon.guidehollow.com/studio/</loc></url>
+  <url><loc>https://toon.guidehollow.com/about/</loc></url>
+  <url><loc>https://toon.guidehollow.com/episodes/ep01-office-cider/</loc></url>
+  <url><loc>https://toon.guidehollow.com/episodes/ep02-love-wedding/</loc></url>
+  <url><loc>https://toon.guidehollow.com/episodes/ep03-car-parking/</loc></url>
+  <url><loc>https://toon.guidehollow.com/episodes/ep04-mystery-mirror/</loc></url>
+  <url><loc>https://toon.guidehollow.com/episodes/ep05-finance-jeonse/</loc></url>
+  <url><loc>https://toon.guidehollow.com/episodes/ep06-secondhand-brick/</loc></url>
+  <url><loc>https://toon.guidehollow.com/episodes/ep07-cafe-receipt/</loc></url>
+  <url><loc>https://toon.guidehollow.com/episodes/ep08-upstairs-noise/</loc></url>
+  <url><loc>https://toon.guidehollow.com/episodes/ep09-groupbuy-scam/</loc></url>
+  <url><loc>https://toon.guidehollow.com/episodes/ep10-gym-refund/</loc></url>
 </urlset>
