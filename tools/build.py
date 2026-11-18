@@ -119,14 +119,8 @@ def _load_sheet(ep_num: int, half: str) -> Image.Image:
     return _SHEET_CACHE[path]
 
 
-def _slice_cell_b64(
-    ep_num: int,
-    cut_index_1based: int,
-    size: tuple[int, int],
-    centering: tuple[float, float] = (0.5, 0.35),
-    quality: int = 82,
-) -> str:
-    """Slice one cell from the episode's 3x3 AI sheet cleanly with divider borders trimmed."""
+def _crop_cell(ep_num: int, cut_index_1based: int) -> Image.Image:
+    """Slice one cell from the episode's 3x3 AI sheet cleanly with hairline borders trimmed."""
     half = "a" if cut_index_1based <= 9 else "b"
     cell_idx = (cut_index_1based - 1) if cut_index_1based <= 9 else (cut_index_1based - 10)
     sheet = _load_sheet(ep_num, half)
@@ -135,16 +129,49 @@ def _slice_cell_b64(
     row = cell_idx // 3
     cw = w / 3.0
     ch = h / 3.0
-    pad_x = cw * 0.048
-    pad_y = ch * 0.048
+    pad_x = cw * 0.032
+    pad_y = ch * 0.032
     box = (
         int(round(col * cw + pad_x)),
         int(round(row * ch + pad_y)),
         int(round((col + 1) * cw - pad_x)),
         int(round((row + 1) * ch - pad_y)),
     )
-    cropped = sheet.crop(box)
+    return sheet.crop(box)
+
+
+def _slice_cell_b64(
+    ep_num: int,
+    cut_index_1based: int,
+    size: tuple[int, int],
+    centering: tuple[float, float] = (0.5, 0.35),
+    quality: int = 84,
+) -> str:
+    """Fit one sliced webtoon cell into the target canvas size."""
+    cropped = _crop_cell(ep_num, cut_index_1based)
     fitted = ImageOps.fit(cropped, size, method=Image.Resampling.LANCZOS, centering=centering)
+    buf = io.BytesIO()
+    fitted.save(buf, format="JPEG", quality=quality, optimize=True)
+    return base64.b64encode(buf.getvalue()).decode("ascii")
+
+
+def _slice_zoom_inset_b64(
+    ep_num: int,
+    cut_index_1based: int,
+    size: tuple[int, int] = (192, 192),
+    quality: int = 84,
+) -> str:
+    """Create a tight zoomed crop inside the panel for 내일보관소-style corner inset frames."""
+    cropped = _crop_cell(ep_num, cut_index_1based)
+    cw, ch = cropped.size
+    zoom_box = (
+        int(round(cw * 0.26)),
+        int(round(ch * 0.28)),
+        int(round(cw * 0.74)),
+        int(round(ch * 0.68)),
+    )
+    focused = cropped.crop(zoom_box)
+    fitted = ImageOps.fit(focused, size, method=Image.Resampling.LANCZOS, centering=(0.5, 0.45))
     buf = io.BytesIO()
     fitted.save(buf, format="JPEG", quality=quality, optimize=True)
     return base64.b64encode(buf.getvalue()).decode("ascii")
@@ -154,7 +181,7 @@ def render_cover_svg(ep: dict) -> str:
     """Render an authentic clean comic.naver.com 480x620 poster with circle badge & title logo only."""
     w, h = 480, 620
     title_lines = wrap_ko(ep["title"], width=14, max_lines=3)
-    img_b64 = _slice_cell_b64(ep["episodeNo"], 1, (w, h), centering=(0.5, 0.25), quality=84)
+    img_b64 = _slice_cell_b64(ep["episodeNo"], 1, (w, h), centering=(0.5, 0.28), quality=84)
     badge = "신작" if ep["episodeNo"] <= 3 else "UP"
     badge_bg = "#00dc64" if badge == "신작" else "#ff3b30"
     badge_fg = "#111111" if badge == "신작" else "#ffffff"
@@ -181,70 +208,158 @@ def render_cover_svg(ep: dict) -> str:
     return "\n".join(parts)
 
 
+SCENE_LOCATION_KO = {
+    "office": "사무실 현장",
+    "messenger": "모바일 메시지·증거",
+    "darkroom": "야간 확인·추적",
+    "police": "수사·행정 접수",
+    "celebration": "사건 해결·일상 복귀",
+    "wedding": "예식장·정산 현장",
+    "parking": "주차장 대치 현장",
+    "apartment": "공동주택 현장",
+    "realestate": "공인중개소·등기 확인",
+    "parcel": "택배 개봉·검증",
+    "cafe": "매장 카운터 현장",
+    "living": "생활·계약 현장",
+    "gym": "체육시설·청구 확인",
+}
+
+CAMERA_CONTEXT_KO = {
+    "climax_impact": ("클라이맥스", "결정적 역전 순간이 벌어지는 핵심 장면입니다."),
+    "evidence_zoom": ("증거 포착", "객관적 숫자와 기록으로 반격을 준비하는 장면입니다."),
+    "split_versus": ("시선 대치", "상대방의 태도와 주인공의 대응이 엇갈리는 순간입니다."),
+    "closeup_villain": ("상대 반응", "상대의 표정과 언행이 그대로 드러나는 구간입니다."),
+    "closeup_hero": ("주인공 시점", "감정을 누르고 다음 행동을 판단하는 장면입니다."),
+    "wide": ("전체 상황", "공간과 인물 관계를 한눈에 보여주는 장면입니다."),
+}
+
+
 def render_panel_svg(ep: dict, idx: int, panel: dict, total: int) -> str:
-    """Render an authentic 690x1120 Naver Webtoon vertical white-paper panel with white gutters & oval bubbles."""
+    """Render an integrated full-bleed Korean webtoon panel where narration, bubbles, scene notes & inset sit INSIDE the illustration."""
     w, h = 690, 1120
     source_cut = int(panel.get("sourceCut", idx))
-    img_b64 = _slice_cell_b64(ep["episodeNo"], source_cut, (650, 740), centering=(0.5, 0.34), quality=82)
+    img_b64 = _slice_cell_b64(ep["episodeNo"], source_cut, (662, 1092), centering=(0.5, 0.38), quality=84)
     is_left = (idx % 2 == 1)
+    camera = str(panel.get("camera", "wide"))
+    emotion = str(panel.get("emotion", "calm_smirk"))
+    scene = str(panel.get("scene", "office"))
+    speaker = str(panel.get("speaker", ""))
+
+    has_inset = camera in ("climax_impact", "evidence_zoom") or emotion in ("shocked", "crying")
 
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img" aria-label="{esc(ep["title"])} {idx}컷">',
         f'<rect width="{w}" height="{h}" fill="#ffffff"/>',
+        '<defs>'
+        '<linearGradient id="wt-top-scrim" x1="0" y1="0" x2="0" y2="1">'
+        '<stop offset="0%" stop-color="#0f172a" stop-opacity="0.28"/>'
+        '<stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>'
+        '</linearGradient>'
+        '<linearGradient id="wt-bot-scrim" x1="0" y1="0" x2="0" y2="1">'
+        '<stop offset="0%" stop-color="#0f172a" stop-opacity="0"/>'
+        '<stop offset="100%" stop-color="#0f172a" stop-opacity="0.68"/>'
+        '</linearGradient>'
+        '</defs>',
+        # Full-bleed illustrated panel INSIDE the frame (matching 내일보관소 & 마지막상영 integrated aesthetic)
+        f'<image href="data:image/jpeg;base64,{img_b64}" x="14" y="14" width="662" height="1092" preserveAspectRatio="xMidYMid slice"/>',
+        '<rect x="14" y="14" width="662" height="190" fill="url(#wt-top-scrim)"/>',
+        '<rect x="14" y="886" width="662" height="220" fill="url(#wt-bot-scrim)"/>',
     ]
 
-    # Top narration box on clean white paper gutter (matching Naver Webtoon boxed narration)
-    sub_lines = wrap_ko(panel["subline"], width=27, max_lines=2)
-    if sub_lines:
-        n_h = 26 + len(sub_lines) * 26
+    # 1) Upper In-Artwork Warm Cream Narration Explanation Box (INSIDE illustration top edge)
+    sub_lines = wrap_ko(panel["subline"], width=30, max_lines=2)
+    act_short = str(panel.get("act", "본편")).split("·")[-1].strip()
+    n_h = 38 + len(sub_lines) * 25
+    parts.append(f'<rect x="31" y="31" width="634" height="{n_h}" rx="4" fill="#18181b" fill-opacity="0.28"/>')
+    parts.append(
+        f'<rect x="28" y="28" width="634" height="{n_h}" rx="4" fill="#fbf8f0" fill-opacity="0.95" stroke="#18181b" stroke-width="2"/>'
+    )
+    parts.append(
+        f'<rect x="38" y="34" width="154" height="20" rx="10" fill="#18181b"/>'
+        f'<text x="115" y="48" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="11.5" font-weight="800" fill="#00dc64">{idx:02d}/{total:02d}컷 · {esc(act_short)}</text>'
+    )
+    for s_idx, s_line in enumerate(sub_lines):
         parts.append(
-            f'<rect x="115" y="14" width="460" height="{n_h}" fill="#ffffff" stroke="#111111" stroke-width="2"/>'
+            f'<text x="345" y="{76 + s_idx * 25}" text-anchor="middle" '
+            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="17" font-weight="700" fill="#18181b">{esc(s_line)}</text>'
         )
-        for s_idx, s_line in enumerate(sub_lines):
-            parts.append(
-                f'<text x="345" y="{42 + s_idx * 26}" text-anchor="middle" '
-                f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="18.5" font-weight="700" fill="#111111">{esc(s_line)}</text>'
-            )
 
-    # Sharp rectangular AI illustration panel on pure white paper (y=220..960)
-    parts.append(
-        f'<image href="data:image/jpeg;base64,{img_b64}" x="20" y="220" width="650" height="740" preserveAspectRatio="xMidYMid slice"/>'
-    )
-    parts.append(
-        '<rect x="20" y="220" width="650" height="740" fill="none" stroke="#111111" stroke-width="2.2"/>'
-    )
-
-    # Authentic white oval comic speech bubble hovering smoothly from top white gutter into upper panel
-    d_lines = wrap_ko(panel["line"], width=16, max_lines=3)
-    bw = 340
-    bh = 36 + len(d_lines) * 28
-    bx = 44 if is_left else 306
-    by = 104
+    # 2) In-Artwork Organic Comic Speech Bubble (INSIDE upper atmospheric headroom)
+    d_lines = wrap_ko(panel["line"], width=17, max_lines=3)
+    bw = 396
+    bh = 48 + len(d_lines) * 27
+    bx = 28 if is_left else 266
+    by = 28 + n_h + 14
     tx = bx + (bw * 2 // 3 if is_left else bw // 3)
+    is_hero = speaker.startswith("나(") or "신부" in speaker or "사장" in speaker
+    is_sys = any(k in speaker for k in ("증거", "알림", "청구", "발령", "공문", "원칙", "팀", "창구", "면", "확인"))
+    spk_bg = "#ecfdf5" if is_hero else ("#eff6ff" if is_sys else "#fef2f2")
+    spk_fg = "#047857" if is_hero else ("#1d4ed8" if is_sys else "#b91c1c")
+
+    parts.append(f'<rect x="{bx + 3}" y="{by + 4}" width="{bw}" height="{bh}" rx="34" fill="#18181b" fill-opacity="0.24"/>')
     parts.append(
-        f'<rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="{bh // 2}" fill="#ffffff" stroke="#111111" stroke-width="2.2"/>'
+        f'<rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="34" fill="#ffffff" fill-opacity="0.97" stroke="#18181b" stroke-width="2.2"/>'
     )
     parts.append(
-        f'<polygon points="{tx-10},{by+bh-1} {tx+2},{by+bh+28} {tx+14},{by+bh-1}" fill="#ffffff" stroke="#111111" stroke-width="2" stroke-linejoin="round"/>'
+        f'<polygon points="{tx - 11},{by + bh - 1} {tx + (14 if is_left else -14)},{by + bh + 32} {tx + 12},{by + bh - 1}" fill="#ffffff" stroke="#18181b" stroke-width="2.1" stroke-linejoin="round"/>'
     )
-    parts.append(f'<rect x="{tx-8}" y="{by+bh-5}" width="20" height="8" fill="#ffffff"/>')
+    parts.append(f'<rect x="{tx - 9}" y="{by + bh - 5}" width="20" height="8" fill="#ffffff"/>')
+    pill_w = min(210, max(90, len(speaker) * 14 + 28))
+    parts.append(
+        f'<rect x="{bx + 20}" y="{by + 9}" width="{pill_w}" height="21" rx="10" fill="{spk_bg}"/>'
+        f'<text x="{bx + 20 + pill_w // 2}" y="{by + 23.5}" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="11.5" font-weight="800" fill="{spk_fg}">{esc(speaker)}</text>'
+    )
     for d_idx, d_line in enumerate(d_lines):
         parts.append(
-            f'<text x="{bx + bw // 2}" y="{by + 36 + d_idx * 28}" text-anchor="middle" '
-            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="20" font-weight="800" fill="#111111">{esc(d_line)}</text>'
+            f'<text x="{bx + bw // 2}" y="{by + 54 + d_idx * 27}" text-anchor="middle" '
+            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="19.5" font-weight="800" fill="#111111">{esc(d_line)}</text>'
         )
 
-    # Hand-lettered comic SFX with thick white halo stroke (no red UI button)
+    # 3) In-Artwork SFX (mid-side action zone inside illustration)
     sfx = panel.get("sfx", "")
     if sfx:
-        sx = 575 if is_left else 115
-        rot = -8 if is_left else 7
+        sx = 562 if is_left else 128
+        sy = 785 if has_inset and not is_left else 745
+        rot = -9 if is_left else 8
         parts.append(
-            f'<text x="{sx}" y="932" text-anchor="middle" transform="rotate({rot} {sx} 932)" '
-            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="38" font-weight="900" '
-            f'fill="#111111" stroke="#ffffff" stroke-width="10" stroke-linejoin="round" paint-order="stroke fill">{esc(sfx)}</text>'
+            f'<text x="{sx}" y="{sy}" text-anchor="middle" transform="rotate({rot} {sx} {sy})" '
+            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="36" font-weight="900" '
+            f'fill="#18181b" stroke="#fffbeb" stroke-width="9" stroke-linejoin="round" paint-order="stroke fill">{esc(sfx)}</text>'
         )
 
+    # 4) Bottom In-Artwork Corner Inset Zoom (내일보관소-style dramatic close-up overlay inside painting)
+    if has_inset:
+        inset_b64 = _slice_zoom_inset_b64(ep["episodeNo"], source_cut, (184, 184), quality=84)
+        ix, iy, iw, ih = 474, 902, 184, 184
+        parts.append(f'<rect x="{ix + 3}" y="{iy + 3}" width="{iw}" height="{ih}" fill="#18181b" fill-opacity="0.35"/>')
+        parts.append(f'<rect x="{ix - 3}" y="{iy - 3}" width="{iw + 6}" height="{ih + 6}" fill="#ffffff" stroke="#18181b" stroke-width="2.2"/>')
+        parts.append(f'<image href="data:image/jpeg;base64,{inset_b64}" x="{ix}" y="{iy}" width="{iw}" height="{ih}" preserveAspectRatio="xMidYMid slice"/>')
+        parts.append(
+            f'<rect x="{ix + 6}" y="{iy + 6}" width="64" height="19" rx="3" fill="#18181b" fill-opacity="0.86"/>'
+            f'<text x="{ix + 38}" y="{iy + 19}" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="10.5" font-weight="800" fill="#00dc64">확대 포착</text>'
+        )
+
+    # 5) Lower-Left In-Artwork Scene & Evidence Explanation Plaque (INSIDE illustration)
+    scene_ko = SCENE_LOCATION_KO.get(scene, "현장 상황")
+    cam_tag, cam_desc = CAMERA_CONTEXT_KO.get(camera, ("장면 안내", "상황 전개를 확인하는 장면입니다."))
+    note_w = 424 if has_inset else 634
+    accent_col = "#00dc64" if emotion == "calm_smirk" else ("#f59e0b" if emotion in ("determined", "shocked") else "#ef4444")
+    note_lines = wrap_ko(f"{cam_desc}", width=(24 if has_inset else 36), max_lines=2)
+    note_h = 46 + len(note_lines) * 21
+    ny = 1090 - note_h
+    parts.append(f'<rect x="30" y="{ny + 3}" width="{note_w}" height="{note_h}" rx="4" fill="#18181b" fill-opacity="0.32"/>')
+    parts.append(f'<rect x="28" y="{ny}" width="{note_w}" height="{note_h}" rx="4" fill="#fbf8f0" fill-opacity="0.94" stroke="#18181b" stroke-width="1.8"/>')
+    parts.append(f'<rect x="28" y="{ny}" width="6" height="{note_h}" fill="{accent_col}"/>')
+    parts.append(
+        f'<text x="44" y="{ny + 22}" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="12.5" font-weight="900" fill="#18181b">장면 설명 · {esc(scene_ko)} · {esc(cam_tag)}</text>'
+    )
+    for nl_idx, nl in enumerate(note_lines):
+        parts.append(
+            f'<text x="44" y="{ny + 43 + nl_idx * 21}" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="13.5" font-weight="600" fill="#334155">{esc(nl)}</text>'
+        )
+
+    # Crisp comic ink border over all interior artwork layers
+    parts.append('<rect x="14" y="14" width="662" height="1092" fill="none" stroke="#18181b" stroke-width="2.6"/>')
     parts.append("</svg>")
     return "\n".join(parts)
 
@@ -357,8 +472,8 @@ body.viewer-body { background: #ffffff; color: #111111; }
 .comic-cut { width: 100%; margin: 0; padding: 0; background: #ffffff; }
 .comic-cut img { width: 100%; height: auto; display: block; }
 
-.float-scroll-nav { position: fixed; right: 20px; bottom: 24px; z-index: 80; display: flex; flex-direction: column; gap: 8px; }
-.float-circle { width: 42px; height: 42px; border-radius: 50%; background: #ffffff; border: 1px solid #d9d9d9; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #333333; cursor: pointer; }
+.float-scroll-nav { position: fixed; right: 12px; bottom: 14px; z-index: 80; display: flex; flex-direction: column; gap: 6px; opacity: 0.86; }
+.float-circle { width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, 0.92); border: 1px solid #d9d9d9; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #333333; cursor: pointer; }
 
 .reader-post { max-width: 690px; margin: 20px auto 64px; display: flex; flex-direction: column; gap: 18px; padding: 0 12px; }
 .nv-box { background: #ffffff; border: 1px solid #ebebeb; border-radius: 6px; padding: 20px; }
@@ -667,9 +782,29 @@ def _footer_html() -> str:
   <script src="/assets/viewer.js"></script>"""
 
 
+RELATED_COUPANG_INDICES = [
+    [0, 5, 6],  # EP01 직장: 무선키보드 · 기록문구 · 간식
+    [1, 4, 8],  # EP02 결혼·수납: 수납장 · 신혼주방 · 여행캐리어
+    [2, 8, 5],  # EP03 주차·운전: 차량루프랙 · 여행캐리어 · 분쟁문구
+    [3, 7, 1],  # EP04 자취·보안: 공기청정기 · 고밀도매트 · 수납정리
+    [4, 7, 3],  # EP05 전세·이사: 이사주방 · 고밀도매트 · 공기청정기
+    [5, 0, 8],  # EP06 중고거래: 포장라벨문구 · 무선키보드 · 정식캐리어
+    [6, 0, 5],  # EP07 카페알바: 휴식간식 · 카운터키보드 · 영수증문구
+    [7, 3, 1],  # EP08 층간소음: 소음매트 · 공기청정기 · 수납정리
+    [8, 5, 0],  # EP09 공구먹튀: 정식캐리어 · 증빙문구 · 무선키보드
+    [9, 7, 6],  # EP10 헬스건강: 산책하네스 · 홈트매트 · 건강간식
+]
+
+
 def _coupang_item_for(episodes: list[dict], idx: int) -> dict:
     ep = episodes[idx % len(episodes)]
     return ep["coupang"]
+
+
+def _thematic_coupang_for(episodes: list[dict], ep_idx: int, slot_offset: int) -> dict:
+    group = RELATED_COUPANG_INDICES[ep_idx % len(RELATED_COUPANG_INDICES)]
+    target_idx = group[slot_offset % len(group)]
+    return episodes[target_idx]["coupang"]
 
 
 def _render_wing_card_html(coup: dict) -> str:
@@ -689,11 +824,13 @@ def _render_wing_card_html(coup: dict) -> str:
     )
 
 
-def _render_wing_aside(episodes: list[dict], start_idx: int, side: str) -> str:
-    cards = "\n".join(
-        _render_wing_card_html(_coupang_item_for(episodes, start_idx + offset))
-        for offset in range(2)
-    )
+def _render_wing_aside(episodes: list[dict], start_idx: int, side: str, thematic_ep_idx: int | None = None) -> str:
+    if thematic_ep_idx is not None:
+        offsets = [0, 1] if side == "left" else [2, 0]
+        items = [_thematic_coupang_for(episodes, thematic_ep_idx, off) for off in offsets]
+    else:
+        items = [_coupang_item_for(episodes, start_idx + offset) for offset in range(2)]
+    cards = "\n".join(_render_wing_card_html(coup) for coup in items)
     aria = "좌측 여백 생활 추천 상품" if side == "left" else "우측 여백 생활 추천 상품"
     return f'<aside class="wing-ad wing-ad-{side}" aria-label="{aria}">\n{cards}\n</aside>'
 
@@ -903,10 +1040,10 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
     prev_ep = episodes[idx - 1] if idx > 0 else episodes[-1]
     next_ep = episodes[idx + 1] if idx + 1 < len(episodes) else episodes[0]
     total = len(ep["panels"])
-    mobile_top_slot = _coupang_item_for(episodes, idx + 4)
+    mobile_top_slot = ep["coupang"]
     mid_slot_a = ep["coupang"]
-    mid_slot_b = _coupang_item_for(episodes, idx + 2)
-    end_slot = _coupang_item_for(episodes, idx + 6)
+    mid_slot_b = _thematic_coupang_for(episodes, idx, 1)
+    end_slot = _thematic_coupang_for(episodes, idx, 2)
     ep_options = "\n".join(
         f'<option value="/episodes/{esc(item["id"])}/"{" selected" if item["id"] == eid else ""}>{item["episodeNo"]:02d}화 ({item["cutCount"]}컷) · {esc(item["genre"])}</option>'
         for item in episodes
@@ -921,7 +1058,7 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
     for c_idx, p in enumerate(ep["panels"], start=1):
         cuts_html.append(
             f'<div class="comic-cut" data-cut-num="{c_idx}">'
-            f'  <img src="/assets/toons/{esc(eid)}/cut-{c_idx:02d}.svg" alt="{esc(ep["title"])} {c_idx}컷 - {esc(p["line"])}" width="690" height="1120" loading="{"eager" if c_idx <= 3 else "lazy"}" />'
+            f'  <img src="/assets/toons/{esc(eid)}/cut-{c_idx:02d}.svg" alt="{esc(ep["title"])} {c_idx}컷 - {esc(p["line"])}" width="690" height="1120" loading="{"eager" if c_idx == 1 else "lazy"}" />'
             f'</div>'
         )
         if c_idx == 4:
@@ -969,13 +1106,13 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
     </div>
 
     <div class="viewer-stage">
-{_render_wing_aside(episodes, idx + 1, "left")}
+{_render_wing_aside(episodes, idx, "left", thematic_ep_idx=idx)}
       <div style="min-width:0;">
         <article class="comic-canvas" aria-label="웹툰 본문 세로 스크롤">
 {chr(10).join(cuts_html)}
         </article>
       </div>
-{_render_wing_aside(episodes, idx + 5, "right")}
+{_render_wing_aside(episodes, idx, "right", thematic_ep_idx=idx)}
     </div>
 
     <div class="float-scroll-nav" aria-label="스크롤 이동 버튼">
