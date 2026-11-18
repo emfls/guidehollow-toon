@@ -81,7 +81,11 @@ def test_build_portal_matches_comic_naver_and_no_fake_server() -> None:
         assert "data:image/webp;base64," in cover_xml
         for marker in FORBIDDEN_UX_MARKERS:
             assert marker not in cover_xml
-        ET.fromstring(cover_xml)
+        cov_root = ET.fromstring(cover_xml)
+        cov_desc = "".join(el.text or "" for el in cov_root.iter("{http://www.w3.org/2000/svg}desc"))
+        if "…" not in ep["title"]:
+            assert "…" not in cov_desc
+        assert " ".join(ep["title"].split()) in " ".join(cov_desc.split())
 
         ep_html = (DIST / "episodes" / eid / "index.html").read_text(encoding="utf-8")
         assert "act-gutter" not in ep_html

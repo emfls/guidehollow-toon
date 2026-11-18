@@ -198,12 +198,12 @@ def render_cover_assets(ep: dict) -> tuple[bytes, str]:
     draw = ImageDraw.Draw(canvas)
 
     badge_font = _load_ko_font(20, "extrabold")
-    title_font = _load_ko_font(40, "extrabold")
+    title_font = _load_ko_font(35, "extrabold")
     draw.ellipse((26, 26, 94, 94), fill=(0, 220, 100, 255))
     draw.text((60, 60), "단편", font=badge_font, fill=(17, 17, 17, 255), anchor="mm")
 
-    title_lines = wrap_ko(ep["title"], width=14, max_lines=3)
-    line_h = 52
+    title_lines = wrap_ko(ep["title"], width=17, max_lines=4, strict=True)
+    line_h = 46
     base_y = h - 42 - (len(title_lines) - 1) * line_h
     for idx, line in enumerate(title_lines):
         draw.text(
