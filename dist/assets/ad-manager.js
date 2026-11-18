@@ -32,11 +32,22 @@
     const badge = el.getAttribute("data-badge") || "상황 맞춤 추천";
     const guideUrl = el.getAttribute("data-guide-url") || "https://shopping.guidehollow.com/";
     const guideLabel = el.getAttribute("data-guide-label") || "구매 가이드";
+    const variant = el.getAttribute("data-gh-slot-variant") || "banner";
+    if (variant === "wing") {
+      el.innerHTML =
+        '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
+        '<div class="wing-badge">' + esc(badge) + '</div>' +
+        '<div class="wing-title">' + esc(title) + '</div>' +
+        '<div class="wing-reason">' + esc(reason) + '</div>' +
+        '<a class="wing-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
+        '<a class="wing-guide" href="' + esc(guideUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(guideLabel) + ' →</a>';
+      return;
+    }
     el.innerHTML =
       '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
       '<div class="coupang-banner">' +
       '  <div style="font-size:12px;font-weight:800;color:#059669;">' + esc(badge) + '</div>' +
-      '  <div style="font-size:16.5px;font-weight:800;color:#111111;">' + esc(title) + '</div>' +
+      '  <div style="font-size:16px;font-weight:800;color:#111111;">' + esc(title) + '</div>' +
       '  <div style="font-size:13.5px;color:#555555;">' + esc(reason) + '</div>' +
       '  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">' +
       '    <a class="coupang-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
@@ -58,7 +69,11 @@
         renderAdSenseSlot(el, el.getAttribute("data-ad-layout") || "auto");
       });
     } else {
-      document.querySelectorAll("[data-gh-ad-slot]").forEach(renderCoupangSlot);
+      document.querySelectorAll("[data-gh-ad-slot]").forEach(function (el) {
+        if (!el.querySelector(".coupang-banner, .wing-cta")) {
+          renderCoupangSlot(el);
+        }
+      });
     }
   });
 })();
