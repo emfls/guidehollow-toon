@@ -15,7 +15,6 @@ a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; height: auto; }
 .wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 16px; }
 
-/* Naver Webtoon Top GNB */
 .nv-gnb { position: sticky; top: 0; z-index: 60; background: #ffffff; border-bottom: 1px solid var(--line); }
 .nv-gnb-inner { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 60px; flex-wrap: wrap; padding: 8px 0; }
 .nv-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 900; font-size: 19px; letter-spacing: -0.03em; }
@@ -25,13 +24,11 @@ img { display: block; max-width: 100%; height: auto; }
 .nv-nav a { font-size: 15px; font-weight: 700; color: #374151; padding: 8px 2px; border-bottom: 3px solid transparent; }
 .nv-nav a.active, .nv-nav a:hover { color: #00b853; border-bottom-color: var(--nv-green); }
 
-/* Genre Filter Tabs */
 .nv-subbar { background: #ffffff; border-bottom: 1px solid var(--line); overflow-x: auto; }
 .nv-tabs { display: flex; align-items: center; gap: 8px; padding: 10px 0; min-width: max-content; }
 .nv-tab-btn { border: 1px solid #e5e8eb; background: #f8f9fa; color: #374151; font-weight: 700; font-size: 13.5px; border-radius: 999px; padding: 7px 14px; cursor: pointer; font-family: inherit; }
 .nv-tab-btn.is-active { background: #111827; border-color: #111827; color: #ffffff; }
 
-/* Today Spotlight Banner */
 .hero-spot { margin-top: 18px; background: linear-gradient(125deg, #0b1120 0%, #172554 55%, #064e3b 100%); border-radius: 16px; padding: 22px; color: #ffffff; display: grid; grid-template-columns: 180px 1fr; gap: 22px; align-items: center; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14); }
 .hero-cover { width: 180px; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45); border: 2px solid rgba(255, 255, 255, 0.16); }
 .hero-kicker { display: inline-flex; align-items: center; gap: 8px; background: var(--nv-red); color: #ffffff; font-size: 12px; font-weight: 900; border-radius: 6px; padding: 4px 10px; margin-bottom: 10px; }
@@ -42,7 +39,6 @@ img { display: block; max-width: 100%; height: auto; }
 .btn-nv:hover { background: #14eb74; }
 .hero-meta { font-size: 13.5px; color: #fde047; font-weight: 800; }
 
-/* 3:4 Naver Webtoon Poster Grid */
 .sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 28px 0 14px; flex-wrap: wrap; }
 .sec-title { margin: 0; font-size: 20px; font-weight: 900; letter-spacing: -0.02em; }
 .sec-sub { font-size: 13px; color: var(--ink-muted); font-weight: 600; }
@@ -58,7 +54,6 @@ img { display: block; max-width: 100%; height: auto; }
 .poster-stats { font-size: 12px; font-weight: 800; color: #d97706; display: flex; align-items: center; gap: 8px; }
 .poster-stats span.views { color: #6b7280; font-weight: 600; }
 
-/* Naver Webtoon Episode List Table */
 .ep-table-box { background: #ffffff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 32px; }
 .ep-row { display: grid; grid-template-columns: 84px 1fr 110px 94px; gap: 14px; align-items: center; padding: 14px 16px; border-bottom: 1px solid #f1f5f9; transition: background 0.14s ease; }
 .ep-row:last-child { border-bottom: 0; }
@@ -72,7 +67,6 @@ img { display: block; max-width: 100%; height: auto; }
 .ep-row-len { font-size: 12px; color: #64748b; font-weight: 700; display: block; }
 .ep-row-cta { text-align: center; font-size: 13px; font-weight: 800; background: var(--nv-green); color: #052e16; padding: 8px 10px; border-radius: 6px; }
 
-/* Immersive Vertical Webtoon Viewer */
 body.viewer-body { background: var(--viewer-bg); color: #f8fafc; }
 body.viewer-body.light-mode { background: #f3f4f6; color: #111827; }
 .read-progress { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 90; background: rgba(255, 255, 255, 0.12); }
@@ -89,19 +83,18 @@ body.viewer-body.light-mode .viewer-back { background: #f1f5f9; color: #111827; 
 body.viewer-body.light-mode .ctrl-btn { background: #ffffff; color: #111827; border-color: #d1d5db; }
 .ctrl-btn.primary { background: var(--nv-green); color: #052e16; border-color: var(--nv-green); }
 
-/* Vertical Full-Bleed Webtoon Canvas (18 Cuts Stacked Seamlessly) */
 .ep-intro-strip { max-width: 720px; margin: 16px auto 12px; padding: 16px 18px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; }
 body.viewer-body.light-mode .ep-intro-strip { background: #ffffff; border-color: #e5e8eb; }
 .ep-intro-strip h2 { margin: 0 0 8px; font-size: clamp(19px, 3vw, 24px); font-weight: 900; line-height: 1.35; }
 .ep-intro-strip p { margin: 0; font-size: 14.5px; color: #cbd5e1; }
 body.viewer-body.light-mode .ep-intro-strip p { color: #475569; }
+.ai-disclosure-sm { margin-top: 8px; font-size: 11.5px; color: #8b95a1; }
 .comic-canvas { width: 100%; max-width: 720px; margin: 0 auto; background: #000000; box-shadow: 0 0 40px rgba(0, 0, 0, 0.55); }
 .comic-cut { width: 100%; margin: 0; padding: 0; background: #000000; }
 .comic-cut img { width: 100%; height: auto; display: block; }
 .act-gutter { padding: 18px 16px 10px; text-align: center; background: #05070b; color: var(--nv-green); font-size: 12.5px; font-weight: 900; letter-spacing: 0.08em; border-top: 1px solid #1e293b; }
 .cut-float-counter { position: fixed; right: 16px; bottom: 72px; z-index: 65; background: rgba(11, 15, 25, 0.88); color: #00dc64; font-size: 12px; font-weight: 900; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(0, 220, 100, 0.4); }
 
-/* Reader Footer: Rating + Next Preview + Comments + Guide */
 .reader-post { max-width: 720px; margin: 20px auto 90px; display: flex; flex-direction: column; gap: 16px; padding: 0 12px; }
 .nv-box { background: #ffffff; color: #111827; border: 1px solid #e5e8eb; border-radius: 14px; padding: 20px; }
 .rate-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }

@@ -1,5 +1,4 @@
 (function () {
-  // Genre Filter on Home / Studio
   const tabs = document.querySelectorAll(".nv-tab-btn");
   const cards = document.querySelectorAll("[data-genre-item]");
   tabs.forEach(function (btn) {
@@ -14,7 +13,6 @@
     });
   });
 
-  // Reading Progress + Cut Counter on Episode Page
   const fill = document.getElementById("read-progress-fill");
   const cutLabel = document.getElementById("cut-float-counter");
   const cuts = Array.from(document.querySelectorAll(".comic-cut"));
@@ -34,7 +32,6 @@
     }, { passive: true });
   }
 
-  // Light / Dark Mode Toggle
   const modeBtn = document.getElementById("toggle-theme-btn");
   if (modeBtn) {
     modeBtn.addEventListener("click", function () {
@@ -43,7 +40,6 @@
     });
   }
 
-  // Star Rating Feedback
   const rateMsg = document.getElementById("star-msg");
   document.querySelectorAll(".star-btn").forEach(function (btn) {
     btn.addEventListener("click", function () {
@@ -52,7 +48,6 @@
     });
   });
 
-  // Interactive Reader Comment Append
   const cForm = document.getElementById("reader-comment-form");
   const cInput = document.getElementById("reader-comment-input");
   const cList = document.getElementById("comment-list");
