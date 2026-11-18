@@ -57,6 +57,10 @@ def test_build_portal_matches_comic_naver_and_no_fake_server() -> None:
     assert "wing-ad-left" in home_html
     assert "wing-ad-right" in home_html
     assert "coupang-strip-box" in home_html
+    assert "ad-thumb-img" in home_html
+    assert "promo-event-banner" in home_html
+    assert "pick-goldbox.webp" in home_html
+    assert (DIST / "assets" / "ads" / "pick-goldbox.webp").exists()
     for marker in DISALLOWED_EDITOR_MARKERS + DISALLOWED_FAKE_SERVER_MARKERS + FORBIDDEN_UX_MARKERS + ["★", "조회 482만"]:
         assert marker not in home_html
         assert marker not in studio_html
@@ -97,7 +101,11 @@ def test_build_portal_matches_comic_naver_and_no_fake_server() -> None:
         assert "ep-mid-cut4" in ep_html
         assert "ep-mid-cut9" in ep_html
         assert "ep-bottom" in ep_html
+        assert "ad-thumb-img" in ep_html
+        assert "promo-event-banner" in ep_html
         assert ep["coupang"]["url"] in ep_html
+        assert ep["coupang"]["image"] in ep_html
+        assert (DIST / ep["coupang"]["image"].lstrip("/")).exists()
         assert "G-QP5Q67GE5B" in ep_html
         for marker in DISALLOWED_EDITOR_MARKERS + DISALLOWED_FAKE_SERVER_MARKERS + FORBIDDEN_UX_MARKERS + ["★", "베스트 댓글", "+ 관심"]:
             assert marker not in ep_html

@@ -49,6 +49,7 @@ EPISODES: list[dict[str, Any]] = [
             "url": "https://link.coupang.com/a/iG9mTjBUg8",
             "guideUrl": "https://shopping.guidehollow.com/guides/digital",
             "guideLabel": "구매 전 무선 키보드 5대 체크 가이드",
+            "image": "/assets/ads/pick-digital-keyboard.webp",
         },
         "guideTitle": "부당한 무급 주말출근·임금체불 요구를 받았을 때 합법적으로 정산받는 4단계 기준",
         "guideBody": (
@@ -108,6 +109,7 @@ EPISODES: list[dict[str, Any]] = [
             "url": "https://link.coupang.com/a/iG9mVheC0i",
             "guideUrl": "https://shopping.guidehollow.com/guides/living",
             "guideLabel": "구매 전 수납가구 규격 확인 가이드",
+            "image": "/assets/ads/pick-living-rack.webp",
         },
         "guideTitle": "예식 보증인원 손실·식권 분쟁을 사전에 막고 깔끔하게 정산하는 현실 체크포인트",
         "guideBody": (
@@ -168,6 +170,7 @@ EPISODES: list[dict[str, Any]] = [
             "url": "https://link.coupang.com/a/iG9otClG7U",
             "guideUrl": "https://shopping.guidehollow.com/guides/auto",
             "guideLabel": "차량 상단 적재·루프랙 안전 기준 보기",
+            "image": "/assets/ads/pick-auto-rack.webp",
         },
         "guideTitle": "악성 이중주차로 출근·영업에 차질이 생겼을 때 역고소 없이 보상받는 절차",
         "guideBody": (
@@ -227,6 +230,7 @@ EPISODES: list[dict[str, Any]] = [
             "url": "https://link.coupang.com/a/iG9mZqYo6S",
             "guideUrl": "https://shopping.guidehollow.com/guides/appliances",
             "guideLabel": "가전 평형·필터 유지비 확인 가이드",
+            "image": "/assets/ads/pick-appliances-purifier.webp",
         },
         "guideTitle": "자취방 입주 및 중고 가구·거울 무료나눔 거래 시 반드시 점검해야 할 안전 수칙",
         "guideBody": (
@@ -286,6 +290,7 @@ EPISODES: list[dict[str, Any]] = [
             "url": "https://link.coupang.com/a/iG9mXT9nRA",
             "guideUrl": "https://shopping.guidehollow.com/guides/kitchen",
             "guideLabel": "인덕션 바닥 호환·코팅 수명 비교표",
+            "image": "/assets/ads/pick-kitchen-glass.webp",
         },
         "guideTitle": "전세·월세 잔금 이체 10분 전, 내 전 재산을 지키는 필수 특약과 등기부 확인법",
         "guideBody": (
@@ -345,6 +350,7 @@ EPISODES: list[dict[str, Any]] = [
             "url": "https://link.coupang.com/a/iG9orI6mBw",
             "guideUrl": "https://shopping.guidehollow.com/guides/stationery",
             "guideLabel": "문구·만년필 컨버터 호환 규격 체크",
+            "image": "/assets/ads/pick-stationery-pen.webp",
         },
         "guideTitle": "고액 전자기기 중고 택배 분쟁 시 사실관계 입증에 도움이 될 수 있는 기록 3가지",
         "guideBody": (
@@ -405,6 +411,7 @@ EPISODES: list[dict[str, Any]] = [
             "url": "https://link.coupang.com/a/iG9oj0f3Yq",
             "guideUrl": "https://shopping.guidehollow.com/guides/food",
             "guideLabel": "포장 식품 영양·기준량 확인 가이드",
+            "image": "/assets/ads/pick-food-nuts.webp",
         },
         "guideTitle": "매장·알바 근무 중 폭언·물건 투척 진상 고객을 마주쳤을 때 사업주·근로자 대응 수칙",
         "guideBody": (
@@ -464,6 +471,7 @@ EPISODES: list[dict[str, Any]] = [
             "url": "https://link.coupang.com/a/iG9onWjzoG",
             "guideUrl": "https://shopping.guidehollow.com/guides/sports",
             "guideLabel": "매트 두께·밀도 구매 전 비교 가이드",
+            "image": "/assets/ads/pick-sports-mat.webp",
         },
         "guideTitle": "층간소음 분쟁 시 스토킹·주거침입 역고소 피하면서 확실히 개선시키는 합법 절차",
         "guideBody": (
@@ -523,6 +531,7 @@ EPISODES: list[dict[str, Any]] = [
             "url": "https://link.coupang.com/a/iG9opJRVv2",
             "guideUrl": "https://shopping.guidehollow.com/guides/travel",
             "guideLabel": "기내용 캐리어 규격·바퀴 체크 가이드",
+            "image": "/assets/ads/pick-travel-organizer.webp",
         },
         "guideTitle": "개인 간 공동구매·계좌이체 먹튀 피해를 막고 2주 안에 빠르게 회수하는 실전 체크",
         "guideBody": (
@@ -582,6 +591,7 @@ EPISODES: list[dict[str, Any]] = [
             "url": "https://link.coupang.com/a/iG9olY6QQ8",
             "guideUrl": "https://shopping.guidehollow.com/guides/pets",
             "guideLabel": "체중 대신 가슴둘레 실측 하네스 가이드",
+            "image": "/assets/ads/pick-pets-harness.webp",
         },
         "guideTitle": "헬스장·피부관리실 장기 회원권 계약 전 반드시 알아야 할 '신용카드 할부항변권'",
         "guideBody": (

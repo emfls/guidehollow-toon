@@ -32,10 +32,12 @@
     const badge = el.getAttribute("data-badge") || "상황 맞춤 추천";
     const guideUrl = el.getAttribute("data-guide-url") || "https://shopping.guidehollow.com/";
     const guideLabel = el.getAttribute("data-guide-label") || "구매 가이드";
+    const img = el.getAttribute("data-image") || "/assets/ads/pick-goldbox.webp";
     const variant = el.getAttribute("data-gh-slot-variant") || "banner";
     if (variant === "wing") {
       el.innerHTML =
         '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
+        '<div class="ad-thumb-wrap"><img class="ad-thumb-img" src="' + esc(img) + '" alt="' + esc(title) + '" width="640" height="420" loading="lazy" /></div>' +
         '<div class="wing-badge">' + esc(badge) + '</div>' +
         '<div class="wing-title">' + esc(title) + '</div>' +
         '<div class="wing-reason">' + esc(reason) + '</div>' +
@@ -46,12 +48,15 @@
     el.innerHTML =
       '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
       '<div class="coupang-banner">' +
-      '  <div style="font-size:12px;font-weight:800;color:#059669;">' + esc(badge) + '</div>' +
-      '  <div style="font-size:16px;font-weight:800;color:#111111;">' + esc(title) + '</div>' +
-      '  <div style="font-size:13.5px;color:#555555;">' + esc(reason) + '</div>' +
-      '  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">' +
-      '    <a class="coupang-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
-      '    <a style="display:inline-flex;align-items:center;font-size:13px;font-weight:700;color:#2563eb;" href="' + esc(guideUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(guideLabel) + ' →</a>' +
+      '  <div class="ad-thumb-wrap"><img class="ad-thumb-img" src="' + esc(img) + '" alt="' + esc(title) + '" width="640" height="420" loading="lazy" /></div>' +
+      '  <div class="coupang-banner-body">' +
+      '    <div style="font-size:12px;font-weight:800;color:#059669;">' + esc(badge) + '</div>' +
+      '    <div style="font-size:16px;font-weight:800;color:#111111;">' + esc(title) + '</div>' +
+      '    <div style="font-size:13.5px;color:#555555;">' + esc(reason) + '</div>' +
+      '    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">' +
+      '      <a class="coupang-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
+      '      <a style="display:inline-flex;align-items:center;font-size:13px;font-weight:700;color:#2563eb;" href="' + esc(guideUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(guideLabel) + ' →</a>' +
+      '    </div>' +
       '  </div>' +
       '</div>';
   }

@@ -521,14 +521,27 @@ body.viewer-body { background: #ffffff; color: #111111; }
 .next-ep-banner img { width: 72px; height: 92px; object-fit: cover; border-radius: 4px; }
 .ad-box { background: #ffffff; border: 1px solid #ebebeb; border-radius: 6px; padding: 18px; }
 .ad-disclosure { font-size: 11px; color: #595959; margin-bottom: 6px; line-height: 1.4; }
-.coupang-banner { display: grid; gap: 8px; }
+.ad-thumb-wrap { overflow: hidden; border-radius: 6px; border: 1px solid #e5e7eb; background: #f8fafc; }
+.ad-thumb-img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+.coupang-banner { display: grid; grid-template-columns: 156px minmax(0, 1fr); gap: 14px; align-items: center; }
+.coupang-banner-body { display: grid; gap: 6px; min-width: 0; }
 .coupang-cta { display: inline-flex; align-items: center; justify-content: center; background: #111111; color: #ffffff; font-weight: 700; font-size: 13.5px; padding: 9px 15px; border-radius: 4px; }
+
+.promo-event-banner { margin: 20px 0; padding: 16px 18px; border-radius: 8px; border: 1.5px solid #f59e0b; background: linear-gradient(135deg, #fffbeb 0%, #ffffff 55%, #ecfdf5 100%); display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; align-items: center; box-shadow: 0 2px 10px rgba(17, 17, 17, 0.04); }
+.promo-event-media { overflow: hidden; border-radius: 6px; border: 1px solid #fde68a; background: #ffffff; }
+.promo-event-media img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+.promo-event-body { display: grid; gap: 6px; min-width: 0; }
+.promo-event-tag { display: inline-flex; align-items: center; width: max-content; max-width: 100%; padding: 3px 10px; border-radius: 999px; background: #fef3c7; border: 1px solid #f59e0b; color: #b45309; font-size: 11px; font-weight: 800; }
+.promo-event-title { margin: 0; font-size: 16.5px; font-weight: 900; color: #111111; line-height: 1.35; }
+.promo-event-desc { margin: 0; font-size: 13px; color: #444444; line-height: 1.45; }
+.promo-event-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 4px; }
+.promo-event-cta { display: inline-flex; align-items: center; justify-content: center; background: #111111; color: #00dc64; font-size: 13px; font-weight: 900; padding: 9px 15px; border-radius: 5px; }
 
 /* Multi-Zone Coupang Placements: Desktop Left/Right Wings (>=1180px), Mid-Stream, Mobile */
 .home-stage { width: 100%; max-width: 1190px; margin: 0 auto; padding: 0 16px; }
 .viewer-stage { width: 100%; max-width: 690px; margin: 0 auto; }
 .wing-ad { display: none; }
-.wing-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px; margin-bottom: 12px; display: grid; gap: 7px; }
+.wing-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; margin-bottom: 12px; display: grid; gap: 7px; }
 .wing-badge { font-size: 11px; font-weight: 800; color: #00a64c; }
 .wing-title { font-size: 13.5px; font-weight: 800; color: #111111; line-height: 1.4; }
 .wing-reason { font-size: 12px; color: #555555; line-height: 1.45; }
@@ -577,6 +590,9 @@ body.viewer-body { background: #ffffff; color: #111111; }
   .next-ep-banner a { grid-column: 1 / -1; text-align: center; }
   .float-scroll-nav { right: 10px; bottom: 14px; }
 }
+@media (max-width: 560px) {
+  .coupang-banner, .promo-event-banner { grid-template-columns: 1fr; }
+}
 @media (max-width: 350px) {
   .wrap, .home-stage { padding: 0 10px; }
   .nv-main-tabs a { padding: 0 10px; font-size: 13.5px; }
@@ -619,10 +635,12 @@ AD_MANAGER_JS = """
     const badge = el.getAttribute("data-badge") || "상황 맞춤 추천";
     const guideUrl = el.getAttribute("data-guide-url") || "https://shopping.guidehollow.com/";
     const guideLabel = el.getAttribute("data-guide-label") || "구매 가이드";
+    const img = el.getAttribute("data-image") || "/assets/ads/pick-goldbox.webp";
     const variant = el.getAttribute("data-gh-slot-variant") || "banner";
     if (variant === "wing") {
       el.innerHTML =
         '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
+        '<div class="ad-thumb-wrap"><img class="ad-thumb-img" src="' + esc(img) + '" alt="' + esc(title) + '" width="640" height="420" loading="lazy" /></div>' +
         '<div class="wing-badge">' + esc(badge) + '</div>' +
         '<div class="wing-title">' + esc(title) + '</div>' +
         '<div class="wing-reason">' + esc(reason) + '</div>' +
@@ -633,12 +651,15 @@ AD_MANAGER_JS = """
     el.innerHTML =
       '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
       '<div class="coupang-banner">' +
-      '  <div style="font-size:12px;font-weight:800;color:#059669;">' + esc(badge) + '</div>' +
-      '  <div style="font-size:16px;font-weight:800;color:#111111;">' + esc(title) + '</div>' +
-      '  <div style="font-size:13.5px;color:#555555;">' + esc(reason) + '</div>' +
-      '  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">' +
-      '    <a class="coupang-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
-      '    <a style="display:inline-flex;align-items:center;font-size:13px;font-weight:700;color:#2563eb;" href="' + esc(guideUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(guideLabel) + ' →</a>' +
+      '  <div class="ad-thumb-wrap"><img class="ad-thumb-img" src="' + esc(img) + '" alt="' + esc(title) + '" width="640" height="420" loading="lazy" /></div>' +
+      '  <div class="coupang-banner-body">' +
+      '    <div style="font-size:12px;font-weight:800;color:#059669;">' + esc(badge) + '</div>' +
+      '    <div style="font-size:16px;font-weight:800;color:#111111;">' + esc(title) + '</div>' +
+      '    <div style="font-size:13.5px;color:#555555;">' + esc(reason) + '</div>' +
+      '    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">' +
+      '      <a class="coupang-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
+      '      <a style="display:inline-flex;align-items:center;font-size:13px;font-weight:700;color:#2563eb;" href="' + esc(guideUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(guideLabel) + ' →</a>' +
+      '    </div>' +
       '  </div>' +
       '</div>';
   }
@@ -848,14 +869,37 @@ def _thematic_coupang_for(episodes: list[dict], ep_idx: int, slot_offset: int) -
     return episodes[target_idx]["coupang"]
 
 
+def _render_promo_event_banner() -> str:
+    return (
+        '<aside class="promo-event-banner" data-promo-banner="goldbox" aria-label="쿠팡 골드박스 오늘의 특가 이벤트 프로모션">'
+        '  <div class="promo-event-media">'
+        '    <img src="/assets/ads/pick-goldbox.webp" alt="쿠팡 골드박스 오늘의 특가 이벤트 프로모션" width="640" height="420" loading="lazy" />'
+        '  </div>'
+        '  <div class="promo-event-body">'
+        '    <div class="promo-event-tag">EVENT · 쿠팡 골드박스 오늘의 특가 프로모션</div>'
+        '    <h3 class="promo-event-title">매일 오전 7시 오픈! 생필품·디지털·주방 일일 특가 기획전</h3>'
+        '    <p class="promo-event-desc">웹툰 독자님들이 가장 많이 찾는 생활·자취·데스크 필수품 오늘의 할인 품목을 한눈에 확인하세요.</p>'
+        f'    <div class="ad-disclosure" style="margin:0;">{COUPANG_DISCLOSURE}</div>'
+        '    <div class="promo-event-actions">'
+        '      <a class="promo-event-cta" href="https://link.coupang.com/a/iH5tIYeHsG" target="_blank" rel="noopener noreferrer sponsored">골드박스 이벤트 특가 바로가기 ↗</a>'
+        '      <a style="font-size:13px;font-weight:700;color:#1d4ed8;" href="https://shopping.guidehollow.com/" target="_blank" rel="noopener noreferrer">분야별 구매 기준 가이드 →</a>'
+        '    </div>'
+        '  </div>'
+        '</aside>'
+    )
+
+
 def _render_wing_card_html(coup: dict) -> str:
+    img = coup.get("image") or "/assets/ads/pick-goldbox.webp"
     return (
         f'<div class="wing-card" data-gh-ad-slot="wing" data-gh-slot-variant="wing" '
         f'data-widget-id="{esc(coup["widgetId"])}" data-badge="{esc(coup["badge"])}" '
         f'data-title="{esc(coup["title"])}" data-reason="{esc(coup["reason"])}" '
         f'data-cta="{esc(coup["cta"])}" data-url="{esc(coup["url"])}" '
+        f'data-image="{esc(img)}" '
         f'data-guide-url="{esc(coup["guideUrl"])}" data-guide-label="{esc(coup["guideLabel"])}">'
         f'  <div class="ad-disclosure">{COUPANG_DISCLOSURE}</div>'
+        f'  <div class="ad-thumb-wrap"><img class="ad-thumb-img" src="{esc(img)}" alt="{esc(coup["title"])}" width="640" height="420" loading="lazy" /></div>'
         f'  <div class="wing-badge">{esc(coup["badge"])}</div>'
         f'  <div class="wing-title">{esc(coup["title"])}</div>'
         f'  <div class="wing-reason">{esc(coup["reason"])}</div>'
@@ -877,21 +921,26 @@ def _render_wing_aside(episodes: list[dict], start_idx: int, side: str, thematic
 
 
 def _render_infeed_coupang_card(coup: dict, slot_name: str, extra_class: str = "infeed-coupang-card") -> str:
+    img = coup.get("image") or "/assets/ads/pick-goldbox.webp"
     return (
         f'<aside class="{extra_class}" aria-label="상황 맞춤 생활·상품 추천" '
         f'       data-gh-ad-slot="{esc(slot_name)}" data-ad-kind="contextual" data-ad-layout="in-article" '
         f'       data-widget-id="{esc(coup["widgetId"])}" data-badge="{esc(coup["badge"])}" '
         f'       data-title="{esc(coup["title"])}" data-reason="{esc(coup["reason"])}" '
         f'       data-cta="{esc(coup["cta"])}" data-url="{esc(coup["url"])}" '
+        f'       data-image="{esc(img)}" '
         f'       data-guide-url="{esc(coup["guideUrl"])}" data-guide-label="{esc(coup["guideLabel"])}">'
         f'  <div class="ad-disclosure">{COUPANG_DISCLOSURE}</div>'
         f'  <div class="coupang-banner">'
-        f'    <div style="font-size:12px;font-weight:800;color:#059669;">{esc(coup["badge"])}</div>'
-        f'    <div style="font-size:16px;font-weight:800;color:#111111;">{esc(coup["title"])}</div>'
-        f'    <div style="font-size:13.5px;color:#555555;">{esc(coup["reason"])}</div>'
-        f'    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">'
-        f'      <a class="coupang-cta" href="{esc(coup["url"])}" target="_blank" rel="noopener noreferrer sponsored">{esc(coup["cta"])} ↗</a>'
-        f'      <a style="display:inline-flex;align-items:center;font-size:13px;font-weight:700;color:#2563eb;" href="{esc(coup["guideUrl"])}" target="_blank" rel="noopener noreferrer">{esc(coup["guideLabel"])} →</a>'
+        f'    <div class="ad-thumb-wrap"><img class="ad-thumb-img" src="{esc(img)}" alt="{esc(coup["title"])}" width="640" height="420" loading="lazy" /></div>'
+        f'    <div class="coupang-banner-body">'
+        f'      <div style="font-size:12px;font-weight:800;color:#059669;">{esc(coup["badge"])}</div>'
+        f'      <div style="font-size:16px;font-weight:800;color:#111111;">{esc(coup["title"])}</div>'
+        f'      <div style="font-size:13.5px;color:#555555;">{esc(coup["reason"])}</div>'
+        f'      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">'
+        f'        <a class="coupang-cta" href="{esc(coup["url"])}" target="_blank" rel="noopener noreferrer sponsored">{esc(coup["cta"])} ↗</a>'
+        f'        <a style="display:inline-flex;align-items:center;font-size:13px;font-weight:700;color:#2563eb;" href="{esc(coup["guideUrl"])}" target="_blank" rel="noopener noreferrer">{esc(coup["guideLabel"])} →</a>'
+        f'      </div>'
         f'    </div>'
         f'  </div>'
         f'</aside>'
@@ -902,11 +951,13 @@ def _render_coupang_strip(episodes: list[dict], start_idx: int, heading: str) ->
     mini_cards = []
     for offset in range(3):
         coup = _coupang_item_for(episodes, start_idx + offset)
+        img = coup.get("image") or "/assets/ads/pick-goldbox.webp"
         mini_cards.append(
             f'<div class="coupang-mini-card">'
-            f'  <div>'
-            f'    <div class="wing-badge" style="margin-bottom:4px;">{esc(coup["badge"])}</div>'
-            f'    <div class="wing-title" style="margin-bottom:5px;">{esc(coup["title"])}</div>'
+            f'  <div style="display:grid;gap:6px;">'
+            f'    <div class="ad-thumb-wrap"><img class="ad-thumb-img" src="{esc(img)}" alt="{esc(coup["title"])}" width="640" height="420" loading="lazy" /></div>'
+            f'    <div class="wing-badge">{esc(coup["badge"])}</div>'
+            f'    <div class="wing-title">{esc(coup["title"])}</div>'
             f'    <div class="wing-reason">{esc(coup["reason"])}</div>'
             f'  </div>'
             f'  <div style="display:grid;gap:5px;margin-top:6px;">'
@@ -1001,6 +1052,8 @@ def build_home_html(episodes: list[dict]) -> str:
 
 {_render_coupang_strip(episodes, 0, "웹툰 이야기 상황별 생활·데스크 관련 상품")}
 
+{_render_promo_event_banner()}
+
     <div class="nv-sec-title-row">
       <h2 class="nv-sec-title">장르별 전체 웹툰</h2>
       <span class="nv-sec-more">독립 단편 완결 · 전 작품 무료 감상</span>
@@ -1061,6 +1114,7 @@ def build_studio_archive_html(episodes: list[dict]) -> str:
     <div class="nv-sec-title-row">
       <h1 class="nv-sec-title">전체 완결 단편 웹툰 모아보기 ({len(episodes)}작)</h1>
     </div>
+{_render_promo_event_banner()}
 {_render_coupang_strip(episodes, 1, "이야기 주제별 생활·가전 관련 상품 안내")}
     <section class="wt-grid" style="margin-bottom:28px;">
 {_render_poster_cards(episodes)}
@@ -1172,6 +1226,8 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
 
       {_render_infeed_coupang_card(end_slot, "ep-bottom", extra_class="ad-box")}
 
+      {_render_promo_event_banner()}
+
       <div class="nv-box">
         <h3 style="margin:0 0 8px;font-size:16px;font-weight:800;">{esc(ep['guideTitle'])}</h3>
         <p style="margin:0 0 12px;font-size:14px;color:#444444;">{esc(ep['guideBody'])}</p>
@@ -1238,6 +1294,9 @@ def build_site(ad_mode: str = "coupang") -> dict:
         + "\n",
     )
     write_text(DIST / "assets" / "viewer.js", VIEWER_JS + "\n")
+    ads_src = ROOT / "assets" / "ads"
+    if ads_src.exists():
+        shutil.copytree(ads_src, DIST / "assets" / "ads", dirs_exist_ok=True)
     write_text(
         DIST / "assets" / "episodes.json",
         json.dumps({"episodes": episodes}, ensure_ascii=False, indent=2) + "\n",
