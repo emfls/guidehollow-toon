@@ -1059,7 +1059,7 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
     for c_idx, p in enumerate(ep["panels"], start=1):
         cuts_html.append(
             f'<div class="comic-cut" data-cut-num="{c_idx}">'
-            f'  <img src="/assets/toons/{esc(eid)}/cut-{c_idx:02d}.svg" alt="{esc(ep["title"])} {c_idx}컷 - {esc(p["line"])}" width="690" height="1120" loading="{"eager" if c_idx == 1 else "lazy"}" />'
+            f'  <img src="/assets/toons/{esc(eid)}/cut-{c_idx:02d}.svg" alt="{c_idx}컷 ({esc(p["act"])}) {esc(p["speaker"])}: {esc(p["line"])} — {esc(p["subline"])}" width="690" height="1120" loading="{"eager" if c_idx == 1 else "lazy"}" />'
             f'</div>'
         )
         if c_idx == 4:
