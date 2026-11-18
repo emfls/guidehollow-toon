@@ -79,7 +79,21 @@ def test_build_portal_matches_comic_naver_and_no_fake_server() -> None:
             assert 'viewBox="0 0 690 1120"' in cut_xml
             assert 'fill="#ffffff"' in cut_xml
             assert "data:image/jpeg;base64," in cut_xml
-            ET.fromstring(cut_xml)
+            root = ET.fromstring(cut_xml)
+            svg_texts = " ".join("".join(el.itertext()).strip() for el in root.iter("{http://www.w3.org/2000/svg}text"))
+            panel = ep["panels"][c_idx - 1]
+            for expected_phrase in (panel["line"], panel["subline"]):
+                norm_exp = " ".join(expected_phrase.split())
+                norm_svg = " ".join(svg_texts.split())
+                if "…" not in expected_phrase:
+                    assert "…" not in svg_texts or expected_phrase in norm_svg
+                assert norm_exp in norm_svg, f"{eid} cut-{c_idx:02d} truncated: {norm_exp!r} not in {norm_svg!r}"
+            if eid == "ep02-love-wedding" and c_idx == 13:
+                for token in ("영구 퇴출", "답례 선물", "돌렸어요"):
+                    assert token in svg_texts, f"EP02 cut-13 missing {token}"
+            if eid == "ep05-finance-jeonse" and c_idx == 9:
+                for token in ("채권최고액", "120,000,000원", "접수일", "어제 16시 12분", "저당권 설정"):
+                    assert token in svg_texts, f"EP05 cut-09 missing {token}"
         assert not (DIST / "assets" / "toons" / eid / f"cut-{target_n + 1:02d}.svg").exists()
 
     assert len(seen_cut_counts) >= 5

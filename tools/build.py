@@ -95,12 +95,14 @@ def esc(value: object) -> str:
     return html.escape(str(value or ""), quote=True)
 
 
-def wrap_ko(text: str, width: int = 16, max_lines: int = 3) -> list[str]:
+def wrap_ko(text: str, width: int = 16, max_lines: int = 3, strict: bool = False) -> list[str]:
     clean = " ".join(str(text or "").split())
     if not clean:
         return []
     lines = textwrap.wrap(clean, width=width, break_long_words=True)
     if len(lines) > max_lines:
+        if strict:
+            raise ValueError(f"Text exceeds {max_lines} lines (width={width}): {clean!r} -> {lines}")
         lines = lines[:max_lines]
         if len(lines[-1]) > 2:
             lines[-1] = lines[-1][:-1] + "…"
@@ -267,7 +269,7 @@ def render_panel_svg(ep: dict, idx: int, panel: dict, total: int) -> str:
     ]
 
     # 1) Upper In-Artwork Warm Cream Narration Explanation Box (INSIDE illustration top edge)
-    sub_lines = wrap_ko(panel["subline"], width=30, max_lines=2)
+    sub_lines = wrap_ko(panel["subline"], width=30, max_lines=2, strict=True)
     act_short = str(panel.get("act", "본편")).split("·")[-1].strip()
     n_h = 38 + len(sub_lines) * 25
     parts.append(f'<rect x="31" y="31" width="634" height="{n_h}" rx="4" fill="#18181b" fill-opacity="0.28"/>')
@@ -285,7 +287,7 @@ def render_panel_svg(ep: dict, idx: int, panel: dict, total: int) -> str:
         )
 
     # 2) In-Artwork Organic Comic Speech Bubble (INSIDE upper atmospheric headroom)
-    d_lines = wrap_ko(panel["line"], width=17, max_lines=3)
+    d_lines = wrap_ko(panel["line"], width=17, max_lines=4, strict=True)
     bw = 396
     bh = 48 + len(d_lines) * 27
     bx = 28 if is_left else 266
