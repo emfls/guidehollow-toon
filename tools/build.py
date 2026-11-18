@@ -8,11 +8,12 @@ import html
 import io
 import json
 from pathlib import Path
+import re
 import shutil
 import sys
 import textwrap
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -27,6 +28,15 @@ ADSENSE_TXT = "google.com, pub-8830524482034754, DIRECT, f08c47fec0942fa0\n"
 GA4_ID = "G-QP5Q67GE5B"
 COUPANG_DISCLOSURE = "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
 AI_IMAGE_NOTICE = "* 본 웹툰 이미지는 AI 도구를 활용해 제작되었습니다."
+
+FONT_PATH = "/System/Library/Fonts/AppleSDGothicNeo.ttc"
+
+
+def _load_ko_font(size: int, weight: str = "bold") -> ImageFont.FreeTypeFont:
+    idx_map = {"regular": 0, "medium": 2, "semibold": 4, "bold": 6, "extrabold": 14}
+    idx = idx_map.get(weight, 6)
+    return ImageFont.truetype(FONT_PATH, size, index=idx)
+
 
 EPISODE_CUT_COUNTS = {
     "ep01-office-cider": 18,
@@ -62,7 +72,7 @@ DISALLOWED_FAKE_SERVER_MARKERS = [
 
 
 def prepare_episodes() -> list[dict]:
-    """Return deep-cleaned episodes with variable cut counts and zero fake rating/comment metadata."""
+    """Return deep-cleaned standalone stories with zero fake rating/comment or cut-count labels."""
     cleaned: list[dict] = []
     for ep in EPISODES:
         raw_panels = ep["panels"]
@@ -82,9 +92,10 @@ def prepare_episodes() -> list[dict]:
             for k, v in ep.items()
             if k not in ("rating", "viewsLabel", "bestComments", "panels", "badgeText")
         }
-        for txt_field in ("summary", "aiDisclosure"):
-            if isinstance(ep_copy.get(txt_field), str):
-                ep_copy[txt_field] = ep_copy[txt_field].replace("18컷", f"{len(panels)}컷")
+        if isinstance(ep_copy.get("summary"), str):
+            ep_copy["summary"] = re.sub(r"\b\d+컷\b", "단편", ep_copy["summary"])
+        if isinstance(ep_copy.get("aiDisclosure"), str):
+            ep_copy["aiDisclosure"] = re.sub(r"\b\d+컷\b", "단편", ep_copy["aiDisclosure"])
         ep_copy["cutCount"] = len(panels)
         ep_copy["panels"] = panels
         cleaned.append(ep_copy)
@@ -142,228 +153,255 @@ def _crop_cell(ep_num: int, cut_index_1based: int) -> Image.Image:
     return sheet.crop(box)
 
 
-def _slice_cell_b64(
-    ep_num: int,
-    cut_index_1based: int,
-    size: tuple[int, int],
+def _upscale_artwork(
+    cropped: Image.Image,
+    target_size: tuple[int, int],
     centering: tuple[float, float] = (0.5, 0.35),
-    quality: int = 84,
-) -> str:
-    """Fit one sliced webtoon cell into the target canvas size."""
-    cropped = _crop_cell(ep_num, cut_index_1based)
-    fitted = ImageOps.fit(cropped, size, method=Image.Resampling.LANCZOS, centering=centering)
-    buf = io.BytesIO()
-    fitted.save(buf, format="JPEG", quality=quality, optimize=True)
-    return base64.b64encode(buf.getvalue()).decode("ascii")
-
-
-def _slice_zoom_inset_b64(
-    ep_num: int,
-    cut_index_1based: int,
-    size: tuple[int, int] = (192, 192),
-    quality: int = 84,
-) -> str:
-    """Create a tight zoomed crop inside the panel for 내일보관소-style corner inset frames."""
-    cropped = _crop_cell(ep_num, cut_index_1based)
+) -> Image.Image:
+    """Progressively upscale cell artwork with crisp edge recovery for HiDPI raster panels."""
     cw, ch = cropped.size
-    zoom_box = (
-        int(round(cw * 0.26)),
-        int(round(ch * 0.28)),
-        int(round(cw * 0.74)),
-        int(round(ch * 0.68)),
-    )
-    focused = cropped.crop(zoom_box)
-    fitted = ImageOps.fit(focused, size, method=Image.Resampling.LANCZOS, centering=(0.5, 0.45))
-    buf = io.BytesIO()
-    fitted.save(buf, format="JPEG", quality=quality, optimize=True)
-    return base64.b64encode(buf.getvalue()).decode("ascii")
+    mid_w = max(1, int(round(cw * 1.8)))
+    mid_h = max(1, int(round(ch * 1.8)))
+    step1 = cropped.resize((mid_w, mid_h), Image.Resampling.LANCZOS)
+    step1 = step1.filter(ImageFilter.UnsharpMask(radius=1.3, percent=130, threshold=3))
+    fitted = ImageOps.fit(step1, target_size, method=Image.Resampling.LANCZOS, centering=centering)
+    fitted = fitted.filter(ImageFilter.UnsharpMask(radius=0.8, percent=105, threshold=2))
+    fitted = ImageEnhance.Contrast(fitted).enhance(1.04)
+    return fitted
 
 
-def render_cover_svg(ep: dict) -> str:
-    """Render an authentic clean comic.naver.com 480x620 poster with circle badge & title logo only."""
-    w, h = 480, 620
+def _draw_alpha_shadow_rect(
+    base_rgba: Image.Image,
+    box: tuple[int, int, int, int],
+    radius: int,
+    fill_rgba: tuple[int, int, int, int],
+) -> Image.Image:
+    overlay = Image.new("RGBA", base_rgba.size, (0, 0, 0, 0))
+    od = ImageDraw.Draw(overlay)
+    od.rounded_rectangle(box, radius=radius, fill=fill_rgba)
+    return Image.alpha_composite(base_rgba, overlay)
+
+
+def render_cover_assets(ep: dict) -> tuple[bytes, str]:
+    """Render crisp 720x930 HiDPI cover WebP and backward-compatible SVG wrapper (zero red tones)."""
+    w, h = 720, 930
+    cropped = _crop_cell(ep["episodeNo"], 1)
+    art = _upscale_artwork(cropped, (w, h), centering=(0.5, 0.28)).convert("RGBA")
+
+    grad = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    gd = ImageDraw.Draw(grad)
+    for y in range(460, h):
+        t = (y - 460) / float(h - 460)
+        alpha = int(round((t ** 1.35) * 232))
+        gd.line([(0, y), (w, y)], fill=(0, 0, 0, alpha))
+    canvas = Image.alpha_composite(art, grad)
+    draw = ImageDraw.Draw(canvas)
+
+    badge_font = _load_ko_font(20, "extrabold")
+    title_font = _load_ko_font(40, "extrabold")
+    draw.ellipse((26, 26, 94, 94), fill=(0, 220, 100, 255))
+    draw.text((60, 60), "단편", font=badge_font, fill=(17, 17, 17, 255), anchor="mm")
+
     title_lines = wrap_ko(ep["title"], width=14, max_lines=3)
-    img_b64 = _slice_cell_b64(ep["episodeNo"], 1, (w, h), centering=(0.5, 0.28), quality=84)
-    badge = "신작" if ep["episodeNo"] <= 3 else "UP"
-    badge_bg = "#00dc64" if badge == "신작" else "#ff3b30"
-    badge_fg = "#111111" if badge == "신작" else "#ffffff"
-
-    parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img" aria-label="{esc(ep["title"])}">',
-        f'<image href="data:image/jpeg;base64,{img_b64}" x="0" y="0" width="{w}" height="{h}" preserveAspectRatio="xMidYMid slice"/>',
-        '<defs><linearGradient id="nv-cover-grad" x1="0" y1="0" x2="0" y2="1">'
-        '<stop offset="0%" stop-color="#000000" stop-opacity="0"/>'
-        '<stop offset="55%" stop-color="#000000" stop-opacity="0.48"/>'
-        '<stop offset="100%" stop-color="#000000" stop-opacity="0.92"/>'
-        '</linearGradient></defs>',
-        '<rect x="0" y="340" width="480" height="280" fill="url(#nv-cover-grad)"/>',
-        f'<circle cx="38" cy="38" r="20" fill="{badge_bg}"/>',
-        f'<text x="38" y="43" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="13" font-weight="900" fill="{badge_fg}">{badge}</text>',
-    ]
-    base_y = 582 - (len(title_lines) - 1) * 34
+    line_h = 52
+    base_y = h - 42 - (len(title_lines) - 1) * line_h
     for idx, line in enumerate(title_lines):
-        parts.append(
-            f'<text x="20" y="{base_y + idx * 34}" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" '
-            f'font-size="24" font-weight="900" fill="#ffffff" stroke="#111111" stroke-width="1.2" paint-order="stroke fill">{esc(line)}</text>'
+        draw.text(
+            (32, base_y + idx * line_h),
+            line,
+            font=title_font,
+            fill=(255, 255, 255, 255),
+            stroke_width=3,
+            stroke_fill=(17, 17, 17, 255),
+            anchor="lm",
         )
-    parts.append("</svg>")
-    return "\n".join(parts)
+
+    out_rgb = canvas.convert("RGB")
+    buf = io.BytesIO()
+    out_rgb.save(buf, format="WEBP", quality=92, method=4)
+    webp_bytes = buf.getvalue()
+    webp_b64 = base64.b64encode(webp_bytes).decode("ascii")
+    svg_str = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img" aria-label="{esc(ep["title"])}">\n'
+        f'  <desc>{esc(ep["title"])}</desc>\n'
+        f'  <image href="data:image/webp;base64,{webp_b64}" x="0" y="0" width="{w}" height="{h}"/>\n'
+        f"</svg>\n"
+    )
+    return webp_bytes, svg_str
 
 
-SCENE_LOCATION_KO = {
-    "office": "사무실 현장",
-    "messenger": "모바일 메시지·증거",
-    "darkroom": "야간 확인·추적",
-    "police": "수사·행정 접수",
-    "celebration": "사건 해결·일상 복귀",
-    "wedding": "예식장·정산 현장",
-    "parking": "주차장 대치 현장",
-    "apartment": "공동주택 현장",
-    "realestate": "공인중개소·등기 확인",
-    "parcel": "택배 개봉·검증",
-    "cafe": "매장 카운터 현장",
-    "living": "생활·계약 현장",
-    "gym": "체육시설·청구 확인",
-}
+def render_panel_assets(ep: dict, idx: int, panel: dict) -> tuple[bytes, str]:
+    """Render 1080x1520 HiDPI webtoon panel WebP with baked speech bubble + clean artwork (no inset, no red text, no cut count)."""
+    w, h = 1080, 1520
+    frame_left, frame_top, frame_right, frame_bottom = 24, 24, 1056, 1496
+    art_x, art_y, art_w, art_h = 24, 380, 1032, 1116
 
-CAMERA_CONTEXT_KO = {
-    "climax_impact": ("클라이맥스", "결정적 역전 순간이 벌어지는 핵심 장면입니다."),
-    "evidence_zoom": ("증거 포착", "객관적 숫자와 기록으로 반격을 준비하는 장면입니다."),
-    "split_versus": ("시선 대치", "상대방의 태도와 주인공의 대응이 엇갈리는 순간입니다."),
-    "closeup_villain": ("상대 반응", "상대의 표정과 언행이 그대로 드러나는 구간입니다."),
-    "closeup_hero": ("주인공 시점", "감정을 누르고 다음 행동을 판단하는 장면입니다."),
-    "wide": ("전체 상황", "공간과 인물 관계를 한눈에 보여주는 장면입니다."),
-}
-
-
-def render_panel_svg(ep: dict, idx: int, panel: dict, total: int) -> str:
-    """Render an integrated full-bleed Korean webtoon panel where narration, bubbles, scene notes & inset sit INSIDE the illustration."""
-    w, h = 690, 1120
     source_cut = int(panel.get("sourceCut", idx))
-    img_b64 = _slice_cell_b64(ep["episodeNo"], source_cut, (662, 1092), centering=(0.5, 0.38), quality=84)
     is_left = (idx % 2 == 1)
-    camera = str(panel.get("camera", "wide"))
-    emotion = str(panel.get("emotion", "calm_smirk"))
-    scene = str(panel.get("scene", "office"))
     speaker = str(panel.get("speaker", ""))
-
-    has_inset = camera in ("climax_impact", "evidence_zoom") or emotion in ("shocked", "crying")
-
-    parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img" aria-label="{esc(ep["title"])} {idx}컷">',
-        f'<rect width="{w}" height="{h}" fill="#ffffff"/>',
-        '<defs>'
-        '<linearGradient id="wt-top-scrim" x1="0" y1="0" x2="0" y2="1">'
-        '<stop offset="0%" stop-color="#0f172a" stop-opacity="0.28"/>'
-        '<stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>'
-        '</linearGradient>'
-        '<linearGradient id="wt-bot-scrim" x1="0" y1="0" x2="0" y2="1">'
-        '<stop offset="0%" stop-color="#0f172a" stop-opacity="0"/>'
-        '<stop offset="100%" stop-color="#0f172a" stop-opacity="0.68"/>'
-        '</linearGradient>'
-        '</defs>',
-        # Full-bleed illustrated panel INSIDE the frame (matching 내일보관소 & 마지막상영 integrated aesthetic)
-        f'<image href="data:image/jpeg;base64,{img_b64}" x="14" y="14" width="662" height="1092" preserveAspectRatio="xMidYMid slice"/>',
-        '<rect x="14" y="14" width="662" height="190" fill="url(#wt-top-scrim)"/>',
-        '<rect x="14" y="886" width="662" height="220" fill="url(#wt-bot-scrim)"/>',
-    ]
-
-    # 1) Upper In-Artwork Warm Cream Narration Explanation Box (INSIDE illustration top edge)
     sub_lines = wrap_ko(panel["subline"], width=30, max_lines=2, strict=True)
-    act_short = str(panel.get("act", "본편")).split("·")[-1].strip()
-    n_h = 38 + len(sub_lines) * 25
-    parts.append(f'<rect x="31" y="31" width="634" height="{n_h}" rx="4" fill="#18181b" fill-opacity="0.28"/>')
-    parts.append(
-        f'<rect x="28" y="28" width="634" height="{n_h}" rx="4" fill="#fbf8f0" fill-opacity="0.95" stroke="#18181b" stroke-width="2"/>'
+    d_lines = wrap_ko(panel["line"], width=17, max_lines=4, strict=True)
+
+    f_sub = _load_ko_font(27, "bold")
+    f_spk = _load_ko_font(21, "extrabold")
+    f_dlg = _load_ko_font(32, "extrabold")
+    f_sfx = _load_ko_font(54, "extrabold")
+
+    canvas = Image.new("RGBA", (w, h), (255, 255, 255, 255))
+
+    # Subtle paper-to-white header backdrop inside top frame before artwork starts
+    hdr_grad = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    hd = ImageDraw.Draw(hdr_grad)
+    for y in range(frame_top, art_y):
+        hd.line([(frame_left, y), (frame_right, y)], fill=(248, 250, 252, 255))
+    canvas = Image.alpha_composite(canvas, hdr_grad)
+
+    # Full-width HiDPI illustration anchored below top dialogue zone so face/subject stays clear
+    cropped = _crop_cell(ep["episodeNo"], source_cut)
+    art = _upscale_artwork(cropped, (art_w, art_h), centering=(0.5, 0.35)).convert("RGBA")
+    canvas.paste(art, (art_x, art_y))
+
+    # Crisp divider between clean top bubble zone and illustrated body + outer frame stroke
+    d_pre = ImageDraw.Draw(canvas)
+    d_pre.line([(frame_left, art_y), (frame_right, art_y)], fill=(24, 24, 27, 255), width=3)
+
+    # 1) Upper Warm Cream Narration Box (zero cut counter, zero red text)
+    n_x, n_y, n_w = 48, 42, 984
+    sub_lh = 36
+    n_h = 34 + len(sub_lines) * sub_lh
+    canvas = _draw_alpha_shadow_rect(
+        canvas,
+        (n_x + 4, n_y + 5, n_x + n_w + 4, n_y + n_h + 5),
+        radius=8,
+        fill_rgba=(24, 24, 27, 45),
     )
-    parts.append(
-        f'<rect x="38" y="34" width="154" height="20" rx="10" fill="#18181b"/>'
-        f'<text x="115" y="48" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="11.5" font-weight="800" fill="#00dc64">{idx:02d}/{total:02d}컷 · {esc(act_short)}</text>'
+    d = ImageDraw.Draw(canvas)
+    d.rounded_rectangle(
+        (n_x, n_y, n_x + n_w, n_y + n_h),
+        radius=8,
+        fill=(251, 248, 240, 248),
+        outline=(24, 24, 27, 255),
+        width=3,
     )
+    sub_start_y = n_y + (n_h - len(sub_lines) * sub_lh) // 2 + sub_lh // 2
     for s_idx, s_line in enumerate(sub_lines):
-        parts.append(
-            f'<text x="345" y="{76 + s_idx * 25}" text-anchor="middle" '
-            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="17" font-weight="700" fill="#18181b">{esc(s_line)}</text>'
+        d.text(
+            (w // 2, sub_start_y + s_idx * sub_lh),
+            s_line,
+            font=f_sub,
+            fill=(24, 24, 27, 255),
+            anchor="mm",
         )
 
-    # 2) In-Artwork Organic Comic Speech Bubble (INSIDE upper atmospheric headroom)
-    d_lines = wrap_ko(panel["line"], width=17, max_lines=4, strict=True)
-    bw = 396
-    bh = 48 + len(d_lines) * 27
-    bx = 28 if is_left else 266
-    by = 28 + n_h + 14
+    # 2) Speech Bubble Baked Inside Canvas (reaches cleanly over top edge of illustration with pointer tail)
+    bw = 680
+    bx = 52 if is_left else 348
+    by = n_y + n_h + 18
+    dlg_lh = 42
+    bh = 76 + len(d_lines) * dlg_lh
     tx = bx + (bw * 2 // 3 if is_left else bw // 3)
+    tip_x = tx + (20 if is_left else -20)
+    tail_tip_y = by + bh + 44
+
+    # Soft shadow for speech bubble
+    canvas = _draw_alpha_shadow_rect(
+        canvas,
+        (bx + 5, by + 6, bx + bw + 5, by + bh + 6),
+        radius=44,
+        fill_rgba=(24, 24, 27, 50),
+    )
+    d = ImageDraw.Draw(canvas)
+
+    # Tail shadow
+    d.polygon(
+        [(tx - 15, by + bh - 2), (tip_x + 4, tail_tip_y + 4), (tx + 17, by + bh - 2)],
+        fill=(24, 24, 27, 50),
+    )
+    # Main bubble body + border
+    d.rounded_rectangle(
+        (bx, by, bx + bw, by + bh),
+        radius=44,
+        fill=(255, 255, 255, 252),
+        outline=(24, 24, 27, 255),
+        width=4,
+    )
+    # Bubble pointer tail seamless join
+    d.polygon(
+        [(tx - 16, by + bh - 3), (tip_x, tail_tip_y), (tx + 16, by + bh - 3)],
+        fill=(255, 255, 255, 255),
+    )
+    d.line([(tx - 16, by + bh - 1), (tip_x, tail_tip_y)], fill=(24, 24, 27, 255), width=4)
+    d.line([(tip_x, tail_tip_y), (tx + 16, by + bh - 1)], fill=(24, 24, 27, 255), width=4)
+
+    # Speaker badge pill (zero red colors anywhere)
     is_hero = speaker.startswith("나(") or "신부" in speaker or "사장" in speaker
     is_sys = any(k in speaker for k in ("증거", "알림", "청구", "발령", "공문", "원칙", "팀", "창구", "면", "확인"))
-    spk_bg = "#ecfdf5" if is_hero else ("#eff6ff" if is_sys else "#fef2f2")
-    spk_fg = "#047857" if is_hero else ("#1d4ed8" if is_sys else "#b91c1c")
+    spk_bg = (236, 253, 245, 255) if is_hero else ((239, 246, 255, 255) if is_sys else (241, 245, 249, 255))
+    spk_fg = (6, 95, 70, 255) if is_hero else ((30, 64, 175, 255) if is_sys else (51, 65, 85, 255))
 
-    parts.append(f'<rect x="{bx + 3}" y="{by + 4}" width="{bw}" height="{bh}" rx="34" fill="#18181b" fill-opacity="0.24"/>')
-    parts.append(
-        f'<rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="34" fill="#ffffff" fill-opacity="0.97" stroke="#18181b" stroke-width="2.2"/>'
+    bbox = d.textbbox((0, 0), speaker, font=f_spk)
+    pill_w = min(380, max(126, (bbox[2] - bbox[0]) + 36))
+    pill_h = 34
+    pill_x = bx + 28
+    pill_y = by + 15
+    d.rounded_rectangle(
+        (pill_x, pill_y, pill_x + pill_w, pill_y + pill_h),
+        radius=17,
+        fill=spk_bg,
     )
-    parts.append(
-        f'<polygon points="{tx - 11},{by + bh - 1} {tx + (14 if is_left else -14)},{by + bh + 32} {tx + 12},{by + bh - 1}" fill="#ffffff" stroke="#18181b" stroke-width="2.1" stroke-linejoin="round"/>'
-    )
-    parts.append(f'<rect x="{tx - 9}" y="{by + bh - 5}" width="20" height="8" fill="#ffffff"/>')
-    pill_w = min(210, max(90, len(speaker) * 14 + 28))
-    parts.append(
-        f'<rect x="{bx + 20}" y="{by + 9}" width="{pill_w}" height="21" rx="10" fill="{spk_bg}"/>'
-        f'<text x="{bx + 20 + pill_w // 2}" y="{by + 23.5}" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="11.5" font-weight="800" fill="{spk_fg}">{esc(speaker)}</text>'
-    )
+    d.text((pill_x + pill_w // 2, pill_y + pill_h // 2), speaker, font=f_spk, fill=spk_fg, anchor="mm")
+
+    # Dialogue lines inside bubble
+    dlg_start_y = by + 58 + dlg_lh // 2
     for d_idx, d_line in enumerate(d_lines):
-        parts.append(
-            f'<text x="{bx + bw // 2}" y="{by + 54 + d_idx * 27}" text-anchor="middle" '
-            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="19.5" font-weight="800" fill="#111111">{esc(d_line)}</text>'
+        d.text(
+            (bx + bw // 2, dlg_start_y + d_idx * dlg_lh),
+            d_line,
+            font=f_dlg,
+            fill=(17, 17, 17, 255),
+            anchor="mm",
         )
 
-    # 3) In-Artwork SFX (mid-side action zone inside illustration)
-    sfx = panel.get("sfx", "")
+    # 3) Tilted SFX stamp on mid-lower illustration (subtle dark ink + cream outline, no red)
+    sfx = str(panel.get("sfx", "") or "").strip()
     if sfx:
-        sx = 562 if is_left else 128
-        sy = 785 if has_inset and not is_left else 745
-        rot = -9 if is_left else 8
-        parts.append(
-            f'<text x="{sx}" y="{sy}" text-anchor="middle" transform="rotate({rot} {sx} {sy})" '
-            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="36" font-weight="900" '
-            f'fill="#18181b" stroke="#fffbeb" stroke-width="9" stroke-linejoin="round" paint-order="stroke fill">{esc(sfx)}</text>'
+        sfx_layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+        sd = ImageDraw.Draw(sfx_layer)
+        sx = 865 if is_left else 215
+        sy = 1355
+        rot = 9 if is_left else -8
+        sd.text(
+            (sx, sy),
+            sfx,
+            font=f_sfx,
+            fill=(24, 24, 27, 255),
+            stroke_width=8,
+            stroke_fill=(255, 251, 235, 255),
+            anchor="mm",
         )
+        rotated_sfx = sfx_layer.rotate(rot, center=(sx, sy), resample=Image.Resampling.BICUBIC)
+        canvas = Image.alpha_composite(canvas, rotated_sfx)
+        d = ImageDraw.Draw(canvas)
 
-    # 4) Bottom In-Artwork Corner Inset Zoom (내일보관소-style dramatic close-up overlay inside painting)
-    if has_inset:
-        inset_b64 = _slice_zoom_inset_b64(ep["episodeNo"], source_cut, (184, 184), quality=84)
-        ix, iy, iw, ih = 474, 902, 184, 184
-        parts.append(f'<rect x="{ix + 3}" y="{iy + 3}" width="{iw}" height="{ih}" fill="#18181b" fill-opacity="0.35"/>')
-        parts.append(f'<rect x="{ix - 3}" y="{iy - 3}" width="{iw + 6}" height="{ih + 6}" fill="#ffffff" stroke="#18181b" stroke-width="2.2"/>')
-        parts.append(f'<image href="data:image/jpeg;base64,{inset_b64}" x="{ix}" y="{iy}" width="{iw}" height="{ih}" preserveAspectRatio="xMidYMid slice"/>')
-        parts.append(
-            f'<rect x="{ix + 6}" y="{iy + 6}" width="64" height="19" rx="3" fill="#18181b" fill-opacity="0.86"/>'
-            f'<text x="{ix + 38}" y="{iy + 19}" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="10.5" font-weight="800" fill="#00dc64">확대 포착</text>'
-        )
-
-    # 5) Lower-Left In-Artwork Scene & Evidence Explanation Plaque (INSIDE illustration)
-    scene_ko = SCENE_LOCATION_KO.get(scene, "현장 상황")
-    cam_tag, cam_desc = CAMERA_CONTEXT_KO.get(camera, ("장면 안내", "상황 전개를 확인하는 장면입니다."))
-    note_w = 424 if has_inset else 634
-    accent_col = "#00dc64" if emotion == "calm_smirk" else ("#f59e0b" if emotion in ("determined", "shocked") else "#ef4444")
-    note_lines = wrap_ko(f"{cam_desc}", width=(24 if has_inset else 36), max_lines=2)
-    note_h = 46 + len(note_lines) * 21
-    ny = 1090 - note_h
-    parts.append(f'<rect x="30" y="{ny + 3}" width="{note_w}" height="{note_h}" rx="4" fill="#18181b" fill-opacity="0.32"/>')
-    parts.append(f'<rect x="28" y="{ny}" width="{note_w}" height="{note_h}" rx="4" fill="#fbf8f0" fill-opacity="0.94" stroke="#18181b" stroke-width="1.8"/>')
-    parts.append(f'<rect x="28" y="{ny}" width="6" height="{note_h}" fill="{accent_col}"/>')
-    parts.append(
-        f'<text x="44" y="{ny + 22}" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="12.5" font-weight="900" fill="#18181b">장면 설명 · {esc(scene_ko)} · {esc(cam_tag)}</text>'
+    # Crisp comic outer border
+    d.rectangle(
+        (frame_left, frame_top, frame_right, frame_bottom),
+        outline=(24, 24, 27, 255),
+        width=4,
     )
-    for nl_idx, nl in enumerate(note_lines):
-        parts.append(
-            f'<text x="44" y="{ny + 43 + nl_idx * 21}" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="13.5" font-weight="600" fill="#334155">{esc(nl)}</text>'
-        )
 
-    # Crisp comic ink border over all interior artwork layers
-    parts.append('<rect x="14" y="14" width="662" height="1092" fill="none" stroke="#18181b" stroke-width="2.6"/>')
-    parts.append("</svg>")
-    return "\n".join(parts)
+    out_rgb = canvas.convert("RGB")
+    buf = io.BytesIO()
+    out_rgb.save(buf, format="WEBP", quality=92, method=4)
+    webp_bytes = buf.getvalue()
+    webp_b64 = base64.b64encode(webp_bytes).decode("ascii")
+    svg_str = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img" aria-label="{esc(ep["title"])}">\n'
+        f'  <desc>{esc(panel["subline"])} | {esc(speaker)}: {esc(panel["line"])}</desc>\n'
+        f'  <image href="data:image/webp;base64,{webp_b64}" x="0" y="0" width="{w}" height="{h}"/>\n'
+        f"</svg>\n"
+    )
+    return webp_bytes, svg_str
 
 
 STYLE_CSS = """
@@ -730,7 +768,7 @@ def _gnb_html(active: str = "home") -> str:
             <span>웹툰</span>
           </a>
           <span class="nv-logo-dot">|</span>
-          <a class="nv-logo-sub" href="/studio/">전체 정주행</a>
+          <a class="nv-logo-sub" href="/studio/">전체 작품</a>
           <span class="nv-logo-dot">|</span>
           <a class="nv-logo-sub" href="https://shopping.guidehollow.com/" target="_blank" rel="noopener noreferrer">쇼핑가이드</a>
         </div>
@@ -738,15 +776,15 @@ def _gnb_html(active: str = "home") -> str:
           <div class="nv-search-box">
             <input id="wt-search-input" type="search" placeholder="제목/장르로 검색할 수 있습니다." aria-label="웹툰 검색" />
           </div>
-          <a class="nv-creator-btn" href="/episodes/ep01-office-cider/">오늘 1화 보기</a>
+          <a class="nv-creator-btn" href="/episodes/ep01-office-cider/">추천 웹툰 보기</a>
         </div>
       </div>
     </div>
     <nav class="nv-main-nav" aria-label="주요 메뉴">
       <div class="wrap nv-main-tabs">
         <a href="/" class="{'is-on' if active == 'home' else ''}">웹툰</a>
-        <a href="/studio/" class="{'is-on' if active == 'studio' else ''}">완결·전체</a>
-        <a href="/about/" class="{'is-on' if active == 'about' else ''}">연재원칙</a>
+        <a href="/studio/" class="{'is-on' if active == 'studio' else ''}">전체 작품</a>
+        <a href="/about/" class="{'is-on' if active == 'about' else ''}">작품원칙</a>
         <a href="https://emfls.github.io/kor/util/ssultoon-maker/" target="_blank" rel="noopener noreferrer">사이다 썰툰관</a>
       </div>
     </nav>
@@ -771,13 +809,13 @@ def _footer_html() -> str:
     <div class="wrap">
       <div class="footer-links">
         <a href="/">웹툰 홈</a>
-        <a href="/studio/">전체 회차 정주행</a>
-        <a href="/about/">연재·제작 안내</a>
+        <a href="/studio/">전체 작품 모아보기</a>
+        <a href="/about/">제작 원칙 안내</a>
         <a href="/privacy/">개인정보처리방침</a>
         <a href="/terms/">이용약관</a>
         <a href="/contact/">문의하기</a>
       </div>
-      <div>GuideHollow 웹툰 · 전 회차 세로 스크롤 무료 연재 · 모든 회차 하단에 현실 분쟁 대응 가이드를 함께 수록합니다.</div>
+      <div>GuideHollow 웹툰 · 전 작품 세로 스크롤 무료 공개 · 모든 이야기 하단에 현실 분쟁 대응 가이드를 함께 수록합니다.</div>
       <div class="ai-disclosure-sm">{AI_IMAGE_NOTICE}</div>
     </div>
   </footer>
@@ -895,11 +933,11 @@ def _render_new_cards(episodes: list[dict]) -> str:
         items.append(
             f'<a class="new-card" href="/episodes/{esc(eid)}/" data-genre-item="{esc(ep["genreKey"])}">'
             f'  <div class="new-thumb">'
-            f'    <img src="/assets/toons/{esc(eid)}/cover.svg" alt="{esc(ep["title"])}" loading="eager" width="480" height="620" />'
-            f'    <span class="new-badge-circle">{ep["cutCount"]}컷</span>'
+            f'    <img src="/assets/toons/{esc(eid)}/cover.webp" alt="{esc(ep["title"])}" loading="eager" width="720" height="930" />'
+            f'    <span class="new-badge-circle">단편</span>'
             f'  </div>'
             f'  <h3 class="new-title">{esc(ep["title"])}</h3>'
-            f'  <div class="new-author">GuideHollow 스튜디오 · {esc(ep["genre"])} · {ep["cutCount"]}컷</div>'
+            f'  <div class="new-author">GuideHollow 스튜디오 · {esc(ep["genre"])} · 단편 완결</div>'
             f'  <p class="new-desc">{esc(ep["hook"])}</p>'
             f'</a>'
         )
@@ -913,10 +951,10 @@ def _render_poster_cards(episodes: list[dict]) -> str:
         cards.append(
             f'<a class="wt-card" href="/episodes/{esc(eid)}/" data-genre-item="{esc(ep["genreKey"])}">'
             f'  <div class="wt-cover">'
-            f'    <img src="/assets/toons/{esc(eid)}/cover.svg" alt="{esc(ep["title"])}" loading="lazy" width="480" height="620" />'
+            f'    <img src="/assets/toons/{esc(eid)}/cover.webp" alt="{esc(ep["title"])}" loading="lazy" width="720" height="930" />'
             f'  </div>'
             f'  <h3 class="wt-title">{esc(ep["title"])}</h3>'
-            f'  <div class="wt-meta">{esc(ep["genre"])} · {ep["cutCount"]}컷 · 무료연재</div>'
+            f'  <div class="wt-meta">{esc(ep["genre"])} · 단편 완결 · 무료</div>'
             f'</a>'
         )
     return "\n".join(cards)
@@ -928,10 +966,10 @@ def _render_episode_table(episodes: list[dict]) -> str:
         eid = ep["id"]
         rows.append(
             f'<a class="ep-item" href="/episodes/{esc(eid)}/" data-genre-item="{esc(ep["genreKey"])}">'
-            f'  <div class="ep-item-thumb"><img src="/assets/toons/{esc(eid)}/cover.svg" alt="{esc(ep["title"])}" loading="lazy" /></div>'
+            f'  <div class="ep-item-thumb"><img src="/assets/toons/{esc(eid)}/cover.webp" alt="{esc(ep["title"])}" loading="lazy" /></div>'
             f'  <div>'
-            f'    <div class="ep-item-name">{ep["episodeNo"]:02d}화 {esc(ep["title"])}</div>'
-            f'    <div class="ep-item-sub">26.11.18 &nbsp;·&nbsp; {ep["cutCount"]}컷 &nbsp;·&nbsp; 무료정주행</div>'
+            f'    <div class="ep-item-name">{esc(ep["title"])}</div>'
+            f'    <div class="ep-item-sub">26.11.19 &nbsp;·&nbsp; 단편 완결 &nbsp;·&nbsp; 무료 감상</div>'
             f'  </div>'
             f'  <div class="ep-item-right">{esc(ep["genre"])}</div>'
             f'</a>'
@@ -941,12 +979,11 @@ def _render_episode_table(episodes: list[dict]) -> str:
 
 def build_home_html(episodes: list[dict]) -> str:
     top = episodes[0]
-    total_cuts = sum(ep["cutCount"] for ep in episodes)
     head = _head_html(
-        "GuideHollow 웹툰 — 현실 공감 사이다 연재관",
-        f"네이버 웹툰 스타일 세로 스크롤 {len(episodes)}화(총 {total_cuts}컷) 현실 공감 창작·각색 사이다 웹툰을 무료로 감상하세요.",
+        "GuideHollow 웹툰 — 현실 공감 사이다 단편관",
+        "네이버 웹툰 스타일 세로 스크롤 현실 공감 창작·각색 사이다 단편 웹툰을 무료로 감상하세요.",
         f"{SITE_URL}/",
-        f"{SITE_URL}/assets/toons/{top['id']}/cover.svg",
+        f"{SITE_URL}/assets/toons/{top['id']}/cover.webp",
     )
     return f"""{head}
 <body>
@@ -956,17 +993,17 @@ def build_home_html(episodes: list[dict]) -> str:
   <main style="min-width:0;">
     <div id="new-sec-head" class="nv-sec-title-row">
       <h1 class="nv-sec-title">이달의 신규 웹툰</h1>
-      <a class="nv-sec-more" href="/studio/">신작웹툰 더보기 &gt;</a>
+      <a class="nv-sec-more" href="/studio/">단편 웹툰 더보기 &gt;</a>
     </div>
     <section class="new-grid" aria-label="이달의 신규 웹툰">
 {_render_new_cards(episodes)}
     </section>
 
-{_render_coupang_strip(episodes, 0, "웹툰 에피소드 상황별 생활·데스크 관련 상품")}
+{_render_coupang_strip(episodes, 0, "웹툰 이야기 상황별 생활·데스크 관련 상품")}
 
     <div class="nv-sec-title-row">
       <h2 class="nv-sec-title">장르별 전체 웹툰</h2>
-      <span class="nv-sec-more">에피소드 길이별 맞춤 컷수(12~18컷) · 전 회차 무료</span>
+      <span class="nv-sec-more">독립 단편 완결 · 전 작품 무료 감상</span>
     </div>
     <section class="wt-grid" aria-label="전체 웹툰 포스터">
 {_render_poster_cards(episodes)}
@@ -975,30 +1012,30 @@ def build_home_html(episodes: list[dict]) -> str:
 
 {_render_coupang_strip(episodes, 4, "자취·주거·일상 예방 필수품 모아보기")}
 
-    <section id="episode-list-anchor" class="series-home-box" aria-label="대표 연재작 회차 목록">
+    <section id="episode-list-anchor" class="series-home-box" aria-label="대표 단편 웹툰 목록">
       <div class="series-top">
         <div class="series-poster">
-          <img src="/assets/toons/{esc(top['id'])}/cover.svg" alt="{esc(top['title'])}" width="480" height="620" />
+          <img src="/assets/toons/{esc(top['id'])}/cover.webp" alt="{esc(top['title'])}" width="720" height="930" />
         </div>
         <div>
-          <h2 class="series-h2">오늘의 베스트 사이다 썰툰 모음집</h2>
-          <div class="series-authors"><strong>GuideHollow 편집팀</strong> · 글 / <strong>AI 웹툰 스튜디오</strong> · 그림 &nbsp;|&nbsp; 스토리 맞춤 12~18컷 무료 연재</div>
-          <p class="series-synop">{esc(top['summary'])} 직장·연애·주차·전세·중고거래 등 현실에서 누구나 겪는 답답한 상황을 이야기의 호흡에 맞춘 맞춤 컷수로 풀어낸 창작·각색 세로 웹툰 모음입니다.</p>
+          <h2 class="series-h2">오늘의 베스트 사이다 단편 모음집</h2>
+          <div class="series-authors"><strong>GuideHollow 편집팀</strong> · 글 / <strong>AI 웹툰 스튜디오</strong> · 그림 &nbsp;|&nbsp; 현실 공감 단편 완결 웹툰</div>
+          <p class="series-synop">{esc(top['summary'])} 직장·연애·주차·전세·중고거래 등 현실에서 누구나 겪는 답답한 상황을 한 편씩 깔끔하게 풀어낸 창작·각색 세로 웹툰 모음입니다.</p>
           <div class="series-tags">
             <span class="series-tag">#사이다참교육</span>
             <span class="series-tag">#직장공감</span>
-            <span class="series-tag">#스토리별가변컷</span>
+            <span class="series-tag">#현실사이다단편</span>
             <span class="series-tag">#전세사기방어</span>
-            <span class="series-tag">#무료정주행</span>
+            <span class="series-tag">#무료감상</span>
           </div>
           <div class="series-cta-row">
-            <a class="btn-first-ep" href="/episodes/{esc(top['id'])}/">첫 화 보기</a>
+            <a class="btn-first-ep" href="/episodes/{esc(top['id'])}/">대표 웹툰 보기</a>
             <a class="btn-sub-outline" href="/studio/">전체 {len(episodes)}작 모아보기</a>
-            <a class="btn-sub-outline" href="/about/">연재 안내</a>
+            <a class="btn-sub-outline" href="/about/">제작 안내</a>
           </div>
         </div>
       </div>
-      <div style="font-size:14px;font-weight:700;margin-bottom:10px;">총 {len(episodes)}화 · 누적 {total_cuts}컷</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px;">전체 단편 웹툰 목록 ({len(episodes)}작)</div>
       <div class="ep-list">
 {_render_episode_table(episodes)}
       </div>
@@ -1012,10 +1049,9 @@ def build_home_html(episodes: list[dict]) -> str:
 
 
 def build_studio_archive_html(episodes: list[dict]) -> str:
-    total_cuts = sum(ep["cutCount"] for ep in episodes)
     head = _head_html(
-        "완결·전체 정주행 모아보기 | GuideHollow 웹툰",
-        f"GuideHollow 오리지널 {len(episodes)}화 {total_cuts}컷 세로 웹툰을 한눈에 모아보고 무료 감상하세요.",
+        "전체 단편 모아보기 | GuideHollow 웹툰",
+        "GuideHollow 오리지널 단편 완결 세로 웹툰을 한눈에 모아보고 무료 감상하세요.",
         f"{SITE_URL}/studio/",
     )
     return f"""{head}
@@ -1023,9 +1059,9 @@ def build_studio_archive_html(episodes: list[dict]) -> str:
 {_gnb_html("studio")}
   <main class="wrap">
     <div class="nv-sec-title-row">
-      <h1 class="nv-sec-title">전체 완결·정주행 웹툰 모아보기 ({len(episodes)}작 · 총 {total_cuts}컷)</h1>
+      <h1 class="nv-sec-title">전체 완결 단편 웹툰 모아보기 ({len(episodes)}작)</h1>
     </div>
-{_render_coupang_strip(episodes, 1, "에피소드 주제별 생활·가전 관련 상품 안내")}
+{_render_coupang_strip(episodes, 1, "이야기 주제별 생활·가전 관련 상품 안내")}
     <section class="wt-grid" style="margin-bottom:28px;">
 {_render_poster_cards(episodes)}
     </section>
@@ -1048,20 +1084,20 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
     mid_slot_b = _thematic_coupang_for(episodes, idx, 1)
     end_slot = _thematic_coupang_for(episodes, idx, 2)
     ep_options = "\n".join(
-        f'<option value="/episodes/{esc(item["id"])}/"{" selected" if item["id"] == eid else ""}>{item["episodeNo"]:02d}화 ({item["cutCount"]}컷) · {esc(item["genre"])}</option>'
+        f'<option value="/episodes/{esc(item["id"])}/"{" selected" if item["id"] == eid else ""}>[{esc(item["genre"])}] {esc(item["title"])}</option>'
         for item in episodes
     )
     prev_ctrl = (
         '<span class="v-btn is-disabled" aria-disabled="true">◀ 처음</span>'
         if idx == 0
-        else f'<a class="v-btn" href="/episodes/{esc(prev_ep["id"])}/">◀ 이전화</a>'
+        else f'<a class="v-btn" href="/episodes/{esc(prev_ep["id"])}/">◀ 이전 작품</a>'
     )
 
     cuts_html = []
     for c_idx, p in enumerate(ep["panels"], start=1):
         cuts_html.append(
             f'<div class="comic-cut" data-cut-num="{c_idx}">'
-            f'  <img src="/assets/toons/{esc(eid)}/cut-{c_idx:02d}.svg" alt="{c_idx}컷 ({esc(p["act"])}) {esc(p["speaker"])}: {esc(p["line"])} — {esc(p["subline"])}" width="690" height="1120" loading="{"eager" if c_idx == 1 else "lazy"}" />'
+            f'  <img src="/assets/toons/{esc(eid)}/cut-{c_idx:02d}.webp" alt="{esc(ep["title"])} - {esc(p["speaker"])}: {esc(p["line"])} ({esc(p["subline"])})" width="1080" height="1520" loading="{"eager" if c_idx == 1 else "lazy"}" />'
             f'</div>'
         )
         if c_idx == 4:
@@ -1071,10 +1107,10 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
 
     checklist_html = "\n".join(f"<li style='margin-bottom:6px;'>{esc(item)}</li>" for item in ep["checklist"])
     head = _head_html(
-        f"{ep['episodeNo']:02d}화 {ep['title']} | GuideHollow 웹툰",
+        f"{ep['title']} | GuideHollow 웹툰",
         f"{ep['hook']} {ep['summary']}",
         f"{SITE_URL}/episodes/{eid}/",
-        f"{SITE_URL}/assets/toons/{eid}/cover.svg",
+        f"{SITE_URL}/assets/toons/{eid}/cover.webp",
     )
 
     return f"""{head}
@@ -1084,23 +1120,23 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
     <div class="wrap viewer-bar-inner">
       <div class="viewer-title-group">
         <a class="viewer-back" href="/">← 목록</a>
-        <h1 class="viewer-h1">{ep['episodeNo']:02d}화 {esc(ep['title'])}</h1>
+        <h1 class="viewer-h1">{esc(ep['title'])}</h1>
       </div>
       <div class="viewer-controls">
-        <select class="v-ep-select" aria-label="회차 빠른 이동" onchange="if(this.value)location.href=this.value">
+        <select class="v-ep-select" aria-label="다른 작품 빠른 이동" onchange="if(this.value)location.href=this.value">
 {ep_options}
         </select>
         {prev_ctrl}
-        <a class="v-btn primary" href="/episodes/{esc(next_ep['id'])}/">다음화 ▶</a>
+        <a class="v-btn primary" href="/episodes/{esc(next_ep['id'])}/">다음 작품 ▶</a>
       </div>
     </div>
   </header>
 
   <main>
     <div class="ep-head-meta">
-      <h2>{ep['episodeNo']:02d}화. {esc(ep['title'])}</h2>
+      <h2>{esc(ep['title'])}</h2>
       <p>{esc(ep['hook'])}</p>
-      <div style="margin-top:6px;font-size:12.5px;color:#008f42;font-weight:700;">{ep['episodeNo']:02d} / {len(episodes)}화 · {esc(ep['genre'])} · 총 {total}컷 · 무료 정주행</div>
+      <div style="margin-top:6px;font-size:12.5px;color:#008f42;font-weight:700;">{esc(ep['genre'])} · 단편 완결 · 무료 웹툰</div>
       <div class="ai-disclosure-sm">{AI_IMAGE_NOTICE}</div>
     </div>
 
@@ -1123,15 +1159,15 @@ def build_episode_html(idx: int, ep: dict, episodes: list[dict]) -> str:
       <button type="button" class="float-circle" aria-label="아래로" onclick="window.scrollTo({{top:document.body.scrollHeight,behavior:'smooth'}})">∨</button>
     </div>
 
-    <section class="reader-post" aria-label="다음화, 생활 추천 및 실전 해결 가이드">
+    <section class="reader-post" aria-label="다음 작품, 생활 추천 및 실전 해결 가이드">
       <div class="next-ep-banner">
-        <img src="/assets/toons/{esc(next_ep['id'])}/cover.svg" alt="{esc(next_ep['title'])}" />
+        <img src="/assets/toons/{esc(next_ep['id'])}/cover.webp" alt="{esc(next_ep['title'])}" />
         <div>
-          <div style="font-size:12px;font-weight:800;color:#00b853;">다음화 · {next_ep['episodeNo']:02d}화 ({next_ep['cutCount']}컷)</div>
+          <div style="font-size:12px;font-weight:800;color:#00b853;">다음 추천 작품 · {esc(next_ep['genre'])}</div>
           <div style="font-size:15px;font-weight:800;color:#111111;margin:3px 0;">{esc(next_ep['title'])}</div>
           <div style="font-size:13px;color:#666666;">{esc(next_ep['hook'])}</div>
         </div>
-        <a class="v-btn primary" href="/episodes/{esc(next_ep['id'])}/">다음화 보기 ▶</a>
+        <a class="v-btn primary" href="/episodes/{esc(next_ep['id'])}/">다음 작품 보기 ▶</a>
       </div>
 
       {_render_infeed_coupang_card(end_slot, "ep-bottom", extra_class="ad-box")}
@@ -1211,14 +1247,17 @@ def build_site(ad_mode: str = "coupang") -> dict:
     sitemap_urls = [f"{SITE_URL}/", f"{SITE_URL}/studio/", f"{SITE_URL}/about/"]
     for idx, ep in enumerate(episodes):
         eid = ep["id"]
-        write_text(DIST / "assets" / "toons" / eid / "cover.svg", render_cover_svg(ep))
+        cover_webp, cover_svg = render_cover_assets(ep)
+        cover_webp_path = DIST / "assets" / "toons" / eid / "cover.webp"
+        cover_webp_path.parent.mkdir(parents=True, exist_ok=True)
+        cover_webp_path.write_bytes(cover_webp)
+        write_text(DIST / "assets" / "toons" / eid / "cover.svg", cover_svg)
         svg_count += 1
-        total = len(ep["panels"])
         for c_idx, panel in enumerate(ep["panels"], start=1):
-            write_text(
-                DIST / "assets" / "toons" / eid / f"cut-{c_idx:02d}.svg",
-                render_panel_svg(ep, c_idx, panel, total),
-            )
+            cut_webp, cut_svg = render_panel_assets(ep, c_idx, panel)
+            cut_webp_path = DIST / "assets" / "toons" / eid / f"cut-{c_idx:02d}.webp"
+            cut_webp_path.write_bytes(cut_webp)
+            write_text(DIST / "assets" / "toons" / eid / f"cut-{c_idx:02d}.svg", cut_svg)
             svg_count += 1
         write_text(DIST / "episodes" / eid / "index.html", build_episode_html(idx, ep, episodes))
         sitemap_urls.append(f"{SITE_URL}/episodes/{eid}/")
@@ -1229,10 +1268,10 @@ def build_site(ad_mode: str = "coupang") -> dict:
         DIST / "about" / "index.html",
         build_policy_page(
             "about",
-            "연재·편집 원칙",
-            "GuideHollow 웹툰 연재·편집 원칙",
-            f"<p>전 에피소드는 직장·계약·중고거래·이웃 분쟁 등 일상에서 흔히 겪는 갈등 소재를 바탕으로 이야기 길이에 따라 12~18컷 세로 스크롤 웹툰으로 창작·각색(현재 {len(episodes)}화 총 {total_cuts}컷)하고, 하단에 법적 대응과 생활 체크리스트를 함께 수록합니다.</p>"
-            "<p>모든 웹툰 작화는 AI 생성 일러스트와 한국어 웹툰 식자 조판을 결합해 제작되며, 별도 회원가입·댓글·평점 없이 모바일과 PC 모두에서 끊김 없는 무료 정주행을 즐길 수 있습니다.</p>",
+            "제작·편집 원칙",
+            "GuideHollow 웹툰 제작·편집 원칙",
+            f"<p>전 작품({len(episodes)}편)은 직장·계약·중고거래·이웃 분쟁 등 일상에서 흔히 겪는 갈등 소재를 바탕으로 독립 단편 완결 세로 스크롤 웹툰으로 창작·각색하고, 하단에 법적 대응과 생활 체크리스트를 함께 수록합니다.</p>"
+            "<p>모든 웹툰 작화는 AI 생성 일러스트에 한국어 말풍선과 상황 해설을 그림 파일 내부에 고해상도로 함께 내장해 제작되며, 별도 회원가입·댓글·평점 없이 모바일과 PC 모두에서 무료로 감상할 수 있습니다.</p>",
         ),
     )
     write_text(
@@ -1250,7 +1289,7 @@ def build_site(ad_mode: str = "coupang") -> dict:
             "terms",
             "이용약관",
             "이용약관",
-            "<p>수록된 모든 웹툰 회차와 가이드는 일상 정보 공유 목적이며 구체적 법률 사건은 관할 기관 또는 전문가 확인을 권장합니다.</p>",
+            "<p>수록된 모든 단편 웹툰과 가이드는 일상 정보 공유 목적이며 구체적 법률 사건은 관할 기관 또는 전문가 확인을 권장합니다.</p>",
         ),
     )
     write_text(
