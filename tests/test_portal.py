@@ -1,4 +1,4 @@
-"""Tests for the 18-cut AI-illustrated Naver Webtoon portal toon.guidehollow.com."""
+"""Tests for the comic.naver.com style AI-illustrated portal toon.guidehollow.com."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -12,14 +12,15 @@ from content.episodes import EPISODES  # noqa: E402
 from tools.build import AI_IMAGE_NOTICE, DISALLOWED_EDITOR_MARKERS, DIST, build_site  # noqa: E402
 
 
-def test_build_portal_with_real_ai_webtoon_art() -> None:
+def test_build_portal_matches_comic_naver_layout() -> None:
     stats = build_site(ad_mode="coupang")
     assert stats["episodes"] == 10
     assert stats["svgs"] == 190  # 10 covers + 180 cuts
 
     home_html = (DIST / "index.html").read_text(encoding="utf-8")
-    assert "WEBTOON" in home_html
-    assert "18컷 장편" in home_html
+    assert "이달의 신규 웹툰" in home_html
+    assert "요일별 전체 웹툰" in home_html
+    assert "첫 화 보기" in home_html
     assert "G-QP5Q67GE5B" in home_html
     assert AI_IMAGE_NOTICE in home_html
     for marker in DISALLOWED_EDITOR_MARKERS:
@@ -33,13 +34,12 @@ def test_build_portal_with_real_ai_webtoon_art() -> None:
         cover_path = DIST / "assets" / "toons" / eid / "cover.svg"
         assert cover_path.exists()
         cover_xml = cover_path.read_text(encoding="utf-8")
-        assert 'viewBox="0 0 480 640"' in cover_xml
+        assert 'viewBox="0 0 480 620"' in cover_xml
         assert "data:image/jpeg;base64," in cover_xml
         ET.fromstring(cover_xml)
 
         ep_html = (DIST / "episodes" / eid / "index.html").read_text(encoding="utf-8")
-        assert "18컷 장편" in ep_html
-        assert "독자 BEST 댓글" in ep_html
+        assert "act-gutter" not in ep_html
         assert AI_IMAGE_NOTICE in ep_html
         assert ep["coupang"]["url"] in ep_html
         assert "G-QP5Q67GE5B" in ep_html
@@ -52,6 +52,7 @@ def test_build_portal_with_real_ai_webtoon_art() -> None:
             cut_file = DIST / "assets" / "toons" / eid / f"cut-{c_idx:02d}.svg"
             assert cut_file.exists()
             cut_xml = cut_file.read_text(encoding="utf-8")
-            assert 'viewBox="0 0 720 880"' in cut_xml
+            assert 'viewBox="0 0 690 1120"' in cut_xml
+            assert 'fill="#ffffff"' in cut_xml
             assert "data:image/jpeg;base64," in cut_xml
             ET.fromstring(cut_xml)

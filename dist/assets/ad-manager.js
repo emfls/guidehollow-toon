@@ -1,4 +1,3 @@
-// Dual-Mode Ad Manager for GuideHollow 웹툰 (toon.guidehollow.com)
 (function () {
   const params = new URLSearchParams(window.location.search);
   const override = params.get("ad_mode");
@@ -37,8 +36,8 @@
       '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
       '<div class="coupang-banner">' +
       '  <div style="font-size:12px;font-weight:800;color:#059669;">' + esc(badge) + '</div>' +
-      '  <div style="font-size:17px;font-weight:900;color:#111827;">' + esc(title) + '</div>' +
-      '  <div style="font-size:13.5px;color:#4b5563;">' + esc(reason) + '</div>' +
+      '  <div style="font-size:16.5px;font-weight:800;color:#111111;">' + esc(title) + '</div>' +
+      '  <div style="font-size:13.5px;color:#555555;">' + esc(reason) + '</div>' +
       '  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">' +
       '    <a class="coupang-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
       '    <a style="display:inline-flex;align-items:center;font-size:13px;font-weight:700;color:#2563eb;" href="' + esc(guideUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(guideLabel) + ' →</a>' +

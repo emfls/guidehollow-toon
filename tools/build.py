@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static webtoon portal builder for toon.guidehollow.com (18-cut AI Korean Webtoon art)."""
+"""Authentic comic.naver.com style static webtoon portal builder for toon.guidehollow.com."""
 from __future__ import annotations
 
 import argparse
@@ -38,22 +38,12 @@ DISALLOWED_EDITOR_MARKERS = [
     "에디터 스튜디오",
 ]
 
-THEME_PALETTE = {
-    "office": {"sky1": "#0b1320", "sky2": "#13293d", "accent": "#00dc64"},
-    "love": {"sky1": "#1a0b2e", "sky2": "#2e1065", "accent": "#fb7185"},
-    "car": {"sky1": "#0b1120", "sky2": "#1e3a8a", "accent": "#f59e0b"},
-    "mystery": {"sky1": "#05070b", "sky2": "#111827", "accent": "#e11d48"},
-    "finance": {"sky1": "#052e26", "sky2": "#064e3b", "accent": "#10b981"},
-    "living": {"sky1": "#0f172a", "sky2": "#1e293b", "accent": "#0ea5e9"},
-    "apartment": {"sky1": "#14110f", "sky2": "#292524", "accent": "#f97316"},
-}
-
 
 def esc(value: object) -> str:
     return html.escape(str(value or ""), quote=True)
 
 
-def wrap_ko(text: str, width: int = 17, max_lines: int = 3) -> list[str]:
+def wrap_ko(text: str, width: int = 16, max_lines: int = 3) -> list[str]:
     clean = " ".join(str(text or "").split())
     if not clean:
         return []
@@ -82,9 +72,9 @@ def _slice_cell_b64(
     cut_index_1based: int,
     size: tuple[int, int],
     centering: tuple[float, float] = (0.5, 0.35),
-    quality: int = 80,
+    quality: int = 82,
 ) -> str:
-    """Extract one cell from the episode's 3x3 AI sheets cleanly with divider margins removed."""
+    """Slice one cell from the episode's 3x3 AI sheet cleanly with divider borders trimmed."""
     half = "a" if cut_index_1based <= 9 else "b"
     cell_idx = (cut_index_1based - 1) if cut_index_1based <= 9 else (cut_index_1based - 10)
     sheet = _load_sheet(ep_num, half)
@@ -93,7 +83,6 @@ def _slice_cell_b64(
     row = cell_idx // 3
     cw = w / 3.0
     ch = h / 3.0
-    # Trim ~4.8% inside each cell so black/white panel borders never bleed into cut art
     pad_x = cw * 0.048
     pad_y = ch * 0.048
     box = (
@@ -109,121 +98,98 @@ def _slice_cell_b64(
     return base64.b64encode(buf.getvalue()).decode("ascii")
 
 
-def _draw_bubble(
-    x: int,
-    y: int,
-    w: int,
-    speaker: str,
-    text: str,
-    width_chars: int = 22,
-) -> str:
-    wrapped = wrap_ko(text, width=width_chars, max_lines=2)
-    bh = 44 + len(wrapped) * 32
-    parts = ["<g>"]
-    parts.append(f'<rect x="{x+4}" y="{y+5}" width="{w}" height="{bh}" rx="22" fill="#000000" opacity="0.35"/>')
-    parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{bh}" rx="22" fill="#ffffff" stroke="#0b0f19" stroke-width="4"/>')
-    tx = x + w // 2
-    parts.append(
-        f'<polygon points="{tx-16},{y+bh} {tx+4},{y+bh+22} {tx+16},{y+bh}" '
-        f'fill="#ffffff" stroke="#0b0f19" stroke-width="3.5" stroke-linejoin="round"/>'
-    )
-    parts.append(f'<rect x="{tx-13}" y="{y+bh-4}" width="27" height="7" fill="#ffffff"/>')
-    pill_w = min(w - 36, max(116, len(speaker) * 16 + 34))
-    parts.append(f'<rect x="{x+18}" y="{y-14}" width="{pill_w}" height="28" rx="14" fill="#0b0f19"/>')
-    parts.append(
-        f'<text x="{x+34}" y="{y+6}" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" '
-        f'font-size="14.5" font-weight="800" fill="#00dc64">{esc(speaker)}</text>'
-    )
-    for idx, line in enumerate(wrapped):
-        ty = y + 48 + idx * 32
+def render_cover_svg(ep: dict) -> str:
+    """Render an authentic clean comic.naver.com 480x620 poster with circle badge & title logo only."""
+    w, h = 480, 620
+    title_lines = wrap_ko(ep["title"], width=14, max_lines=3)
+    img_b64 = _slice_cell_b64(ep["episodeNo"], 1, (w, h), centering=(0.5, 0.25), quality=84)
+    badge = "신작" if ep["episodeNo"] <= 3 else "UP"
+    badge_bg = "#00dc64" if badge == "신작" else "#ff3b30"
+    badge_fg = "#111111" if badge == "신작" else "#ffffff"
+
+    parts = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img" aria-label="{esc(ep["title"])}">',
+        f'<image href="data:image/jpeg;base64,{img_b64}" x="0" y="0" width="{w}" height="{h}" preserveAspectRatio="xMidYMid slice"/>',
+        '<defs><linearGradient id="nv-cover-grad" x1="0" y1="0" x2="0" y2="1">'
+        '<stop offset="0%" stop-color="#000000" stop-opacity="0"/>'
+        '<stop offset="55%" stop-color="#000000" stop-opacity="0.48"/>'
+        '<stop offset="100%" stop-color="#000000" stop-opacity="0.92"/>'
+        '</linearGradient></defs>',
+        '<rect x="0" y="340" width="480" height="280" fill="url(#nv-cover-grad)"/>',
+        f'<circle cx="38" cy="38" r="20" fill="{badge_bg}"/>',
+        f'<text x="38" y="43" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="13" font-weight="900" fill="{badge_fg}">{badge}</text>',
+    ]
+    base_y = 582 - (len(title_lines) - 1) * 34
+    for idx, line in enumerate(title_lines):
         parts.append(
-            f'<text x="{x + w//2}" y="{ty}" text-anchor="middle" '
-            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="22" font-weight="800" fill="#0b0f19">{esc(line)}</text>'
+            f'<text x="20" y="{base_y + idx * 34}" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" '
+            f'font-size="24" font-weight="900" fill="#ffffff" stroke="#111111" stroke-width="1.2" paint-order="stroke fill">{esc(line)}</text>'
         )
-    parts.append("</g>")
+    parts.append("</svg>")
     return "\n".join(parts)
 
 
-def render_cover_svg(ep: dict) -> str:
-    """Render a 480x640 3:4 portrait webtoon poster embedding Cut 1's real AI artwork."""
-    w, h = 480, 640
-    pal = THEME_PALETTE.get(ep["genreKey"], THEME_PALETTE["office"])
-    title_lines = wrap_ko(ep["title"], width=15, max_lines=3)
-    img_b64 = _slice_cell_b64(ep["episodeNo"], 1, (w, h), centering=(0.5, 0.25), quality=84)
-
-    body = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img" aria-label="{esc(ep["title"])}">',
-        f'<rect width="{w}" height="{h}" fill="{pal["sky1"]}"/>',
-        f'<image href="data:image/jpeg;base64,{img_b64}" x="0" y="0" width="{w}" height="{h}" preserveAspectRatio="xMidYMid slice"/>',
-        '<defs><linearGradient id="cover-scrim" x1="0" y1="0" x2="0" y2="1">'
-        '<stop offset="0%" stop-color="#05070b" stop-opacity="0"/>'
-        '<stop offset="42%" stop-color="#05070b" stop-opacity="0.58"/>'
-        '<stop offset="100%" stop-color="#05070b" stop-opacity="0.96"/>'
-        '</linearGradient></defs>',
-        '<rect x="0" y="300" width="480" height="340" fill="url(#cover-scrim)"/>',
-        f'<rect x="20" y="408" width="184" height="30" rx="15" fill="{pal["accent"]}"/>',
-        f'<text x="112" y="428" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="14" font-weight="900" fill="#05070b">{esc(ep["genre"])}</text>',
-    ]
-    for idx, line in enumerate(title_lines):
-        body.append(
-            f'<text x="22" y="{478 + idx * 36}" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" '
-            f'font-size="25" font-weight="900" fill="#ffffff" stroke="#000000" stroke-width="0.8">{esc(line)}</text>'
-        )
-    body.append(
-        f'<text x="22" y="612" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="15" font-weight="800" fill="#fde047">★ {esc(ep["rating"])} · 조회 {esc(ep["viewsLabel"])} · 클릭해서 결말 보기 ▶</text>'
-    )
-    body.append("</svg>")
-    return "\n".join(body)
-
-
 def render_panel_svg(ep: dict, idx: int, panel: dict, total: int) -> str:
-    """Render a 720x880 vertical webtoon cut with real AI art in unobstructed frame + crisp bubbles."""
-    w, h = 720, 880
-    pal = THEME_PALETTE.get(ep["genreKey"], THEME_PALETTE["office"])
-    speaker = panel.get("speaker", "주인공")
-    img_b64 = _slice_cell_b64(ep["episodeNo"], idx, (660, 560), centering=(0.5, 0.36), quality=80)
-    clip_id = f"clip-ep{ep['episodeNo']}-c{idx}"
+    """Render an authentic 690x1120 Naver Webtoon vertical white-paper panel with white gutters & oval bubbles."""
+    w, h = 690, 1120
+    img_b64 = _slice_cell_b64(ep["episodeNo"], idx, (650, 740), centering=(0.5, 0.34), quality=82)
+    is_left = (idx % 2 == 1)
 
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img" aria-label="{esc(ep["title"])} {idx}컷">',
-        f'<defs>'
-        f'<linearGradient id="bg-{clip_id}" x1="0" y1="0" x2="0" y2="1">'
-        f'<stop offset="0%" stop-color="{pal["sky1"]}"/><stop offset="100%" stop-color="{pal["sky2"]}"/></linearGradient>'
-        f'<clipPath id="{clip_id}"><rect x="30" y="174" width="660" height="560" rx="14"/></clipPath>'
-        f'</defs>',
-        f'<rect width="{w}" height="{h}" fill="url(#bg-{clip_id})"/>',
-        '<rect x="0" y="0" width="720" height="46" fill="#05070b" opacity="0.92"/>',
-        f'<text x="24" y="29" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="16" font-weight="800" fill="#00dc64">'
-        f'EP.{ep["episodeNo"]} · {esc(panel["act"])}</text>',
-        f'<text x="696" y="29" text-anchor="end" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="15" font-weight="800" fill="#e2e8f0">'
-        f'CUT {idx:02d} / {total}</text>',
-        # Full unobstructed AI illustration frame
-        f'<rect x="30" y="174" width="660" height="560" rx="14" fill="#0b0f19"/>',
-        f'<image href="data:image/jpeg;base64,{img_b64}" x="30" y="174" width="660" height="560" preserveAspectRatio="xMidYMid slice" clip-path="url(#{clip_id})"/>',
-        '<rect x="30" y="174" width="660" height="560" rx="14" fill="none" stroke="#0b0f19" stroke-width="4.5"/>',
-        # Top speech bubble sitting cleanly above artwork frame so faces never get blocked
-        _draw_bubble(34, 62, 652, speaker, panel["line"], width_chars=23),
+        f'<rect width="{w}" height="{h}" fill="#ffffff"/>',
     ]
 
-    sfx = panel.get("sfx", "")
-    if sfx:
+    # Top narration box on clean white paper gutter (matching Naver Webtoon boxed narration)
+    sub_lines = wrap_ko(panel["subline"], width=27, max_lines=2)
+    if sub_lines:
+        n_h = 26 + len(sub_lines) * 26
         parts.append(
-            f'<g transform="translate(596, 696) rotate(5)">'
-            f'<rect x="-80" y="-26" width="160" height="46" rx="12" fill="#ef4444" stroke="#ffffff" stroke-width="3.5"/>'
-            f'<text x="0" y="5" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="22" font-weight="900" fill="#fde047">{esc(sfx)}</text>'
-            f'</g>'
+            f'<rect x="115" y="14" width="460" height="{n_h}" fill="#ffffff" stroke="#111111" stroke-width="2"/>'
+        )
+        for s_idx, s_line in enumerate(sub_lines):
+            parts.append(
+                f'<text x="345" y="{42 + s_idx * 26}" text-anchor="middle" '
+                f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="18.5" font-weight="700" fill="#111111">{esc(s_line)}</text>'
+            )
+
+    # Sharp rectangular AI illustration panel on pure white paper (y=220..960)
+    parts.append(
+        f'<image href="data:image/jpeg;base64,{img_b64}" x="20" y="220" width="650" height="740" preserveAspectRatio="xMidYMid slice"/>'
+    )
+    parts.append(
+        '<rect x="20" y="220" width="650" height="740" fill="none" stroke="#111111" stroke-width="2.2"/>'
+    )
+
+    # Authentic white oval comic speech bubble hovering smoothly from top white gutter into upper panel
+    d_lines = wrap_ko(panel["line"], width=16, max_lines=3)
+    bw = 340
+    bh = 36 + len(d_lines) * 28
+    bx = 44 if is_left else 306
+    by = 104
+    tx = bx + (bw * 2 // 3 if is_left else bw // 3)
+    parts.append(
+        f'<rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="{bh // 2}" fill="#ffffff" stroke="#111111" stroke-width="2.2"/>'
+    )
+    parts.append(
+        f'<polygon points="{tx-10},{by+bh-1} {tx+2},{by+bh+28} {tx+14},{by+bh-1}" fill="#ffffff" stroke="#111111" stroke-width="2" stroke-linejoin="round"/>'
+    )
+    parts.append(f'<rect x="{tx-8}" y="{by+bh-5}" width="20" height="8" fill="#ffffff"/>')
+    for d_idx, d_line in enumerate(d_lines):
+        parts.append(
+            f'<text x="{bx + bw // 2}" y="{by + 36 + d_idx * 28}" text-anchor="middle" '
+            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="20" font-weight="800" fill="#111111">{esc(d_line)}</text>'
         )
 
-    sub_lines = wrap_ko(panel["subline"], width=28, max_lines=2)
-    box_h = 34 + len(sub_lines) * 30
-    by = h - box_h - 24
-    parts.append(
-        f'<rect x="30" y="{by}" width="660" height="{box_h}" rx="12" fill="#0b0f19" opacity="0.96" stroke="#00dc64" stroke-width="3"/>'
-    )
-    for s_idx, s_line in enumerate(sub_lines):
+    # Hand-lettered comic SFX with thick white halo stroke (no red UI button)
+    sfx = panel.get("sfx", "")
+    if sfx:
+        sx = 575 if is_left else 115
+        rot = -8 if is_left else 7
         parts.append(
-            f'<text x="360" y="{by + 34 + s_idx * 30}" text-anchor="middle" '
-            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="19.5" font-weight="700" fill="#f8fafc">{esc(s_line)}</text>'
+            f'<text x="{sx}" y="932" text-anchor="middle" transform="rotate({rot} {sx} 932)" '
+            f'font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="38" font-weight="900" '
+            f'fill="#111111" stroke="#ffffff" stroke-width="10" stroke-linejoin="round" paint-order="stroke fill">{esc(sfx)}</text>'
         )
 
     parts.append("</svg>")
@@ -234,149 +200,156 @@ STYLE_CSS = """
 :root {
   --nv-green: #00dc64;
   --nv-green-dark: #00b853;
-  --nv-red: #ff3b30;
-  --bg-page: #f8f9fa;
-  --bg-card: #ffffff;
-  --ink-strong: #111827;
-  --ink-muted: #5b6472;
-  --line: #e5e8eb;
-  --viewer-bg: #0b0d10;
+  --ink: #111111;
+  --muted: #666666;
+  --line: #ebebeb;
+  --bg: #ffffff;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; overflow-x: hidden; background: var(--bg-page); color: var(--ink-strong); font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; line-height: 1.55; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; background: #ffffff; color: #111111; font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; line-height: 1.5; }
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; height: auto; }
-.wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+.wrap { width: 100%; max-width: 1190px; margin: 0 auto; padding: 0 16px; }
 
-.nv-gnb { position: sticky; top: 0; z-index: 60; background: #ffffff; border-bottom: 1px solid var(--line); }
-.nv-gnb-inner { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 60px; flex-wrap: wrap; padding: 8px 0; }
-.nv-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 900; font-size: 19px; letter-spacing: -0.03em; }
-.nv-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--nv-green); color: #ffffff; font-weight: 900; font-size: 13px; padding: 5px 10px; border-radius: 6px; letter-spacing: 0.02em; }
-.nv-sub-pill { font-size: 11px; font-weight: 800; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 999px; padding: 2px 8px; }
-.nv-nav { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.nv-nav a { font-size: 15px; font-weight: 700; color: #374151; padding: 8px 2px; border-bottom: 3px solid transparent; }
-.nv-nav a.active, .nv-nav a:hover { color: #00b853; border-bottom-color: var(--nv-green); }
+/* Naver Webtoon 3-Tier White Header */
+.nv-top-strip { border-bottom: 1px solid #f0f0f0; background: #ffffff; }
+.nv-top-inner { display: flex; align-items: center; justify-content: space-between; height: 52px; gap: 12px; }
+.nv-brand-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.nv-logo { display: inline-flex; align-items: center; gap: 6px; font-weight: 900; font-size: 18px; letter-spacing: -0.04em; color: #111111; }
+.nv-logo-mark { font-weight: 900; font-size: 13px; color: #111111; letter-spacing: -0.03em; }
+.nv-logo-dot { color: #d1d5db; }
+.nv-logo-sub { font-size: 13.5px; font-weight: 600; color: #767676; }
+.nv-search-row { display: flex; align-items: center; gap: 10px; }
+.nv-search-box { display: inline-flex; align-items: center; border: 1px solid #d9d9d9; border-radius: 4px; height: 34px; padding: 0 10px; background: #ffffff; width: 230px; }
+.nv-search-box input { border: 0; outline: 0; font-size: 13px; width: 100%; font-family: inherit; }
+.nv-creator-btn { display: inline-flex; align-items: center; background: var(--nv-green); color: #ffffff; font-size: 12px; font-weight: 900; padding: 7px 14px; border-radius: 4px; letter-spacing: 0.02em; }
 
-.nv-subbar { background: #ffffff; border-bottom: 1px solid var(--line); overflow-x: auto; }
-.nv-tabs { display: flex; align-items: center; gap: 8px; padding: 10px 0; min-width: max-content; }
-.nv-tab-btn { border: 1px solid #e5e8eb; background: #f8f9fa; color: #374151; font-weight: 700; font-size: 13.5px; border-radius: 999px; padding: 7px 14px; cursor: pointer; font-family: inherit; }
-.nv-tab-btn.is-active { background: #111827; border-color: #111827; color: #ffffff; }
+.nv-main-nav { border-bottom: 1px solid #ebebeb; background: #ffffff; }
+.nv-main-tabs { display: flex; align-items: center; height: 48px; gap: 2px; }
+.nv-main-tabs a { display: inline-flex; align-items: center; height: 48px; padding: 0 18px; font-size: 15px; font-weight: 800; color: #111111; }
+.nv-main-tabs a.is-on { background: var(--nv-green); color: #ffffff; }
 
-.hero-spot { margin-top: 18px; background: linear-gradient(125deg, #0b1120 0%, #172554 55%, #064e3b 100%); border-radius: 16px; padding: 22px; color: #ffffff; display: grid; grid-template-columns: 180px 1fr; gap: 22px; align-items: center; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14); }
-.hero-cover { width: 180px; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45); border: 2px solid rgba(255, 255, 255, 0.16); }
-.hero-kicker { display: inline-flex; align-items: center; gap: 8px; background: var(--nv-red); color: #ffffff; font-size: 12px; font-weight: 900; border-radius: 6px; padding: 4px 10px; margin-bottom: 10px; }
-.hero-title { margin: 0 0 10px; font-size: clamp(20px, 2.6vw, 27px); font-weight: 900; line-height: 1.32; letter-spacing: -0.02em; }
-.hero-hook { margin: 0 0 16px; font-size: 15px; color: #e2e8f0; line-height: 1.55; }
-.hero-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.btn-nv { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--nv-green); color: #052e16; font-weight: 900; font-size: 15px; padding: 12px 22px; border-radius: 8px; border: 0; cursor: pointer; }
-.btn-nv:hover { background: #14eb74; }
-.hero-meta { font-size: 13.5px; color: #fde047; font-weight: 800; }
+.nv-sub-nav { border-bottom: 1px solid #ebebeb; background: #ffffff; overflow-x: auto; }
+.nv-sub-tabs { display: flex; align-items: center; height: 44px; gap: 18px; min-width: max-content; }
+.nv-sub-btn { background: none; border: 0; border-bottom: 2px solid transparent; height: 44px; padding: 0 2px; font-size: 14px; font-weight: 700; color: #333333; cursor: pointer; font-family: inherit; }
+.nv-sub-btn.is-active { color: #00b853; border-bottom-color: var(--nv-green); font-weight: 800; }
 
-.sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 28px 0 14px; flex-wrap: wrap; }
-.sec-title { margin: 0; font-size: 20px; font-weight: 900; letter-spacing: -0.02em; }
-.sec-sub { font-size: 13px; color: var(--ink-muted); font-weight: 600; }
-.poster-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px 14px; }
-.poster-card { display: flex; flex-direction: column; gap: 8px; background: transparent; transition: transform 0.16s ease; }
-.poster-card:hover { transform: translateY(-3px); }
-.poster-thumb { position: relative; aspect-ratio: 3 / 4; border-radius: 10px; overflow: hidden; border: 1px solid #d1d5db; background: #111827; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08); }
-.poster-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.poster-rank { position: absolute; top: 8px; left: 8px; background: rgba(11, 15, 25, 0.88); color: var(--nv-green); font-size: 12px; font-weight: 900; padding: 3px 8px; border-radius: 6px; }
-.poster-up { position: absolute; top: 8px; right: 8px; background: var(--nv-red); color: #ffffff; font-size: 11px; font-weight: 900; padding: 3px 7px; border-radius: 6px; }
-.poster-ep-title { margin: 0; font-size: 14.5px; font-weight: 800; line-height: 1.38; color: var(--ink-strong); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.poster-hook { margin: 0; font-size: 12.5px; color: var(--ink-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.poster-stats { font-size: 12px; font-weight: 800; color: #d97706; display: flex; align-items: center; gap: 8px; }
-.poster-stats span.views { color: #6b7280; font-weight: 600; }
+/* 이달의 신규 웹툰 3-column horizontal showcase */
+.nv-sec-title-row { display: flex; align-items: center; justify-content: space-between; margin: 28px 0 14px; gap: 12px; flex-wrap: wrap; }
+.nv-sec-title { margin: 0; font-size: 20px; font-weight: 800; color: #111111; letter-spacing: -0.02em; }
+.nv-sec-more { font-size: 13.5px; color: #666666; font-weight: 600; }
+.new-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.new-card { display: flex; flex-direction: column; }
+.new-thumb { position: relative; aspect-ratio: 4 / 3; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.08); background: #f3f4f6; margin-bottom: 10px; }
+.new-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.new-badge-circle { position: absolute; top: 10px; left: 10px; width: 32px; height: 32px; border-radius: 50%; background: var(--nv-green); color: #111111; font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.new-title { margin: 0 0 3px; font-size: 15.5px; font-weight: 800; color: #111111; line-height: 1.38; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.new-author { font-size: 13px; color: #444444; font-weight: 600; margin-bottom: 4px; }
+.new-desc { margin: 0; font-size: 12.5px; color: #767676; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-.ep-table-box { background: #ffffff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 32px; }
-.ep-row { display: grid; grid-template-columns: 84px 1fr 110px 94px; gap: 14px; align-items: center; padding: 14px 16px; border-bottom: 1px solid #f1f5f9; transition: background 0.14s ease; }
-.ep-row:last-child { border-bottom: 0; }
-.ep-row:hover { background: #f8fafc; }
-.ep-row-thumb { width: 84px; height: 58px; border-radius: 6px; overflow: hidden; border: 1px solid #e5e8eb; background: #0f172a; }
-.ep-row-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-.ep-row-badge { display: inline-block; font-size: 11px; font-weight: 900; color: #059669; background: #ecfdf5; border-radius: 4px; padding: 2px 6px; margin-bottom: 4px; }
-.ep-row-title { font-size: 15px; font-weight: 800; color: #111827; line-height: 1.38; margin: 0 0 3px; }
-.ep-row-desc { font-size: 13px; color: #64748b; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ep-row-rate { font-size: 13.5px; font-weight: 900; color: #e11d48; text-align: right; }
-.ep-row-len { font-size: 12px; color: #64748b; font-weight: 700; display: block; }
-.ep-row-cta { text-align: center; font-size: 13px; font-weight: 800; background: var(--nv-green); color: #052e16; padding: 8px 10px; border-radius: 6px; }
+/* 요일별 / 전체 웹툰 5-column clean grid */
+.wt-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px 16px; }
+.wt-card { display: flex; flex-direction: column; gap: 7px; }
+.wt-cover { aspect-ratio: 48 / 62; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.08); background: #f8f9fa; }
+.wt-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.18s ease; }
+.wt-card:hover .wt-cover img { transform: scale(1.03); }
+.wt-title { margin: 0; font-size: 14.5px; font-weight: 800; color: #111111; line-height: 1.36; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.wt-meta { font-size: 12.5px; color: #666666; font-weight: 600; }
 
-body.viewer-body { background: var(--viewer-bg); color: #f8fafc; }
-body.viewer-body.light-mode { background: #f3f4f6; color: #111827; }
-.read-progress { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 90; background: rgba(255, 255, 255, 0.12); }
-.read-progress-fill { height: 100%; width: 0%; background: var(--nv-green); transition: width 0.08s linear; }
-.viewer-bar { position: sticky; top: 0; z-index: 70; background: rgba(20, 23, 28, 0.96); backdrop-filter: blur(8px); border-bottom: 1px solid #27272a; color: #ffffff; }
-body.viewer-body.light-mode .viewer-bar { background: rgba(255, 255, 255, 0.96); color: #111827; border-bottom-color: #e5e8eb; }
-.viewer-bar-inner { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 54px; padding: 6px 0; }
+/* 작품 홈 헤더 + 회차 리스트 (comic.naver.com/webtoon/list style) */
+.series-home-box { margin-top: 34px; border: 1px solid #ebebeb; border-radius: 6px; padding: 24px; background: #ffffff; }
+.series-top { display: grid; grid-template-columns: 185px 1fr; gap: 24px; align-items: start; margin-bottom: 22px; }
+.series-poster { width: 185px; aspect-ratio: 48 / 62; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.08); }
+.series-poster img { width: 100%; height: 100%; object-fit: cover; }
+.series-h2 { margin: 0 0 8px; font-size: 22px; font-weight: 800; color: #111111; line-height: 1.32; }
+.series-authors { font-size: 13.5px; color: #666666; margin-bottom: 10px; font-weight: 600; }
+.series-authors strong { color: #111111; }
+.series-synop { margin: 0 0 14px; font-size: 14px; color: #333333; line-height: 1.6; }
+.series-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.series-tag { font-size: 12px; color: #555555; background: #f3f4f6; padding: 5px 10px; border-radius: 4px; font-weight: 600; }
+.series-cta-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-first-ep { flex: 1; min-width: 190px; height: 46px; display: inline-flex; align-items: center; justify-content: center; background: var(--nv-green); color: #ffffff; font-weight: 800; font-size: 15px; border-radius: 4px; }
+.btn-sub-outline { height: 46px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; background: #f7f7f7; border: 1px solid #e5e5e5; color: #111111; font-weight: 700; font-size: 14px; border-radius: 4px; cursor: pointer; }
+
+.ep-list { border-top: 1px solid #111111; }
+.ep-item { display: grid; grid-template-columns: 98px 1fr 120px; gap: 14px; align-items: center; padding: 12px 10px; border-bottom: 1px solid #ebebeb; transition: background 0.12s ease; }
+.ep-item:hover { background: #f9fafb; }
+.ep-item-thumb { width: 98px; height: 58px; border-radius: 4px; overflow: hidden; border: 1px solid #e5e5e5; }
+.ep-item-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.ep-item-name { font-size: 15px; font-weight: 700; color: #111111; margin-bottom: 3px; }
+.ep-item-sub { font-size: 12.5px; color: #888888; }
+.ep-item-right { text-align: right; font-size: 13px; color: #666666; }
+
+/* Authentic Pure White Paper Vertical Webtoon Viewer (comic.naver.com/webtoon/detail) */
+body.viewer-body { background: #ffffff; color: #111111; }
+.read-progress { position: fixed; top: 0; left: 0; width: 100%; height: 2.5px; z-index: 95; background: #f0f0f0; }
+.read-progress-fill { height: 100%; width: 0%; background: var(--nv-green); }
+.viewer-bar { position: sticky; top: 0; z-index: 70; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(8px); border-bottom: 1px solid #ebebeb; color: #111111; }
+.viewer-bar-inner { display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 54px; }
 .viewer-title-group { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
-.viewer-back { display: inline-flex; align-items: center; gap: 4px; font-size: 13.5px; font-weight: 800; background: #27272a; color: #ffffff; padding: 7px 12px; border-radius: 8px; flex-shrink: 0; }
-body.viewer-body.light-mode .viewer-back { background: #f1f5f9; color: #111827; }
-.viewer-h1 { margin: 0; font-size: 14.5px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.viewer-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.ctrl-btn { border: 1px solid #3f3f46; background: #18181b; color: #f8fafc; font-size: 12.5px; font-weight: 800; padding: 7px 10px; border-radius: 8px; cursor: pointer; font-family: inherit; }
-body.viewer-body.light-mode .ctrl-btn { background: #ffffff; color: #111827; border-color: #d1d5db; }
-.ctrl-btn.primary { background: var(--nv-green); color: #052e16; border-color: var(--nv-green); }
+.viewer-back { display: inline-flex; align-items: center; font-size: 13.5px; font-weight: 700; color: #111111; padding: 6px 10px; border: 1px solid #e0e0e0; border-radius: 4px; flex-shrink: 0; }
+.viewer-h1 { margin: 0; font-size: 15px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.viewer-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.v-btn { font-size: 13px; font-weight: 700; padding: 6px 12px; border: 1px solid #e0e0e0; border-radius: 4px; background: #ffffff; color: #111111; cursor: pointer; }
+.v-btn.primary { background: var(--nv-green); border-color: var(--nv-green); color: #ffffff; font-weight: 800; }
 
-.ep-intro-strip { max-width: 720px; margin: 16px auto 12px; padding: 16px 18px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; }
-body.viewer-body.light-mode .ep-intro-strip { background: #ffffff; border-color: #e5e8eb; }
-.ep-intro-strip h2 { margin: 0 0 8px; font-size: clamp(19px, 3vw, 24px); font-weight: 900; line-height: 1.35; }
-.ep-intro-strip p { margin: 0; font-size: 14.5px; color: #cbd5e1; }
-body.viewer-body.light-mode .ep-intro-strip p { color: #475569; }
+.ep-head-meta { max-width: 690px; margin: 22px auto 12px; padding: 0 12px; text-align: center; }
+.ep-head-meta h2 { margin: 0 0 8px; font-size: clamp(19px, 3vw, 24px); font-weight: 800; color: #111111; line-height: 1.35; }
+.ep-head-meta p { margin: 0; font-size: 14px; color: #555555; }
 .ai-disclosure-sm { margin-top: 8px; font-size: 11.5px; color: #8b95a1; }
-.comic-canvas { width: 100%; max-width: 720px; margin: 0 auto; background: #000000; box-shadow: 0 0 40px rgba(0, 0, 0, 0.55); }
-.comic-cut { width: 100%; margin: 0; padding: 0; background: #000000; }
+
+.comic-canvas { width: 100%; max-width: 690px; margin: 0 auto; background: #ffffff; }
+.comic-cut { width: 100%; margin: 0; padding: 0; background: #ffffff; }
 .comic-cut img { width: 100%; height: auto; display: block; }
-.act-gutter { padding: 18px 16px 10px; text-align: center; background: #05070b; color: var(--nv-green); font-size: 12.5px; font-weight: 900; letter-spacing: 0.08em; border-top: 1px solid #1e293b; }
-.cut-float-counter { position: fixed; right: 16px; bottom: 72px; z-index: 65; background: rgba(11, 15, 25, 0.88); color: #00dc64; font-size: 12px; font-weight: 900; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(0, 220, 100, 0.4); }
 
-.reader-post { max-width: 720px; margin: 20px auto 90px; display: flex; flex-direction: column; gap: 16px; padding: 0 12px; }
-.nv-box { background: #ffffff; color: #111827; border: 1px solid #e5e8eb; border-radius: 14px; padding: 20px; }
+.float-scroll-nav { position: fixed; right: 20px; bottom: 24px; z-index: 80; display: flex; flex-direction: column; gap: 8px; }
+.float-circle { width: 42px; height: 42px; border-radius: 50%; background: #ffffff; border: 1px solid #d9d9d9; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #333333; cursor: pointer; }
+
+.reader-post { max-width: 690px; margin: 20px auto 64px; display: flex; flex-direction: column; gap: 18px; padding: 0 12px; }
+.nv-box { background: #ffffff; border: 1px solid #ebebeb; border-radius: 6px; padding: 20px; }
 .rate-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.star-btns { display: flex; gap: 6px; }
-.star-btn { font-size: 20px; background: #fef9c3; border: 1px solid #fde047; border-radius: 8px; padding: 6px 10px; cursor: pointer; }
-.next-preview { display: grid; grid-template-columns: 76px 1fr auto; gap: 14px; align-items: center; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 14px; }
-.next-preview img { width: 76px; height: 100px; object-fit: cover; border-radius: 8px; }
-.comment-item { padding: 14px 0; border-bottom: 1px solid #f1f5f9; }
+.star-btn { font-size: 14px; font-weight: 700; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 4px; padding: 7px 12px; cursor: pointer; }
+.next-ep-banner { display: grid; grid-template-columns: 72px 1fr auto; gap: 14px; align-items: center; border: 1px solid #ebebeb; border-radius: 6px; padding: 14px; background: #fafafa; }
+.next-ep-banner img { width: 72px; height: 92px; object-fit: cover; border-radius: 4px; }
+.comment-item { padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
 .comment-item:last-child { border-bottom: 0; }
-.best-pill { display: inline-block; background: #ef4444; color: #ffffff; font-size: 10.5px; font-weight: 900; padding: 2px 6px; border-radius: 4px; margin-right: 6px; }
+.best-pill { display: inline-block; background: #ffffff; color: #ef4444; border: 1px solid #ef4444; font-size: 10.5px; font-weight: 800; padding: 1px 5px; border-radius: 3px; margin-right: 6px; }
 .comment-form { display: flex; gap: 8px; margin-top: 12px; }
-.comment-form input { flex: 1; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; }
-.comment-form button { background: var(--nv-green); color: #052e16; font-weight: 900; border: 0; padding: 0 16px; border-radius: 8px; cursor: pointer; font-family: inherit; }
-.ad-box { background: #ffffff; color: #111827; border: 1px solid #e5e8eb; border-radius: 14px; padding: 18px; }
-.ad-disclosure { font-size: 11.5px; color: #6b7280; margin-bottom: 6px; }
+.comment-form input { flex: 1; padding: 10px 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; font-family: inherit; }
+.comment-form button { background: var(--nv-green); color: #ffffff; font-weight: 800; border: 0; padding: 0 18px; border-radius: 4px; cursor: pointer; font-family: inherit; }
+.ad-box { background: #ffffff; border: 1px solid #ebebeb; border-radius: 6px; padding: 18px; }
+.ad-disclosure { font-size: 11.5px; color: #888888; margin-bottom: 6px; }
 .coupang-banner { display: grid; gap: 8px; }
-.coupang-cta { display: inline-flex; align-items: center; justify-content: center; background: #0f172a; color: #ffffff; font-weight: 800; font-size: 14px; padding: 11px 16px; border-radius: 8px; }
-.bottom-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 80; background: rgba(17, 24, 39, 0.96); border-top: 1px solid #374151; padding: 8px 14px; display: flex; justify-content: center; gap: 10px; }
-.bottom-dock a, .bottom-dock button { font-size: 13px; font-weight: 800; color: #ffffff; background: #1f2937; border: 1px solid #374151; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-family: inherit; }
-.bottom-dock a.go-next { background: var(--nv-green); color: #052e16; border-color: var(--nv-green); }
+.coupang-cta { display: inline-flex; align-items: center; justify-content: center; background: #111111; color: #ffffff; font-weight: 700; font-size: 14px; padding: 10px 16px; border-radius: 4px; }
 
-.site-footer { margin-top: 40px; background: #ffffff; border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 13px; color: #6b7280; }
+.site-footer { margin-top: 48px; border-top: 1px solid #ebebeb; padding: 28px 0 42px; font-size: 12.5px; color: #767676; background: #ffffff; }
 .footer-links { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
-.prose-card { background: #ffffff; border: 1px solid var(--line); border-radius: 14px; padding: 24px; margin: 22px 0; }
+.prose-card { background: #ffffff; border: 1px solid #ebebeb; border-radius: 6px; padding: 24px; margin: 22px 0; }
 
 @media (max-width: 960px) {
-  .poster-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .new-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wt-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .nv-search-box { display: none; }
 }
 @media (max-width: 640px) {
-  .hero-spot { grid-template-columns: 1fr; padding: 16px; }
-  .hero-cover { width: 140px; }
-  .poster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; }
-  .ep-row { grid-template-columns: 64px 1fr auto; }
-  .ep-row-cta { display: none; }
-  .ep-row-thumb { width: 64px; height: 50px; }
-  .reader-post { padding: 0 8px; }
-  .next-preview { grid-template-columns: 60px 1fr; }
-  .next-preview a { grid-column: 1 / -1; text-align: center; }
+  .new-grid { grid-template-columns: 1fr; gap: 16px; }
+  .wt-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 10px; }
+  .series-top { grid-template-columns: 1fr; gap: 14px; }
+  .series-poster { width: 130px; }
+  .ep-item { grid-template-columns: 74px 1fr; }
+  .ep-item-right { display: none; }
+  .next-ep-banner { grid-template-columns: 60px 1fr; }
+  .next-ep-banner a { grid-column: 1 / -1; text-align: center; }
+  .float-scroll-nav { right: 10px; bottom: 14px; }
 }
 @media (max-width: 350px) {
   .wrap { padding: 0 10px; }
-  .nv-nav { gap: 10px; }
-  .nv-nav a { font-size: 13.5px; }
+  .nv-main-tabs a { padding: 0 10px; font-size: 13.5px; }
 }
 """.strip()
 
 
 AD_MANAGER_JS = """
-// Dual-Mode Ad Manager for GuideHollow 웹툰 (toon.guidehollow.com)
 (function () {
   const params = new URLSearchParams(window.location.search);
   const override = params.get("ad_mode");
@@ -415,8 +388,8 @@ AD_MANAGER_JS = """
       '<div class="ad-disclosure">' + esc(COUPANG_FTC) + '</div>' +
       '<div class="coupang-banner">' +
       '  <div style="font-size:12px;font-weight:800;color:#059669;">' + esc(badge) + '</div>' +
-      '  <div style="font-size:17px;font-weight:900;color:#111827;">' + esc(title) + '</div>' +
-      '  <div style="font-size:13.5px;color:#4b5563;">' + esc(reason) + '</div>' +
+      '  <div style="font-size:16.5px;font-weight:800;color:#111111;">' + esc(title) + '</div>' +
+      '  <div style="font-size:13.5px;color:#555555;">' + esc(reason) + '</div>' +
       '  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">' +
       '    <a class="coupang-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer sponsored">' + esc(cta) + ' ↗</a>' +
       '    <a style="display:inline-flex;align-items:center;font-size:13px;font-weight:700;color:#2563eb;" href="' + esc(guideUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(guideLabel) + ' →</a>' +
@@ -446,52 +419,47 @@ AD_MANAGER_JS = """
 
 VIEWER_JS = """
 (function () {
-  const tabs = document.querySelectorAll(".nv-tab-btn");
+  const tabs = document.querySelectorAll(".nv-sub-btn");
   const cards = document.querySelectorAll("[data-genre-item]");
-  tabs.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      const target = btn.getAttribute("data-genre") || "all";
-      tabs.forEach(function (t) { t.classList.remove("is-active"); });
-      btn.classList.add("is-active");
-      cards.forEach(function (card) {
-        const g = card.getAttribute("data-genre-item") || "";
-        card.style.display = (target === "all" || target === g) ? "" : "none";
-      });
-    });
-  });
+  const searchInput = document.getElementById("wt-search-input");
 
-  const fill = document.getElementById("read-progress-fill");
-  const cutLabel = document.getElementById("cut-float-counter");
-  const cuts = Array.from(document.querySelectorAll(".comic-cut"));
-  if (fill || cutLabel) {
-    window.addEventListener("scroll", function () {
-      const docH = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const pct = Math.min(100, Math.max(0, Math.round((window.scrollY / docH) * 100)));
-      if (fill) fill.style.width = pct + "%";
-      if (cutLabel && cuts.length) {
-        const mid = window.scrollY + window.innerHeight * 0.4;
-        let current = 1;
-        cuts.forEach(function (c, i) {
-          if (c.offsetTop <= mid) current = i + 1;
-        });
-        cutLabel.textContent = current + " / " + cuts.length + "컷";
-      }
-    }, { passive: true });
+  function applyFilter() {
+    const activeBtn = document.querySelector(".nv-sub-btn.is-active");
+    const target = activeBtn ? activeBtn.getAttribute("data-genre") : "all";
+    const q = searchInput ? searchInput.value.trim().toLowerCase() : "";
+    cards.forEach(function (card) {
+      const g = card.getAttribute("data-genre-item") || "";
+      const txt = (card.textContent || "").toLowerCase();
+      const matchGenre = (target === "all" || target === g);
+      const matchSearch = (!q || txt.includes(q));
+      card.style.display = (matchGenre && matchSearch) ? "" : "none";
+    });
   }
 
-  const modeBtn = document.getElementById("toggle-theme-btn");
-  if (modeBtn) {
-    modeBtn.addEventListener("click", function () {
-      document.body.classList.toggle("light-mode");
-      modeBtn.textContent = document.body.classList.contains("light-mode") ? "🌙 다크" : "☀️ 라이트";
+  tabs.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      tabs.forEach(function (t) { t.classList.remove("is-active"); });
+      btn.classList.add("is-active");
+      applyFilter();
     });
+  });
+  if (searchInput) {
+    searchInput.addEventListener("input", applyFilter);
+  }
+
+  const fill = document.getElementById("read-progress-fill");
+  if (fill) {
+    window.addEventListener("scroll", function () {
+      const docH = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      fill.style.width = Math.min(100, Math.max(0, Math.round((window.scrollY / docH) * 100))) + "%";
+    }, { passive: true });
   }
 
   const rateMsg = document.getElementById("star-msg");
   document.querySelectorAll(".star-btn").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      const val = btn.getAttribute("data-star") || "5";
-      if (rateMsg) rateMsg.textContent = "별점 " + val + "점 참여가 반영되었습니다! 감사합니다.";
+      const val = btn.getAttribute("data-star") || "10";
+      if (rateMsg) rateMsg.textContent = "별점 " + val + "점 참여가 반영되었습니다!";
     });
   });
 
@@ -505,7 +473,7 @@ VIEWER_JS = """
       if (!txt) return;
       const item = document.createElement("div");
       item.className = "comment-item";
-      item.innerHTML = '<div style="font-size:13px;font-weight:800;margin-bottom:4px;"><span class="best-pill" style="background:#00dc64;color:#052e16;">NEW</span>방금 남긴 댓글</div><div style="font-size:14px;"></div>';
+      item.innerHTML = '<div style="font-size:13px;font-weight:800;margin-bottom:4px;"><span class="best-pill" style="color:#059669;border-color:#059669;">NEW</span>방금 남긴 댓글</div><div style="font-size:14px;"></div>';
       item.querySelector("div:last-child").textContent = txt;
       cList.prepend(item);
       cInput.value = "";
@@ -545,19 +513,46 @@ def _head_html(title: str, description: str, canonical: str, og_image: str | Non
 
 def _gnb_html(active: str = "home") -> str:
     return f"""
-  <header class="nv-gnb">
-    <div class="wrap nv-gnb-inner">
-      <a class="nv-brand" href="/">
-        <span class="nv-badge">WEBTOON</span>
-        <span>GuideHollow 썰툰</span>
-        <span class="nv-sub-pill">18컷 장편 연재</span>
-      </a>
-      <nav class="nv-nav" aria-label="주요 메뉴">
-        <a href="/" class="{'active' if active == 'home' else ''}">요일·인기 웹툰</a>
-        <a href="/studio/" class="{'active' if active == 'studio' else ''}">완결·전체 정주행</a>
-        <a href="/about/" class="{'active' if active == 'about' else ''}">연재 원칙</a>
-        <a href="https://shopping.guidehollow.com/" target="_blank" rel="noopener noreferrer">🛒 쇼핑 가이드 ↗</a>
-      </nav>
+  <header>
+    <div class="nv-top-strip">
+      <div class="wrap nv-top-inner">
+        <div class="nv-brand-group">
+          <a class="nv-logo" href="/">
+            <span class="nv-logo-mark">GUIDEHOLLOW</span>
+            <span>웹툰</span>
+          </a>
+          <span class="nv-logo-dot">|</span>
+          <a class="nv-logo-sub" href="/studio/">전체 정주행</a>
+          <span class="nv-logo-dot">|</span>
+          <a class="nv-logo-sub" href="https://shopping.guidehollow.com/" target="_blank" rel="noopener noreferrer">쇼핑가이드</a>
+        </div>
+        <div class="nv-search-row">
+          <div class="nv-search-box">
+            <input id="wt-search-input" type="search" placeholder="제목/장르로 검색할 수 있습니다." aria-label="웹툰 검색" />
+          </div>
+          <a class="nv-creator-btn" href="/episodes/ep01-office-cider/">오늘 1화 보기</a>
+        </div>
+      </div>
+    </div>
+    <nav class="nv-main-nav" aria-label="주요 메뉴">
+      <div class="wrap nv-main-tabs">
+        <a href="/" class="{'is-on' if active == 'home' else ''}">웹툰</a>
+        <a href="/studio/" class="{'is-on' if active == 'studio' else ''}">완결·전체</a>
+        <a href="/about/" class="{'is-on' if active == 'about' else ''}">연재원칙</a>
+        <a href="https://emfls.github.io/kor/util/ssultoon-maker/" target="_blank" rel="noopener noreferrer">사이다 썰툰관</a>
+      </div>
+    </nav>
+    <div class="nv-sub-nav">
+      <div class="wrap nv-sub-tabs" role="tablist" aria-label="장르별 보기">
+        <button type="button" class="nv-sub-btn is-active" data-genre="all">요일전체</button>
+        <button type="button" class="nv-sub-btn" data-genre="office">직장·알바</button>
+        <button type="button" class="nv-sub-btn" data-genre="love">연애·관계</button>
+        <button type="button" class="nv-sub-btn" data-genre="car">주차·도로</button>
+        <button type="button" class="nv-sub-btn" data-genre="mystery">미스터리</button>
+        <button type="button" class="nv-sub-btn" data-genre="finance">전세·경제</button>
+        <button type="button" class="nv-sub-btn" data-genre="living">중고·공구</button>
+        <button type="button" class="nv-sub-btn" data-genre="apartment">층간소음</button>
+      </div>
     </div>
   </header>"""
 
@@ -574,7 +569,7 @@ def _footer_html() -> str:
         <a href="/terms/">이용약관</a>
         <a href="/contact/">문의하기</a>
       </div>
-      <div>GuideHollow 웹툰 연재관 · 전 에피소드 18컷 풀스토리 세로 스크롤 제공 · 각 에피소드는 현실 분쟁 예방 가이드와 함께 제공됩니다.</div>
+      <div>GuideHollow 웹툰 · 전 회차 세로 스크롤 무료 연재 · 모든 회차 하단에 현실 분쟁 대응 가이드를 함께 수록합니다.</div>
       <div class="ai-disclosure-sm">{AI_IMAGE_NOTICE}</div>
     </div>
   </footer>
@@ -582,36 +577,35 @@ def _footer_html() -> str:
   <script src="/assets/viewer.js"></script>"""
 
 
-def _render_genre_tabs() -> str:
-    return """
-  <div class="nv-subbar">
-    <div class="wrap nv-tabs" role="tablist" aria-label="웹툰 장르 필터">
-      <button type="button" class="nv-tab-btn is-active" data-genre="all">🔥 전체 웹툰 (10작)</button>
-      <button type="button" class="nv-tab-btn" data-genre="office">💼 직장·알바 참교육</button>
-      <button type="button" class="nv-tab-btn" data-genre="love">💍 연애·인간관계</button>
-      <button type="button" class="nv-tab-btn" data-genre="car">🚗 주차·도로 참교육</button>
-      <button type="button" class="nv-tab-btn" data-genre="mystery">👻 새벽 소름·미스터리</button>
-      <button type="button" class="nv-tab-btn" data-genre="finance">🏦 전세·생활경제</button>
-      <button type="button" class="nv-tab-btn" data-genre="living">📦 중고·공구 역관광</button>
-      <button type="button" class="nv-tab-btn" data-genre="apartment">🏢 층간소음 해결</button>
-    </div>
-  </div>"""
+def _render_new_cards() -> str:
+    items = []
+    for ep in EPISODES[:3]:
+        eid = ep["id"]
+        items.append(
+            f'<a class="new-card" href="/episodes/{esc(eid)}/" data-genre-item="{esc(ep["genreKey"])}">'
+            f'  <div class="new-thumb">'
+            f'    <img src="/assets/toons/{esc(eid)}/cover.svg" alt="{esc(ep["title"])}" loading="eager" width="480" height="620" />'
+            f'    <span class="new-badge-circle">신작</span>'
+            f'  </div>'
+            f'  <h3 class="new-title">{esc(ep["title"])}</h3>'
+            f'  <div class="new-author">GuideHollow 스튜디오 · {esc(ep["genre"])}</div>'
+            f'  <p class="new-desc">{esc(ep["hook"])}</p>'
+            f'</a>'
+        )
+    return "\n".join(items)
 
 
 def _render_poster_cards() -> str:
     cards = []
-    for idx, ep in enumerate(EPISODES, start=1):
+    for ep in EPISODES:
         eid = ep["id"]
         cards.append(
-            f'<a class="poster-card" href="/episodes/{esc(eid)}/" data-genre-item="{esc(ep["genreKey"])}">'
-            f'  <div class="poster-thumb">'
-            f'    <img src="/assets/toons/{esc(eid)}/cover.svg" alt="{esc(ep["title"])}" loading="lazy" width="480" height="640" />'
-            f'    <span class="poster-rank">{idx}</span>'
-            f'    <span class="poster-up">{esc(ep["badgeText"])}</span>'
+            f'<a class="wt-card" href="/episodes/{esc(eid)}/" data-genre-item="{esc(ep["genreKey"])}">'
+            f'  <div class="wt-cover">'
+            f'    <img src="/assets/toons/{esc(eid)}/cover.svg" alt="{esc(ep["title"])}" loading="lazy" width="480" height="620" />'
             f'  </div>'
-            f'  <h3 class="poster-ep-title">{esc(ep["title"])}</h3>'
-            f'  <p class="poster-hook">{esc(ep["hook"])}</p>'
-            f'  <div class="poster-stats">★ {esc(ep["rating"])} <span class="views">조회 {esc(ep["viewsLabel"])} · 18컷</span></div>'
+            f'  <h3 class="wt-title">{esc(ep["title"])}</h3>'
+            f'  <div class="wt-meta">{esc(ep["genre"])} · ★ {esc(ep["rating"])}</div>'
             f'</a>'
         )
     return "\n".join(cards)
@@ -622,15 +616,13 @@ def _render_episode_table() -> str:
     for ep in EPISODES:
         eid = ep["id"]
         rows.append(
-            f'<a class="ep-row" href="/episodes/{esc(eid)}/" data-genre-item="{esc(ep["genreKey"])}">'
-            f'  <div class="ep-row-thumb"><img src="/assets/toons/{esc(eid)}/cover.svg" alt="{esc(ep["title"])}" loading="lazy" /></div>'
-            f'  <div style="min-width:0;">'
-            f'    <span class="ep-row-badge">{esc(ep["episodeNo"])}화 · {esc(ep["genre"])}</span>'
-            f'    <h3 class="ep-row-title">{esc(ep["title"])}</h3>'
-            f'    <p class="ep-row-desc">{esc(ep["summary"])}</p>'
+            f'<a class="ep-item" href="/episodes/{esc(eid)}/" data-genre-item="{esc(ep["genreKey"])}">'
+            f'  <div class="ep-item-thumb"><img src="/assets/toons/{esc(eid)}/cover.svg" alt="{esc(ep["title"])}" loading="lazy" /></div>'
+            f'  <div>'
+            f'    <div class="ep-item-name">{ep["episodeNo"]:02d}화 {esc(ep["title"])}</div>'
+            f'    <div class="ep-item-sub">★ {esc(ep["rating"])} &nbsp;·&nbsp; 26.11.18 &nbsp;·&nbsp; 18컷</div>'
             f'  </div>'
-            f'  <div class="ep-row-rate">★ {esc(ep["rating"])}<span class="ep-row-len">18컷 장편 · 세로정주행</span></div>'
-            f'  <div class="ep-row-cta">감상하기 ▶</div>'
+            f'  <div class="ep-item-right">{esc(ep["genre"])}</div>'
             f'</a>'
         )
     return "\n".join(rows)
@@ -639,45 +631,58 @@ def _render_episode_table() -> str:
 def build_home_html() -> str:
     top = EPISODES[0]
     head = _head_html(
-        "GuideHollow 웹툰 — 실시간 사이다 썰툰 연재관 (전 회차 18컷 장편)",
-        "직장 갑질, 결혼식 축의금, 악성 이중주차, 전세 사기, 새벽 무료나눔 실화를 네이버 웹툰 스타일 AI 작화 18컷 장편 세로 스크롤로 무료 감상하세요.",
+        "GuideHollow 웹툰 — 사이다 실화 연재관",
+        "네이버 웹툰 스타일 세로 스크롤 18컷 장편 사이다 실화 웹툰을 무료로 감상하세요.",
         f"{SITE_URL}/",
         f"{SITE_URL}/assets/toons/{top['id']}/cover.svg",
     )
     return f"""{head}
 <body>
 {_gnb_html("home")}
-{_render_genre_tabs()}
   <main class="wrap">
-    <section class="hero-spot" aria-label="오늘의 인기 급상승 웹툰">
-      <div class="hero-cover">
-        <img src="/assets/toons/{esc(top['id'])}/cover.svg" alt="{esc(top['title'])}" width="480" height="640" />
-      </div>
-      <div>
-        <span class="hero-kicker">🔥 실시간 1위 · 오늘 가장 많이 정주행한 웹툰</span>
-        <h1 class="hero-title">{esc(top['title'])}</h1>
-        <p class="hero-hook">{esc(top['hook'])} — {esc(top['summary'])}</p>
-        <div class="hero-actions">
-          <a class="btn-nv" href="/episodes/{esc(top['id'])}/">18컷 풀스토리 지금 바로 보기 ▶</a>
-          <span class="hero-meta">★ {esc(top['rating'])} · 조회 {esc(top['viewsLabel'])} · 18컷 세로 장편</span>
-        </div>
-      </div>
+    <div class="nv-sec-title-row">
+      <h1 class="nv-sec-title">이달의 신규 웹툰</h1>
+      <a class="nv-sec-more" href="/studio/">신작웹툰 더보기 &gt;</a>
+    </div>
+    <section class="new-grid" aria-label="이달의 신규 웹툰">
+{_render_new_cards()}
     </section>
 
-    <div class="sec-head">
-      <h2 class="sec-title">오늘의 인기 연재 웹툰</h2>
-      <span class="sec-sub">포스터를 누르면 18컷 장편 세로 웹툰 뷰어로 바로 이동합니다</span>
+    <div class="nv-sec-title-row">
+      <h2 class="nv-sec-title">요일별 전체 웹툰</h2>
+      <span class="nv-sec-more">인기순 · 업데이트순 · 별점순</span>
     </div>
-    <section class="poster-grid" aria-label="인기 웹툰 포스터 목록">
+    <section class="wt-grid" aria-label="전체 웹툰 포스터">
 {_render_poster_cards()}
     </section>
 
-    <div class="sec-head">
-      <h2 class="sec-title">전체 회차 · 한눈에 정주행 리스트</h2>
-      <span class="sec-sub">전 회차 1화~10화 · 각 18컷 세로 풀사이즈 무료 공개</span>
-    </div>
-    <section class="ep-table-box" aria-label="전체 회차 리스트">
+    <section class="series-home-box" aria-label="대표 연재작 회차 목록">
+      <div class="series-top">
+        <div class="series-poster">
+          <img src="/assets/toons/{esc(top['id'])}/cover.svg" alt="{esc(top['title'])}" width="480" height="620" />
+        </div>
+        <div>
+          <h2 class="series-h2">오늘의 베스트 사이다 썰툰 모음집</h2>
+          <div class="series-authors"><strong>GuideHollow 편집팀</strong> · 글 / <strong>AI 웹툰 스튜디오</strong> · 그림 &nbsp;|&nbsp; 매일연재 · 15세 이용가</div>
+          <p class="series-synop">{esc(top['summary'])} 직장·연애·주차·전세·중고거래 등 현실에서 누구나 겪는 답답한 상황을 시원하게 해결하는 장편 세로 웹툰 모음입니다.</p>
+          <div class="series-tags">
+            <span class="series-tag">#사이다참교육</span>
+            <span class="series-tag">#직장실화</span>
+            <span class="series-tag">#고자극반전</span>
+            <span class="series-tag">#전세사기방어</span>
+            <span class="series-tag">#무료정주행</span>
+          </div>
+          <div class="series-cta-row">
+            <a class="btn-first-ep" href="/episodes/{esc(top['id'])}/">첫 화 보기</a>
+            <a class="btn-sub-outline" href="/studio/">+ 관심 13,946</a>
+            <a class="btn-sub-outline" href="/about/">연재 안내</a>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px;">총 {len(EPISODES)}화</div>
+      <div class="ep-list">
 {_render_episode_table()}
+      </div>
     </section>
   </main>
 {_footer_html()}
@@ -688,24 +693,22 @@ def build_home_html() -> str:
 def build_studio_archive_html() -> str:
     head = _head_html(
         "완결·전체 정주행 모아보기 | GuideHollow 웹툰",
-        "GuideHollow 오리지널 사이다 썰툰 전 10화 180컷 장편 웹툰 일러스트를 장르별로 골라 바로 정주행하세요.",
+        "GuideHollow 오리지널 10화 180컷 장편 웹툰을 한눈에 모아보고 세로 뷰어로 감상하세요.",
         f"{SITE_URL}/studio/",
     )
     return f"""{head}
 <body>
 {_gnb_html("studio")}
-{_render_genre_tabs()}
   <main class="wrap">
-    <div class="sec-head">
-      <h1 class="sec-title">🔥 전체 10작 180컷 정주행 아카이브</h1>
-      <span class="sec-sub">직장·연애·주차·전세·중고거래 레전드 실화 완결 모음</span>
+    <div class="nv-sec-title-row">
+      <h1 class="nv-sec-title">전체 완결·인기 웹툰 모아보기 ({len(EPISODES)}작)</h1>
     </div>
-    <section class="poster-grid" style="margin-bottom:28px;">
+    <section class="wt-grid" style="margin-bottom:28px;">
 {_render_poster_cards()}
     </section>
-    <section class="ep-table-box">
+    <div class="ep-list" style="border-top:1px solid #111111;">
 {_render_episode_table()}
-    </section>
+    </div>
   </main>
 {_footer_html()}
 </body>
@@ -717,33 +720,28 @@ def build_episode_html(idx: int, ep: dict) -> str:
     prev_ep = EPISODES[idx - 1] if idx > 0 else EPISODES[-1]
     next_ep = EPISODES[idx + 1] if idx + 1 < len(EPISODES) else EPISODES[0]
     cuts_html = []
-    last_act = ""
     total = len(ep["panels"])
     for c_idx, p in enumerate(ep["panels"], start=1):
-        act = p["act"]
-        if act != last_act:
-            cuts_html.append(f'<div class="act-gutter">▼ {esc(act)} ({c_idx}컷~) ▼</div>')
-            last_act = act
         cuts_html.append(
             f'<div class="comic-cut" data-cut-num="{c_idx}">'
-            f'  <img src="/assets/toons/{esc(eid)}/cut-{c_idx:02d}.svg" alt="{esc(ep["title"])} {c_idx}컷 - {esc(p["line"])}" width="720" height="880" loading="{"eager" if c_idx <= 3 else "lazy"}" />'
+            f'  <img src="/assets/toons/{esc(eid)}/cut-{c_idx:02d}.svg" alt="{esc(ep["title"])} {c_idx}컷 - {esc(p["line"])}" width="690" height="1120" loading="{"eager" if c_idx <= 3 else "lazy"}" />'
             f'</div>'
         )
 
     comments_html = "\n".join(
         f'<div class="comment-item">'
         f'  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
-        f'    <span style="font-size:13.5px;font-weight:800;"><span class="best-pill">BEST</span>{esc(c["user"])}</span>'
-        f'    <span style="font-size:12.5px;font-weight:700;color:#64748b;">👍 {esc(c["likes"])}</span>'
+        f'    <span style="font-size:13.5px;font-weight:700;"><span class="best-pill">BEST</span>{esc(c["user"])}</span>'
+        f'    <span style="font-size:12.5px;color:#666666;">👍 {esc(c["likes"])}</span>'
         f'  </div>'
-        f'  <div style="font-size:14.5px;color:#1e293b;">{esc(c["text"])}</div>'
+        f'  <div style="font-size:14px;color:#222222;">{esc(c["text"])}</div>'
         f'</div>'
         for c in ep["bestComments"]
     )
     checklist_html = "\n".join(f"<li style='margin-bottom:6px;'>{esc(item)}</li>" for item in ep["checklist"])
     coup = ep["coupang"]
     head = _head_html(
-        f"{ep['episodeNo']}화. {ep['title']} | GuideHollow 웹툰",
+        f"{ep['episodeNo']:02d}화 {ep['title']} | GuideHollow 웹툰",
         f"{ep['hook']} {ep['summary']}",
         f"{SITE_URL}/episodes/{eid}/",
         f"{SITE_URL}/assets/toons/{eid}/cover.svg",
@@ -756,56 +754,54 @@ def build_episode_html(idx: int, ep: dict) -> str:
     <div class="wrap viewer-bar-inner">
       <div class="viewer-title-group">
         <a class="viewer-back" href="/">← 목록</a>
-        <h1 class="viewer-h1">{ep['episodeNo']}화. {esc(ep['title'])}</h1>
+        <h1 class="viewer-h1">{ep['episodeNo']:02d}화 {esc(ep['title'])}</h1>
       </div>
       <div class="viewer-controls">
-        <button id="toggle-theme-btn" type="button" class="ctrl-btn">☀️ 라이트</button>
-        <a class="ctrl-btn" href="/episodes/{esc(prev_ep['id'])}/">◀ 이전</a>
-        <a class="ctrl-btn primary" href="/episodes/{esc(next_ep['id'])}/">다음화 ▶</a>
+        <a class="v-btn" href="/episodes/{esc(prev_ep['id'])}/">◀ 이전화</a>
+        <a class="v-btn primary" href="/episodes/{esc(next_ep['id'])}/">다음화 ▶</a>
       </div>
     </div>
   </header>
 
   <main>
-    <div class="ep-intro-strip">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
-        <span class="nv-badge" style="font-size:11.5px;padding:3px 8px;">{ep['episodeNo']}화 · 18컷 장편</span>
-        <span style="font-size:12.5px;font-weight:800;color:#fde047;">★ {esc(ep['rating'])} · 조회 {esc(ep['viewsLabel'])}</span>
-      </div>
-      <h2>{esc(ep['title'])}</h2>
+    <div class="ep-head-meta">
+      <h2>{ep['episodeNo']:02d}화. {esc(ep['title'])}</h2>
       <p>{esc(ep['hook'])}</p>
       <div class="ai-disclosure-sm">{AI_IMAGE_NOTICE}</div>
     </div>
 
-    <div id="cut-float-counter" class="cut-float-counter">1 / {total}컷</div>
-
-    <article class="comic-canvas" aria-label="웹툰 본문 세로 스크롤 컷 모음">
+    <article class="comic-canvas" aria-label="웹툰 본문 세로 스크롤">
 {chr(10).join(cuts_html)}
     </article>
 
-    <section class="reader-post" aria-label="감상 후 참여 및 다음화 안내">
+    <div class="float-scroll-nav" aria-label="스크롤 이동 버튼">
+      <button type="button" class="float-circle" aria-label="맨 위로" onclick="window.scrollTo({{top:0,behavior:'smooth'}})">∧</button>
+      <button type="button" class="float-circle" aria-label="아래로" onclick="window.scrollTo({{top:document.body.scrollHeight,behavior:'smooth'}})">∨</button>
+    </div>
+
+    <section class="reader-post" aria-label="별점 참여, 다음화, 베스트 댓글 및 가이드">
       <div class="nv-box">
         <div class="rate-row">
           <div>
-            <div style="font-size:16px;font-weight:900;">이번 화 재미있게 보셨나요? (★ {esc(ep['rating'])})</div>
-            <div id="star-msg" style="font-size:13px;color:#059669;font-weight:700;margin-top:2px;">별점을 눌러 작가에게 사이다 응원을 남겨주세요!</div>
+            <div style="font-size:15.5px;font-weight:800;">이번 화 별점 주기 (현재 ★ {esc(ep['rating'])})</div>
+            <div id="star-msg" style="font-size:13px;color:#00b853;font-weight:600;margin-top:2px;">별점을 눌러 응원을 남겨주세요.</div>
           </div>
-          <div class="star-btns">
-            <button type="button" class="star-btn" data-star="5">⭐ 5점 최고</button>
-            <button type="button" class="star-btn" data-star="4">★ 4점</button>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="star-btn" data-star="10">★ 10점</button>
+            <button type="button" class="star-btn" data-star="9">★ 9점</button>
           </div>
         </div>
         <div class="ai-disclosure-sm">{AI_IMAGE_NOTICE}</div>
       </div>
 
-      <div class="next-preview">
+      <div class="next-ep-banner">
         <img src="/assets/toons/{esc(next_ep['id'])}/cover.svg" alt="{esc(next_ep['title'])}" />
         <div>
-          <div style="font-size:12px;font-weight:900;color:#059669;">다음 정주행 추천 · {next_ep['episodeNo']}화</div>
-          <div style="font-size:15.5px;font-weight:900;color:#111827;margin:4px 0;">{esc(next_ep['title'])}</div>
-          <div style="font-size:13px;color:#475569;">{esc(next_ep['hook'])}</div>
+          <div style="font-size:12px;font-weight:800;color:#00b853;">다음화 · {next_ep['episodeNo']:02d}화</div>
+          <div style="font-size:15px;font-weight:800;color:#111111;margin:3px 0;">{esc(next_ep['title'])}</div>
+          <div style="font-size:13px;color:#666666;">{esc(next_ep['hook'])}</div>
         </div>
-        <a class="btn-nv" href="/episodes/{esc(next_ep['id'])}/">다음화 보기 ▶</a>
+        <a class="v-btn primary" href="/episodes/{esc(next_ep['id'])}/">다음화 보기 ▶</a>
       </div>
 
       <div class="ad-box"
@@ -823,33 +819,27 @@ def build_episode_html(idx: int, ep: dict) -> str:
            aria-label="상황 맞춤 생활·상품 추천 배너"></div>
 
       <div class="nv-box">
-        <h3 style="margin:0 0 10px;font-size:17px;font-weight:900;">💬 독자 BEST 댓글 ({len(ep['bestComments'])})</h3>
+        <h3 style="margin:0 0 10px;font-size:16px;font-weight:800;">댓글 ({len(ep['bestComments'])})</h3>
         <div id="comment-list">
 {comments_html}
         </div>
         <form id="reader-comment-form" class="comment-form">
-          <input id="reader-comment-input" type="text" maxlength="140" placeholder="이번 화 가장 통쾌했던 장면을 댓글로 남겨보세요..." aria-label="댓글 입력" />
+          <input id="reader-comment-input" type="text" maxlength="140" placeholder="댓글을 입력해 주세요..." aria-label="댓글 입력" />
           <button type="submit">등록</button>
         </form>
       </div>
 
       <div class="nv-box">
-        <h3 style="margin:0 0 8px;font-size:17px;font-weight:900;">🛡️ {esc(ep['guideTitle'])}</h3>
-        <p style="margin:0 0 12px;font-size:14px;color:#334155;">{esc(ep['guideBody'])}</p>
-        <div style="font-size:14px;font-weight:900;margin-bottom:6px;color:#059669;">실전 확인 체크리스트</div>
-        <ul style="margin:0;padding-left:18px;font-size:13.5px;color:#1e293b;">
+        <h3 style="margin:0 0 8px;font-size:16px;font-weight:800;">{esc(ep['guideTitle'])}</h3>
+        <p style="margin:0 0 12px;font-size:14px;color:#444444;">{esc(ep['guideBody'])}</p>
+        <div style="font-size:14px;font-weight:800;margin-bottom:6px;color:#00b853;">실전 확인 체크리스트</div>
+        <ul style="margin:0;padding-left:18px;font-size:13.5px;color:#333333;">
 {checklist_html}
         </ul>
       </div>
     </section>
   </main>
 
-  <nav class="bottom-dock" aria-label="하단 빠른 이동">
-    <a href="/">🏠 웹툰 홈</a>
-    <a href="/episodes/{esc(prev_ep['id'])}/">◀ 이전화</a>
-    <button type="button" onclick="window.scrollTo({{top:0,behavior:'smooth'}})">⬆ 맨 위로</button>
-    <a class="go-next" href="/episodes/{esc(next_ep['id'])}/">다음화 ▶</a>
-  </nav>
   <script src="/assets/ad-manager.js"></script>
   <script src="/assets/viewer.js"></script>
 </body>
@@ -930,7 +920,7 @@ def build_site(ad_mode: str = "coupang") -> dict:
             "about",
             "연재·편집 원칙",
             "GuideHollow 웹툰 연재·편집 원칙",
-            "<p>전 에피소드는 직장·계약·중고거래·이웃 분쟁 등 일상에서 벌어지는 실제 고민을 5막 18컷 장편 세로 웹툰으로 각색하고, 하단에 법적 대응과 생활 체크리스트를 함께 수록합니다.</p>"
+            "<p>전 에피소드는 직장·계약·중고거래·이웃 분쟁 등 일상에서 벌어지는 실제 고민을 18컷 세로 스크롤 웹툰으로 각색하고, 하단에 법적 대응과 생활 체크리스트를 함께 수록합니다.</p>"
             "<p>모든 웹툰 작화는 AI 생성 일러스트와 한국어 웹툰 식자 조판을 결합해 제작되며, 모바일과 PC 모두에서 끊김 없는 정주행을 즐길 수 있습니다.</p>",
         ),
     )
@@ -975,7 +965,7 @@ def main() -> int:
     parser.add_argument("--ad-mode", choices=["coupang", "adsense"], default="coupang")
     args = parser.parse_args()
     stats = build_site(ad_mode=args.ad_mode)
-    print(f"BUILT_WEBTOON_PORTAL episodes={stats['episodes']} svgs={stats['svgs']} urls={stats['urls']}")
+    print(f"BUILT_NAVER_STYLE_PORTAL episodes={stats['episodes']} svgs={stats['svgs']} urls={stats['urls']}")
     return 0
 
 

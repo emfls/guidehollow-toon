@@ -24,19 +24,46 @@
 </head>
 <body>
 
-  <header class="nv-gnb">
-    <div class="wrap nv-gnb-inner">
-      <a class="nv-brand" href="/">
-        <span class="nv-badge">WEBTOON</span>
-        <span>GuideHollow 썰툰</span>
-        <span class="nv-sub-pill">18컷 장편 연재</span>
-      </a>
-      <nav class="nv-nav" aria-label="주요 메뉴">
-        <a href="/" class="">요일·인기 웹툰</a>
-        <a href="/studio/" class="">완결·전체 정주행</a>
-        <a href="/about/" class="">연재 원칙</a>
-        <a href="https://shopping.guidehollow.com/" target="_blank" rel="noopener noreferrer">🛒 쇼핑 가이드 ↗</a>
-      </nav>
+  <header>
+    <div class="nv-top-strip">
+      <div class="wrap nv-top-inner">
+        <div class="nv-brand-group">
+          <a class="nv-logo" href="/">
+            <span class="nv-logo-mark">GUIDEHOLLOW</span>
+            <span>웹툰</span>
+          </a>
+          <span class="nv-logo-dot">|</span>
+          <a class="nv-logo-sub" href="/studio/">전체 정주행</a>
+          <span class="nv-logo-dot">|</span>
+          <a class="nv-logo-sub" href="https://shopping.guidehollow.com/" target="_blank" rel="noopener noreferrer">쇼핑가이드</a>
+        </div>
+        <div class="nv-search-row">
+          <div class="nv-search-box">
+            <input id="wt-search-input" type="search" placeholder="제목/장르로 검색할 수 있습니다." aria-label="웹툰 검색" />
+          </div>
+          <a class="nv-creator-btn" href="/episodes/ep01-office-cider/">오늘 1화 보기</a>
+        </div>
+      </div>
+    </div>
+    <nav class="nv-main-nav" aria-label="주요 메뉴">
+      <div class="wrap nv-main-tabs">
+        <a href="/" class="">웹툰</a>
+        <a href="/studio/" class="">완결·전체</a>
+        <a href="/about/" class="">연재원칙</a>
+        <a href="https://emfls.github.io/kor/util/ssultoon-maker/" target="_blank" rel="noopener noreferrer">사이다 썰툰관</a>
+      </div>
+    </nav>
+    <div class="nv-sub-nav">
+      <div class="wrap nv-sub-tabs" role="tablist" aria-label="장르별 보기">
+        <button type="button" class="nv-sub-btn is-active" data-genre="all">요일전체</button>
+        <button type="button" class="nv-sub-btn" data-genre="office">직장·알바</button>
+        <button type="button" class="nv-sub-btn" data-genre="love">연애·관계</button>
+        <button type="button" class="nv-sub-btn" data-genre="car">주차·도로</button>
+        <button type="button" class="nv-sub-btn" data-genre="mystery">미스터리</button>
+        <button type="button" class="nv-sub-btn" data-genre="finance">전세·경제</button>
+        <button type="button" class="nv-sub-btn" data-genre="living">중고·공구</button>
+        <button type="button" class="nv-sub-btn" data-genre="apartment">층간소음</button>
+      </div>
     </div>
   </header>
   <main class="wrap">
@@ -56,7 +83,7 @@
         <a href="/terms/">이용약관</a>
         <a href="/contact/">문의하기</a>
       </div>
-      <div>GuideHollow 웹툰 연재관 · 전 에피소드 18컷 풀스토리 세로 스크롤 제공 · 각 에피소드는 현실 분쟁 예방 가이드와 함께 제공됩니다.</div>
+      <div>GuideHollow 웹툰 · 전 회차 세로 스크롤 무료 연재 · 모든 회차 하단에 현실 분쟁 대응 가이드를 함께 수록합니다.</div>
       <div class="ai-disclosure-sm">* 본 웹툰 이미지는 AI 도구를 활용해 제작되었습니다.</div>
     </div>
   </footer>
